@@ -64,8 +64,32 @@ const m = (id: string, i = 0) => ex[id]?.data.metrics[i];
       </li>
     </ul>
 
-    <div class="sec-h" style="margin-top:44px"><h2>Co-authored manuscripts</h2><span class="hnote">lab papers where I am second or third author</span></div>
+    <div class="sec-h" id="manuscripts" style="margin-top:44px;scroll-margin-top:24px"><h2>Manuscripts</h2><span class="hnote">first-author papers under review, working papers on their way to submission, then lab papers where I am second or third author; review stages on <a href="/publications/">Publications</a></span></div>
     <ul class="rows rl">
+      <li><a href="/research/diffusion-scenarios/">
+        <span class="d">{pub('case').year}</span>
+        <div><div class="t">{pub('case').title}</div>
+          <div class="k">CASE: one diffusion transformer over multi-asset return panels, re-conditioned each morning, judged by the decision it feeds rather than by how realistic its samples look: reserves set on its scenarios across nine portfolio books and 139 decision dates.</div>
+          <div class="pm"><span><b>7.5 %</b> less reserve for the same shortfall</span><span><b>9</b> books · <b>139</b> decision dates</span></div></div>
+        <div class="r"><span class={`status ${pub('case').stageClass}`}>{pub('case').stage} · ESWA</span><span>1st author · {last(pub('case'))}</span></div></a></li>
+      <li><a href="/research/finphasor/">
+        <span class="d">{pub('finphasor').year}</span>
+        <div><div class="t">{pub('finphasor').title}</div>
+          <div class="k">Predicting the future complex wavelet scalogram keeps the phase of a price move, and only phase orders the cross-section by when each stock reprices; every magnitude read-out of the same prediction is flat.</div>
+          <div class="pm"><span><b>+0.074</b> out-of-sample rank IC from phase</span></div></div>
+        <div class="r"><span class={`status ${pub('finphasor').stageClass}`}>{pub('finphasor').stageShort ?? pub('finphasor').stage} · ESWA</span><span>1st author · {last(pub('finphasor'))}</span></div></a></li>
+      <li><a href="/research/model-uncertainty-priors/">
+        <span class="d">now</span>
+        <div><div class="t">Learned Surrogate Priors for Bayesian Model Selection: Density, Uncertainty, and the Cost of a Sampler</div>
+          <div class="k">Checked against the exact posterior over models (TV 0.016), then controlled by Bayesian optimisation through its density; the decision barely moves while the entropy-based uncertainty measure collapses.</div>
+          <ol class="stages"><li class="done">Idea</li><li class="cur">Experiments</li><li>Drafting</li><li>Internal review</li><li>Submission</li></ol></div>
+        <div class="r"><span class="status s-wip">Working paper</span><span>1st author · not yet submitted</span></div></a></li>
+      <li><a href="/projects/exchange-queueing/">
+        <span class="d">now</span>
+        <div><div class="t">Bayesian Capacity Sizing for an Exchange Matching Queue under Over-Dispersed Arrivals</div>
+          <div class="k">Order arrivals are over-dispersed and most of the uncertainty lives in the batch sizes; a batch-arrival posterior plus a learned SLA surrogate sizes servers every minute, and the write-up states where its coverage falls short.</div>
+          <ol class="stages"><li class="done">Idea</li><li class="cur">Experiments</li><li>Drafting</li><li>Internal review</li><li>Submission</li></ol></div>
+        <div class="r"><span class="status s-wip">Working paper</span><span>1st author · not yet submitted</span></div></a></li>
       <li><div class="row3">
         <span class="d">{pub('convfactornet').year}</span>
         <div><div class="t">ConvFactorNet — deep convolutional factor prediction with explainable AI</div>

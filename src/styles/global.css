@@ -579,3 +579,6 @@ pre .k{color:var(--accent)}pre .c{color:var(--mute)}pre .s{color:var(--warn)}
   .prose code{overflow-wrap:anywhere}
   main{overflow-x:clip}
 }
+/* stage rail inside list rows (home publications, research manuscripts): undo the row styles */
+.pubs .stages,.rows .stages{margin-top:10px}
+.pubs .stages li,.rows .stages li{display:flex;grid-template-columns:none;border:0;padding:0 22px 0 0;margin:0;font-size:12px;line-height:1.5;background:none}
