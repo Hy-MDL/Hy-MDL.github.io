@@ -115,7 +115,7 @@ The largest module over all seeds is returned, in $O(N^2)$ time and memory, with
 
 **Chinese A-shares, 2013–2024.** Daily closes for Shanghai and Shenzhen stocks come from RESSET, stocks with missing data are dropped, and one network is built per year. $\xi_\pm$ are the fractions of validated positive and negative entries, $\mu_+$ the mean positive weight, and $\varsigma = |S^*|/N$.
 
-| Year | $N$ | $\xi_+$ | $\xi_-$ | $\mu_+$ | $|S^*|$ | $\varsigma$ |
+| Year | $N$ | $\xi_+$ | $\xi_-$ | $\mu_+$ | $\lvert S^*\rvert$ | $\varsigma$ |
 |---|---|---|---|---|---|---|
 | 2013 | 1462 | 0.9295 | 0.000078 | 0.3241 | 13 | 0.0089 |
 | 2014 | 1101 | 0.8920 | 0.00032 | 0.2919 | 15 | 0.0136 |

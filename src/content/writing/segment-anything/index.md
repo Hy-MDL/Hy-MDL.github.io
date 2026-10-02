@@ -3,7 +3,7 @@ title: "SAM: Segment Anything"
 paper:
   title: "Segment Anything"
   authors: "Alexander Kirillov et al."
-  venue: "arXiv 2023"
+  venue: "ICCV 2023"
   arxiv: "2304.02643"
   license: "arxiv.org/licenses/nonexclusive-distrib/1.0/"
 series: "vision"
@@ -124,7 +124,7 @@ SAM is behind on AP, by less on LVIS where the ground truth is cleaner. In a hum
 
 ## References
 
-1. Kirillov, A., Mintun, E., Ravi, N., et al. *Segment Anything.* arXiv:2304.02643, 2023.
+1. Kirillov, A., Mintun, E., Ravi, N., et al. *Segment Anything.* ICCV 2023. arXiv:2304.02643.
 2. He, K., et al. *Masked Autoencoders Are Scalable Vision Learners* (MAE). 2022.
 3. Radford, A., et al. *Learning Transferable Visual Models From Natural Language Supervision* (CLIP). 2021.
 4. Li, Y., et al. *Exploring Plain Vision Transformer Backbones for Object Detection* (ViTDet). 2022.

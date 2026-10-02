@@ -3,7 +3,7 @@ title: "Preference-relation StatArb: Statistical arbitrage portfolio constructio
 paper:
   title: "Statistical arbitrage portfolio construction based on preference relations"
   authors: "Fredi Šarić et al."
-  venue: "Expert Systems with Applications, 2023, 121906"
+  venue: "Expert Systems with Applications 238, 121906, 2024"
   arxiv: "2310.08284"
   license: "creativecommons.org/licenses/by-nc-nd/4.0/"
 series: "eswa-finance"
@@ -117,12 +117,12 @@ Annualised excess returns of the long-short portfolio with utility-proportional 
 
 **Variants.** Four combinations are compared: equal (EW) or utility-proportional (UP) weights, with or without the decorator (w/ M). UP beats EW on mean return in every configuration ([Fig. 3 in the paper](https://arxiv.org/pdf/2310.08284#page=12)). <mark>The decorator lowers volatility and sharply lowers turnover in all cases, but on the full universe it does not raise the mean return.</mark> Holding periods stretch from a few days to as long as 23 days ([Fig. 2](https://arxiv.org/pdf/2310.08284#page=11), [Fig. 5](https://arxiv.org/pdf/2310.08284#page=13)).
 
-**Factor exposure.** Fama-French five-factor regressions on the full universe, $n=7037$ daily observations (long-short rows of Table 3 of the paper; the paper marks significance at the 0.05 level in boldface, which did not survive my text extraction, so none is marked here):
+**Factor exposure.** Fama-French five-factor regressions on the full universe, $n=7037$ daily observations (long-short rows of Table 3 of the paper; significance markers omitted):
 
 | Method | $\alpha$ | $\beta_{MKT}$ | $\beta_{SMB}$ | $\beta_{HML}$ | $\beta_{RMW}$ | $\beta_{CMA}$ | adj. $R^2$ |
 |---|---|---|---|---|---|---|---|
 | EW | 0.045 | 0.254 | 0.030 | 0.204 | -0.134 | -0.329 | 0.05 |
-| **UP** | **0.063** | 0.254 | 0.022 | 0.237 | -0.170 | -0.331 | 0.04 |
+| UP | 0.063 | 0.254 | 0.022 | 0.237 | -0.170 | -0.331 | 0.04 |
 | EW w/ M | 0.023 | 0.248 | 0.025 | 0.225 | -0.083 | -0.290 | 0.09 |
 | UP w/ M | 0.039 | 0.260 | 0.012 | 0.208 | -0.084 | -0.279 | 0.09 |
 
@@ -150,7 +150,7 @@ Annualised excess returns of the long-short portfolio with utility-proportional 
 
 ## References
 
-1. Šarić, F., Begušić, S., Merćep, A., Kostanjčar, Z. "Statistical arbitrage portfolio construction based on preference relations." arXiv:2310.08284, 2023.
+1. Šarić, F., Begušić, S., Merćep, A., Kostanjčar, Z. "Statistical arbitrage portfolio construction based on preference relations." Expert Systems with Applications 238, 121906, 2024. arXiv:2310.08284.
 2. Gatev, E., Goetzmann, W. N., Rouwenhorst, K. G. "Pairs trading: Performance of a relative-value arbitrage rule." Review of Financial Studies, 19(3), 2006.
 3. Čaklović, L. "Measure of inconsistency for the potential method." Lecture Notes in Computer Science, vol. 7647, 2012.
 4. Mrčela, L., Merćep, A., Begušić, S., Kostanjčar, Z. "Portfolio optimization using preference relation based on statistical arbitrage." SST 2017.

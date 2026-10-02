@@ -186,8 +186,8 @@ Easy to get wrong. (i) SMLD's $\sigma(t)$ is discontinuous at $t=0$ by construct
 | Predictor | VE P1000 | VE P2000 | VE PC1000 | VP P1000 | VP P2000 | VP PC1000 |
 |---|---|---|---|---|---|---|
 | ancestral | 4.98 ± .06 | 4.88 ± .06 | 3.62 ± .03 | 3.24 ± .02 | 3.24 ± .02 | 3.21 ± .02 |
-| reverse diffusion | 4.79 ± .07 | 4.74 ± .08 | **3.60 ± .02** | 3.21 ± .02 | 3.19 ± .02 | 3.18 ± .01 |
-| probability flow | 15.41 ± .15 | 10.54 ± .08 | 3.51 ± .04 | 3.59 ± .04 | 3.23 ± .03 | **3.06 ± .03** |
+| reverse diffusion | 4.79 ± .07 | 4.74 ± .08 | 3.60 ± .02 | 3.21 ± .02 | 3.19 ± .02 | 3.18 ± .01 |
+| probability flow | 15.41 ± .15 | 10.54 ± .08 | **3.51 ± .04** | 3.59 ± .04 | 3.23 ± .03 | **3.06 ± .03** |
 
 The corrector-only column (C2000) is shared by all three rows, since it uses no predictor: 20.43 ± .07 on VE and 19.06 ± .06 on VP.
 
@@ -220,7 +220,7 @@ The corrector-only column (C2000) is shared by all three rows, since it uses no 
 
 *"Correctors beat more predictor steps at equal compute."* <mark>Decisively true for VE (3.60 vs 4.74, reverse diffusion) but not for VP: under Table 4's rounding interpolation, P2000 reaches 3.10–3.11 and beats PC1000's 3.18–3.21</mark>, reversing Table 1. Since P2000 needs an ad-hoc interpolation this architecture happens to permit, the honest reading is that PC wins robustly where the predictor is weak and is a wash where it is already good. The corrector-only column (≈20 FID) does establish that a corrector cannot replace a predictor.
 
-*"Sub-VP improves likelihood."* Consistent across all four matched pairs (3.21→3.05, 3.16→3.02, 3.13→2.99), a real ablation rather than one number, with FID moving the same way. But see the $\epsilon$ caveat below.
+*"Sub-VP improves likelihood."* Consistent across all three matched pairs (3.21→3.05, 3.16→3.02, 3.13→2.99), a real ablation rather than one number, with ODE-sampled FID moving the same way. But see the $\epsilon$ caveat below.
 
 *"VE gives the best samples, sub-VP the best likelihood."* <mark>Supported, and neither dominates — 2.20 FID for VE with no reported likelihood, 2.99 bits/dim for sub-VP at 2.41 FID.</mark>
 

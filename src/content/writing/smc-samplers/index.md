@@ -7,7 +7,7 @@ paper:
   arxiv: "10.1111/j.1467-9868.2006.00553.x"
   url: "https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-9868.2006.00553.x"
   pdf: "https://www.stats.ox.ac.uk/~doucet/delmoral_doucet_jasra_sequentialmontecarlosamplersJRSSB.pdf"
-  license: "© 2006 Royal Statistical Society — publisher copyright; read from an author-hosted copy"
+  license: "© 2006 Royal Statistical Society"
 series: "sequential-monte-carlo"
 order: 4
 tags: [sequential-monte-carlo, smc-samplers, backward-kernels, annealed-importance-sampling, normalizing-constants, tempering, mcmc]
@@ -97,7 +97,7 @@ $$
 \widehat{\log\frac{Z_n}{Z_1}}=\sum_{k=2}^{n}\log\widehat{\frac{Z_k}{Z_{k-1}}}. \tag{5}
 $$
 
-This is the property that makes SMC samplers a *model-comparison* tool and not just a sampler: run the tempering path from prior to posterior and $Z_p/Z_1$ is the marginal likelihood. The paper also connects this to path sampling, noting the identity $\log(Z_1/Z_0)=\int_0^1\int\frac{d\theta}{dt}\frac{d\log\gamma_{\theta(t)}(x)}{dt}\pi_{\theta(t)}(dx)\,dt$, approximable by trapezoidal integration over the particle approximations.
+This is the property that makes SMC samplers a *model-comparison* tool and not just a sampler: run the tempering path from prior to posterior and $Z_p/Z_1$ is the marginal likelihood. The paper also connects this to path sampling, noting the identity $\log(Z_1/Z_0)=\int_0^1\int\frac{d\theta}{dt}\,\frac{\partial\log\gamma_{\theta}(x)}{\partial\theta}\Big|_{\theta=\theta(t)}\pi_{\theta(t)}(dx)\,dt$, approximable by trapezoidal integration over the particle approximations.
 
 ### 3.3 Choosing the backward kernel
 
@@ -253,7 +253,7 @@ And the posterior means of the four component locations, which by non-identifiab
 **What the numbers say, including where SMC does not win.**
 
 1. **Resampling helps the particles a lot.** The SMC log-posteriors are far higher than AIS's at every setting, and the gap is enormous at short schedules ($-155.22$ against $-191.07$). *The standard deviation of these values (which is not given here) is also significantly smaller than for AIS* — a claim made without the numbers behind it.
-2. **Resampling does not help the normalising constant.** *The estimates of the normalizing constant that were obtained via SMC sampling are not improved compared with AIS.* Look at the $\log Z$ columns: at 1000 steps with 10 iterations they agree to two decimal places ($-247.40$ vs $-247.36$), and at short schedules *the estimates for both algorithms are particularly poor and improve similarly as $p$ increases*. This is a clean negative result about the paper's own method, reported without hedging.
+2. **Resampling does not help the normalising constant.** *The estimates of the normalizing constant that were obtained via SMC sampling are not improved compared with AIS.* Look at the $\log Z$ columns: at 1000 steps with 10 iterations they agree to within 0.04 ($-247.40$ vs $-247.36$), and at short schedules *the estimates for both algorithms are particularly poor and improve similarly as $p$ increases*. This is a clean negative result about the paper's own method, reported without hedging.
 3. **A practical recommendation drawn from a negative result.** *If we are interested in estimating normalizing constants, it appears that it is preferable to use only one iterate of the kernel and more time steps.* More, shorter steps beat fewer, better-mixed ones when the target is $Z$.
 4. **Non-identifiability recovery is the clearest win.** The four estimated means should coincide at ~1.5; SMC at 100 steps with 10 iterations gives $(1.34,1.44,1.44,1.54)$ against AIS's $(0.88,1.06,1.59,2.25)$. *This underlines that the resampling step can improve the sampler substantially, with little extra coding effort.* Notably the advantage is *largest at moderate $p$* and shrinks by 500 steps, where AIS nearly catches up — the honest shape of the result.
 5. **Resampling frequency behaves as theory predicts.** It falls with $p$ (consecutive densities closer, less weight degeneracy) and falls with more MCMC iterations per step, *which we attribute to the fact that the kernels mix faster, allowing us a better coverage of the space*. The 50-step/10-iteration cell is the exception at 10.90, the only configuration where more mixing *raised* the resampling count.

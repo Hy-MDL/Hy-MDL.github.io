@@ -1,5 +1,5 @@
 ---
-title: "Swin: Swin Transformer: Hierarchical Vision Transformer using Shifted Windows"
+title: "Swin: Swin Transformer — Hierarchical Vision Transformer using Shifted Windows"
 paper:
   title: "Swin Transformer: Hierarchical Vision Transformer using Shifted Windows"
   authors: "Ze Liu et al."

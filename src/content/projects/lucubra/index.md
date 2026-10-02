@@ -20,7 +20,7 @@ thumb: "/projects/lucubra/media/home.jpg"
 
 Lucubra is the name the platform carries now; its window title reads "Lucubra — research, verified in conversation", and the landing's palette is called lamplight. The public landing page is the outermost layer, the first thing anyone sees before signing in, so this page starts there: one capture per section of the landing page, top to bottom, taken on 2026.10.02 at 1440 × 900.
 
-Two cautions about what the captures show. The landing's scenes run on one illustrative paper (a momentum-crash study with made-up numbers) and the landing says so; none of the numbers in them are results. And the landing is the *specification* of the product as much as a description of it: a feature audit of the app on 2026.10.02 marked several of the scenes as only partly built or not built yet, among them the Reader that links claims to tables with line references, fixes applied in place to the TeX source, and the Codex, Ollama and ORCID connections. The overnight plan works through that list scene by scene; the app screens further down show what runs today.
+Two cautions about what the captures show. The landing's scenes run on one illustrative paper (a momentum-crash study with made-up numbers) and the landing says so; none of the numbers in them are results. And the landing is the *specification* of the product as much as a description of it: a feature audit of the app on 2026.10.02 marked several of the scenes as only partly built or not built yet, among them the Reader that links claims to tables with line references, fixes applied in place to the TeX source, and the Codex, Ollama and ORCID connections. Those scenes are being built next; the app screens further down show what runs today.
 
 ## The landing page, section by section
 
@@ -46,13 +46,13 @@ The second reason is the one I would state in an interview: I wanted to know whe
 
 ## Inside the app, screen by screen
 
-Behind the landing page, after sign-in, the app itself, captured on 2026.10.02 after the rename and the lamplight restyle. The sidebar lists real working projects, including a few internal test probes from the build rounds.
+Behind the landing page, after sign-in, the app itself, captured on 2026.10.02 after the rename and the lamplight restyle. The sidebar lists real working projects and a few test ones.
 
 ![Home: the conversation is the front door. One message box with the model picked per run (here Claude Haiku 4.5 through the local Claude Code), suggested questions underneath, and "Pick up where you left off": recent conversations and drafts with their venue and stage.](./figs/home.jpg)
 
 **Chat** is the front door. A question, a paper, or an idea goes into one box; agents answer with cards that carry their reason and their source, and whatever they build (code, a data plan, draft LaTeX, notes) lands beside the thread as a versioned artifact. ⌘K opens a new conversation from anywhere; ⌘/ searches venues, drafts, papers and personas. "Open venues" or "go to review" typed in the conversation navigates the app.
 
-**Projects** hold one research question each, with the journal it aims at, its drafts, data and everything built for it. A draft moves along a five-stage rail, **Ideate** (question, gap, pre-registered hypotheses) → **Premise** (the venue sets length, table style and figure spec for every cell) → **Build** → **Review** → **Submit**, and every agent result is kept with the draft.
+**Projects** hold one research question each, with the journal it aims at, its drafts, data and everything built for it. A draft starts at **Ideate** (question, gap, pre-registered hypotheses), then moves along the four-stage rail **Premise** (the venue sets length, table style and figure spec for every cell) → **Write** → **Review** → **Submit**, and every agent result is kept with the draft.
 
 ![Write: the draft as LaTeX on the left of a live preview, sections listed by state, named figure and table styles, versions, and "Write all", which sends each section to its own agent team; bracketed placeholders stay highlighted in the preview until a result fills them. The stage rail above runs Premise → Write → Review → Submit.](./figs/draft-write.jpg)
 

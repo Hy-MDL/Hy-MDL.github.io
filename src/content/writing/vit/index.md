@@ -1,5 +1,5 @@
 ---
-title: "ViT: An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale"
+title: "ViT: An Image is Worth 16x16 Words — Transformers for Image Recognition at Scale"
 paper:
   title: "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale"
   authors: "Alexey Dosovitskiy et al."
@@ -114,7 +114,7 @@ For transfer, the pre-training head is replaced by a zero-initialized $D\times K
 
 \*The 88.5 figure is a slightly improved result the paper cites from Touvron et al. (2020).
 
-<mark>ViT-L/16 pre-trained on JFT beats BiT-L, pre-trained on the same data, on every listed task while using 0.68k instead of 9.9k TPUv3-core-days.</mark> ViT-H/14 improves further, mostly on the harder datasets. The ImageNet-21k model is weaker but trainable on a single 8-core cloud TPUv3 in roughly 30 days. The authors caution that this comparison mixes architecture with training choices and point to their controlled study.
+<mark>ViT-L/16 pre-trained on JFT matches or beats BiT-L, pre-trained on the same data, on every listed task — ahead on five, level on ImageNet ReaL and VTAB — while using 0.68k instead of 9.9k TPUv3-core-days.</mark> ViT-H/14 improves further, mostly on the harder datasets. The ImageNet-21k model is weaker but trainable on a single 8-core cloud TPUv3 in roughly 30 days. The authors caution that this comparison mixes architecture with training choices and point to their controlled study.
 
 **How much data is needed.** Two experiments address this. In the first ([Fig. 3 in the paper](https://arxiv.org/pdf/2010.11929#page=7)), models are pre-trained on the three datasets with tuned weight decay, dropout and label smoothing. On ImageNet alone, ViT-Large is *worse* than ViT-Base; on ImageNet-21k they are similar; only on JFT does the larger model pull ahead, and only there does ViT clearly pass the BiT range. In the second ([Fig. 4](https://arxiv.org/pdf/2010.11929#page=7)), models are trained on random JFT subsets of 9M, 30M, 90M and the full 300M with identical hyper-parameters, and evaluated by few-shot linear probes. <mark>ViT-B/32 is much worse than a comparably priced ResNet50 on the 9M subset and better from 90M upward</mark>; the same crossover holds for ViT-L/16 against ResNet152x2.
 

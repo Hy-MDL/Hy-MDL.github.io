@@ -1,6 +1,6 @@
 ---
 title: "Tail-GAN: Learning to Simulate Tail Risk Scenarios"
-paper: { title: "Tail-GAN: Learning to Simulate Tail Risk Scenarios", authors: "Rama Cont et al.", venue: "arXiv preprint (v4, 2025)", arxiv: "2203.01664", license: "creativecommons.org/licenses/by-nc-nd/4.0/" }
+paper: { title: "Tail-GAN: Learning to Simulate Tail Risk Scenarios", authors: "Rama Cont et al.", venue: "Management Science 72(4):2917–2936, 2026", arxiv: "2203.01664", license: "creativecommons.org/licenses/by-nc-nd/4.0/" }
 series: "generative-finance"
 order: 3
 tags: [gan, tail-risk, value-at-risk, expected-shortfall, elicitability, scoring-functions, scenario-generation, market-simulation, eigenportfolios]
@@ -130,7 +130,7 @@ $$
 \tag{10}
 $$
 
-where row $i$ concentrates on the $i$-th largest entry of $x$ and $\tau>0$ is a temperature; the soft-sorted vector $\widehat{\Gamma}^{\tau}(x)\,x$ feeds an MLP. (The PDF prints the row score without the factor $x$; I follow the NeuralSort form.)
+where row $i$ concentrates on the $i$-th largest entry of $x$ and $\tau>0$ is a temperature; the soft-sorted vector $\widehat{\Gamma}^{\tau}(x)\,x$ feeds an MLP. (The paper prints the row score without the factor $x$; I follow the NeuralSort form.)
 
 ```mermaid
 flowchart LR
@@ -202,7 +202,7 @@ where $q_i$ is the $i$-th eigenvector and $\sigma_m$ the empirical volatility of
 | Training strategies | 5 single-asset + 50 multi-asset static, 5 mean-reversion, 5 trend-following ($K=65$) |
 | Epochs | curves run to 3,000 (synthetic) and 30,000 (intraday); convergence reported within 2,000 and 20,000 |
 | Optimiser, sort temperature $\tau$, weight init | not stated |
-| Rules and look-backs of the dynamic strategies | not stated in the PDF (code is linked: `github.com/chaozhang-ox/Tail-GAN`) |
+| Rules and look-backs of the dynamic strategies | not stated in the paper (code is linked: `github.com/chaozhang-ox/Tail-GAN`) |
 | Input scaling of prices, output constraint on $(v,e)$ | not stated |
 | Hardware, wall-clock | not stated |
 
@@ -275,7 +275,7 @@ Ablations and variants (Tables 2–6 and 9; synthetic unless noted):
 
 ## 7 Extensions
 
-**What was built on this.** In this collection the relatives are predecessors or parallels, not descendants: [Quant GANs](/blog/quant-gans/) (the single-asset line Tail-GAN-Raw imitates), [SigCWGAN](/blog/conditional-sig-wgan/) (a bespoke conditional path-space loss, cited as not tail-focused) and [Deep Hedging](/blog/deep-hedging/), which also judges models through strategy PnL. The PDF cites same-group GANs with task-specific losses (Fin-GAN for forecasting, VolGAN for implied-volatility surfaces) and a limit-order-book simulator as the intended next step. I cannot name with confidence a follow-up that reuses the (VaR, ES) score inside a generator; elicitability-based training of generative models appears to be an active topic (from general knowledge, unverified).
+**What was built on this.** In this collection the relatives are predecessors or parallels, not descendants: [Quant GANs](/blog/quant-gans/) (the single-asset line Tail-GAN-Raw imitates), [SigCWGAN](/blog/conditional-sig-wgan/) (a bespoke conditional path-space loss, cited as not tail-focused) and [Deep Hedging](/blog/deep-hedging/), which also judges models through strategy PnL. The paper cites same-group GANs with task-specific losses (Fin-GAN for forecasting, VolGAN for implied-volatility surfaces) and a limit-order-book simulator as the intended next step.
 
 **Open problems.**
 
@@ -298,7 +298,7 @@ Ablations and variants (Tables 2–6 and 9; synthetic unless noted):
 
 ## References
 
-1. R. Cont, M. Cucuringu, R. Xu, C. Zhang. *Tail-GAN: Learning to Simulate Tail Risk Scenarios.* arXiv:2203.01664.
+1. R. Cont, M. Cucuringu, R. Xu, C. Zhang. *Tail-GAN: Learning to Simulate Tail Risk Scenarios.* Management Science 72(4):2917–2936, 2026. doi:10.1287/mnsc.2023.00936. arXiv:2203.01664.
 2. T. Fissler, J. F. Ziegel. *Higher order elicitability and Osband's principle.* Annals of Statistics, 2016.
 3. C. Acerbi, B. Szekely. *Back-testing expected shortfall.* Risk, 2014.
 4. A. Grover, E. Wang, A. Zweig, S. Ermon. *Stochastic optimization of sorting networks via continuous relaxations.* ICLR 2019.

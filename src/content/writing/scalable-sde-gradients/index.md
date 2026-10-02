@@ -17,7 +17,7 @@ Neural ODEs became practical because the adjoint sensitivity method returns para
 
 ## 1 Introduction
 
-Fitting an SDE with neural drift and diffusion requires the gradient of a path functional with respect to many parameters, and before this paper there were two routes, both scaling badly. The **pathwise** or forward-sensitivity approach propagates a Jacobian of size (parameters)² or (parameters)×(states) alongside the state, so its time cost grows with the total dimension $D$ of states plus parameters. **Backpropagating through the operations of the solver** — the approach Giles and Glasserman introduced for market-model calibration — is fast per step but stores every intermediate quantity, so memory grows with the number of steps $L$.
+Fitting an SDE with neural drift and diffusion requires the gradient of a path functional with respect to many parameters, and before this paper there were two routes, both scaling badly. The **pathwise** or forward-sensitivity approach propagates a Jacobian of size (parameters)² or (parameters)×(states) alongside the state, so its time cost grows with the total dimension $D$ of states plus parameters. **Backpropagating through the operations of the solver** — the approach Giles and Glasserman introduced for fast Monte Carlo Greeks in the LIBOR market model — is fast per step but stores every intermediate quantity, so memory grows with the number of steps $L$.
 
 The paper's complexity table sets the target. Counting both memory and time in units of one evaluation of drift and diffusion, <mark>forward pathwise costs $O(1)$ memory and $O(LD)$ time, backprop through the solver costs $O(L)$ in both, and the stochastic adjoint costs $O(1)$ memory and $O(L\log L)$ time</mark>. The extra $\log L$ is the price of reconstructing noise instead of storing it.
 
@@ -33,7 +33,7 @@ $$
 Z_T = z_0 + \int_0^T b(Z_t, t)\,dt + \sum_{i=1}^m \int_0^T \sigma_i(Z_t, t)\,dW^{(i)}_t, \tag{1}
 $$
 
-with drift $b$ and diffusion columns $\sigma_i$. The Stratonovich integral $\circ\,dW_t$ replaces each cell's left endpoint $Y_{t_k}$ by the average $(Y_{t_k}+Y_{t_{k-1}})/2$; the two integrals differ by a finite-variation correction, so Itô and Stratonovich models convert into each other. Throughout, $b$ and $\sigma$ are assumed to have infinitely many bounded state derivatives and bounded first time derivatives ($b,\sigma\in C_b^{\infty,1}$), which buys existence, uniqueness and smooth dependence on the starting point.
+with drift $b$ and diffusion columns $\sigma_i$. The Stratonovich integral $\circ\,dW_t$ replaces each cell's left endpoint $Y_{t_{k-1}}$ by the average $(Y_{t_k}+Y_{t_{k-1}})/2$; the two integrals differ by a finite-variation correction, so Itô and Stratonovich models convert into each other. Throughout, $b$ and $\sigma$ are assumed to have infinitely many bounded state derivatives and bounded first time derivatives ($b,\sigma\in C_b^{\infty,1}$), which buys existence, uniqueness and smooth dependence on the starting point.
 
 The **backward Wiener process** is $\check W_t = W_t - W_T$, adapted to the backward filtration $\{\mathcal{F}_{t,T}\}$, with the backward Stratonovich integral defined over a partition running from $T$ down to $0$. Kunita's theorem then says that (1), read in Stratonovich form, generates a stochastic flow of diffeomorphisms $\Phi_{s,t}$, and that the inverse flow $\check\Psi_{s,t} = \Phi_{s,t}^{-1}$ solves
 
@@ -163,7 +163,7 @@ Two numbers are worth keeping. The mocap latent SDE has **11,605** parameters ag
 
 ### 5.1 Gradient accuracy
 
-Three test SDEs with closed-form solutions, each duplicated to 10 dimensions with per-dimension parameters drawn from a Gaussian and squashed through a sigmoid. Example 1 is geometric Brownian motion; example 2 is $dX_t = -\tfrac{p^2}{2}\sin(X_t)\cos^3(X_t)\,dt + p\cos^2(X_t)\,dW_t$ with solution $\arctan(pW_t+\tan X_0)$; example 3 is a time-inhomogeneous linear SDE. The Milstein adjoint gradient is compared to the analytic one.
+Three test SDEs with closed-form solutions, each duplicated to 10 dimensions with per-dimension parameters drawn from a Gaussian and squashed through a sigmoid. Example 1 is geometric Brownian motion; example 2 is $dX_t = -p^2\sin(X_t)\cos^3(X_t)\,dt + p\cos^2(X_t)\,dW_t$, whose Itô solution is $\arctan(pW_t+\tan X_0)$ (a drift of $-\tfrac{p^2}{2}\sin X_t\cos^3X_t$ would not give this solution); example 3 is a time-inhomogeneous linear SDE. The Milstein adjoint gradient is compared to the analytic one.
 
 Error falls with step size and with the adaptive solver's absolute tolerance on all three problems; function-evaluation counts run far above the ODE case; and on **two of the three** problems the fixed-step Milstein adjoint is more time-efficient at equal error than backpropagating through Milstein or Euler ([Fig. 5 in the paper](https://arxiv.org/pdf/2001.01328#page=8)). Euler backprop is cheaper per step but hits a worse error floor; Milstein backprop must differentiate the scheme's own higher-order terms.
 
@@ -213,7 +213,7 @@ Motion capture follows the ODE²VAE protocol — encode the first three frames, 
 
 ## 7 Extensions
 
-**What was built on this.** The direct successor is [SDE-GAN](/blog/neural-sde-gan/), which reuses `torchsde` but abandons the adjoint: gradient-penalty training needs a double backward, and Kidger et al. report that a double *continuous* adjoint is too inaccurate at moderate step sizes to train with, so they differentiate the solver's internals instead — the sharpest practical boundary anyone has drawn around this method. [Neural JSDE](/blog/neural-jump-sde/) extends latent continuous-time dynamics to jumps; [Sig-SDE](/blog/sig-sdes/) and [Neural SDEs for pricing and hedging](/blog/neural-sde-pricing-hedging/) pursue calibration with signatures and payoff matching. The reverse-time SDE of [Score-SDE](/blog/score-sde/) is a different object — a reversal in law, not a pathwise inverse flow — and reading the two together sharpens exactly the contrast this paper's Figure 2 draws. Later work on Brownian interval structures and reversible solvers refined the noise and memory story further *(from general knowledge, unverified)*.
+**What was built on this.** The direct successor is [SDE-GAN](/blog/neural-sde-gan/), which reuses `torchsde` but abandons the adjoint: gradient-penalty training needs a double backward, and Kidger et al. report that a double *continuous* adjoint is too inaccurate at moderate step sizes to train with, so they differentiate the solver's internals instead — the sharpest practical boundary anyone has drawn around this method. [Neural JSDE](/blog/neural-jump-sde/) extends latent continuous-time dynamics to jumps; [Sig-SDE](/blog/sig-sdes/) and [Neural SDEs for pricing and hedging](/blog/neural-sde-pricing-hedging/) pursue calibration with signatures and payoff matching. The reverse-time SDE of [Score-SDE](/blog/score-sde/) is a different object — a reversal in law, not a pathwise inverse flow — and reading the two together sharpens exactly the contrast this paper's Figure 2 draws. Later, Kidger, Foster, Li and Lyons (NeurIPS 2021) introduced the Brownian Interval and the algebraically reversible Heun solver, refining the noise and memory story further.
 
 **Open problems.** Rates for the composed estimator; condition (ii) beyond Euler–Maruyama and $d=1$; variance reduction for adjoint gradients; high-order schemes without diagonal noise; whether a rough-path formulation, which the authors raise themselves, removes the adaptedness problem rather than merely avoiding it.
 
@@ -239,3 +239,4 @@ Motion capture follows the ODE²VAE protocol — encode the first three frames, 
 4. Giles, M., Glasserman, P. *Smoking Adjoints: Fast Monte Carlo Greeks.* Risk, 2006.
 5. Yıldız, Ç., Heinonen, M., Lähdesmäki, H. *ODE²VAE: Deep Generative Second Order ODEs with Bayesian Neural Networks.* NeurIPS 2019.
 6. Kidger, P., Foster, J., Li, X., Oberhauser, H., Lyons, T. *Neural SDEs as Infinite-Dimensional GANs.* ICML 2021. arXiv:2102.03657.
+7. Kidger, P., Foster, J., Li, X., Lyons, T. *Efficient and Accurate Gradients for Neural SDEs.* NeurIPS 2021.

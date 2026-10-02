@@ -36,12 +36,12 @@ import Base from '../layouts/Base.astro';
         <li><a class="card" href="/research/model-uncertainty-priors/"><img src="/projects/model-uncertainty-priors/media/bo_thumb.jpg" alt="Bayesian optimisation over the learned prior: Gaussian-process surrogate, its uncertainty band and the acquisition curve" loading="lazy"></a>
           <div class="kick"><span class="status s-wip">Working paper</span><span>experimenting</span></div>
           <a class="t" href="/research/model-uncertainty-priors/">Learned surrogate priors for Bayesian model selection</a>
-          <p class="k">A normalizing flow as a surrogate prior reproduces the exact factor-selection posterior (TV 0.016) where a sampler-only one does not (0.597); its density lets Bayesian optimisation control and adapt it, which barely moves the decision but collapses the uncertainty measure.</p></li>
-        <li><a class="card" href="/research/tailflow/"><img src="/projects/tailflow/media/architecture.png" alt="TailFlow: conditional denoiser architecture" loading="lazy"></a>
+          <p class="k">A normalizing flow as a surrogate prior reproduces the exact factor-selection posterior (TV 0.016) where the sampling route a GAN is limited to does not (0.597 even with the exact prior; 0.796 for the GAN); its density lets Bayesian optimisation control and adapt it, which barely moves the decision but collapses the uncertainty measure.</p></li>
+        <li><a class="card" href="/research/tailflow/"><img src="/projects/tailflow/media/reverse_minimal.jpg" alt="TailFlow: ten-day scenario paths after the observed history; true 1 % and 99 % quantiles dashed" loading="lazy"></a>
           <div class="kick"><span class="status s-done">Experiment</span><span>code + results</span></div>
           <a class="t" href="/research/tailflow/">TailFlow — a diffusion model as a risk engine</a>
           <p class="k">Conditional DDPM for return scenarios, scored against a market with known VaR/ES and as a simulation input model for constrained selection.</p></li>
-        <li><a class="card" href="/projects/eco-route-rl/"><img src="/projects/eco-route-rl/media/route_race.jpg" alt="Eco-Route RL: three routes racing on the Seoul network with CO₂ per route" loading="lazy"></a>
+        <li><a class="card" href="/projects/eco-route-rl/"><img src="/projects/eco-route-rl/media/sumo_race.jpg" alt="Eco-Route RL: five routes on the real Seoul network (SUMO, OpenStreetMap) with cumulative CO₂ per route" loading="lazy"></a>
           <div class="kick"><span class="status s-done">Project</span><span>code + results</span></div>
           <a class="t" href="/projects/eco-route-rl/">Eco-Route RL</a>
           <p class="k">A low-CO₂ route on a real Seoul network chosen with a statistical guarantee: P(correct) = 0.956 where a fixed budget reaches 0.742.</p></li>
@@ -54,21 +54,21 @@ import Base from '../layouts/Base.astro';
 
     <div class="hsec"><h2>News</h2>
       <ul class="news">
+        <li><span class="d">Oct 2026</span><span>Working paper on <a href="/projects/exchange-queueing/">sizing an exchange's matching capacity when order arrivals are over-dispersed</a>: a 2025 course study re-run on 1.30 GB of real BTC/USDT tick data, with a Bayesian batch-arrival model as the surrogate behind the server count.</span></li>
+        <li><span class="d">Oct 2026</span><span>Seven reading notes on <a href="/blog/#surrogates-bo">Bayesian optimisation, learned priors and surrogates</a>, the methods behind the current working papers.</span></li>
+        <li><span class="d">Sep 2026 –</span><span>Building <a href="/projects/lucubra/">Lucubra</a>, a research-agent platform where LLM agents verify papers and draft referee reports — the agent orchestration (chain-of-thought review steps, venue committees of referee personas) is the part I am working on now.</span></li>
         {PUBS.filter((p) => ['case', 'finphasor'].includes(p.id)).map((p) => (
           <li><span class="d">{month(p.events[p.events.length - 1].date)}</span><span><a href={p.page}>{p.id === 'case' ? 'CASE' : 'FinPhasor'}</a> — {p.stage.toLowerCase()} at Expert Systems with Applications.</span></li>
         ))}
-        <li><span class="d">Oct 2026</span><span>Working paper on <a href="/projects/exchange-queueing/">sizing an exchange's matching capacity when order arrivals are over-dispersed</a>: a 2025 course study re-run on 1.30 GB of real BTC/USDT tick data, with a Bayesian batch-arrival model as the surrogate behind the server count.</span></li>
-        <li><span class="d">Oct 2026</span><span>Seven reading notes on <a href="/blog/#surrogates-bo">Bayesian optimisation, learned priors and surrogates</a>, the methods behind the current working papers.</span></li>
-        <li><span class="d">2025.03 – 2026.08</span><span>Lab R&amp;D project with Urban Complex: <a href="/projects/artist-style-engine/">an artist-style generative engine</a> — style captioning, a QLoRA style classifier, SDXL generation routed by style family, and 3D asset output.</span></li>
         <li><span class="d">Feb 2026 –</span><span>Personal project with Nune Eye Hospital: <a href="/projects/nune-retina-rl/">reinforcement learning for dynamic patient assignment</a> in a retina examination room — read-only EMR integration, a recalibrated simulation, and RL against the hospital's own scheduling.</span></li>
-        <li><span class="d">2026 –</span><span>Building <a href="/projects/lucubra/">Lucubra</a>, a research-agent platform where LLM agents verify papers and draft referee reports — the agent orchestration (chain-of-thought review steps, venue committees of referee personas) is the part I am working on now.</span></li>
-        <li><span class="d">2025.07 –</span><span>Built the lab's website <a href="/projects/fai-lab-site/">fai.yonsei.ac.kr</a>; this site followed in 2026.</span></li>
         <li><span class="d">Jan 2026</span><span>Lab seminar on <a href="/research/model-uncertainty-priors/">learned priors for Bayesian factor selection</a>.</span></li>
+        <li><span class="d">Jul 2025 –</span><span>Built the lab's website <a href="/projects/fai-lab-site/">fai.yonsei.ac.kr</a>; this site followed in 2026.</span></li>
         <li><span class="d">Jul 2025</span><span>Talk at ISF 2025, Beijing: <a href="/research/isf2025-solar-forecasting/">A Study for Forecasting Solar Energy Power Generation</a>, joint work with SAS Institute and the University of Seoul.</span></li>
+        <li><span class="d">Mar 2025 – Aug 2026</span><span>Lab R&amp;D project with Urban Complex: <a href="/projects/artist-style-engine/">an artist-style generative engine</a> — style captioning, a QLoRA style classifier, SDXL generation routed by style family, and 3D asset output.</span></li>
         <li><span class="d">Mar 2025</span><span>Joined the Financial Investment AI Lab at Yonsei University as an M.S. student.</span></li>
+        <li><span class="d">2024</span><span>Submitted <a href="/research/#completed">Personalized Sleep Score Prediction Model Using a Lifelog Dataset</a> to the ETRI Human Understanding AI Paper Challenge.</span></li>
         <li><span class="d">Nov 2023</span><span>Presented <a href="/projects/eco-route-rl/">Green-Navi</a> (RL for fuel-optimal urban routing, team lead) at the Carbon-Neutral ESG research fair, Chung-Ang University.</span></li>
         <li><span class="d">Nov 2023</span><span>Presented <a href="/research/#completed">Dealing with the Imbalanced-Data Problem with a Diffusion Model</a> at the 2023 KICS fall conference.</span></li>
-        <li><span class="d">2024</span><span>Submitted <a href="/research/#completed">Personalized Sleep Score Prediction Model Using a Lifelog Dataset</a> to the ETRI Human Understanding AI Paper Challenge.</span></li>
         <li><span class="d">Dec 2022</span><span>Started as an undergraduate researcher at GAIL, Chung-Ang University.</span></li>
       </ul>
     </div>

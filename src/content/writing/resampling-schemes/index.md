@@ -3,7 +3,7 @@ title: "Resampling schemes: Comparison of Resampling Schemes for Particle Filter
 paper:
   title: "Comparison of Resampling Schemes for Particle Filtering"
   authors: "Randal Douc, Olivier Cappé, Eric Moulines"
-  venue: "arXiv 2005 (cs.CE)"
+  venue: "ISPA 2005 (Proc. 4th International Symposium on Image and Signal Processing and Analysis), pp. 64–69"
   arxiv: "cs/0507025"
   license: "arxiv.org/licenses/nonexclusive-distrib/1.0/"
 series: "sequential-monte-carlo"
@@ -72,7 +72,7 @@ A particle with weight $\omega^i\ge 1/n$ is guaranteed at least $\lfloor n\omega
 
 ### 3.3 Stratified
 
-Partition $(0,1]=(0,1/n]\cup\cdots\cup((n-1)/n,1]$ and draw $U^i\sim\mathcal{U}\bigl(((i-1)/n,\,i/n]\bigr)$ independently, then invert as before. The structure buys the guarantee that $\lvert N^i-n\omega^i\rvert<1$ for every $i$ — the same near-deterministic property residual has. Unbiasedness follows because
+Partition $(0,1]=(0,1/n]\cup\cdots\cup((n-1)/n,1]$ and draw $U^i\sim\mathcal{U}\bigl(((i-1)/n,\,i/n]\bigr)$ independently, then invert as before. Only the (at most two) strata that a particle's interval straddles are random, so $\lvert N^i-n\omega^i\rvert<2$ for every $i$; systematic resampling (below) tightens this to $N^i\in\{\lfloor n\omega^i\rfloor,\lceil n\omega^i\rceil\}$, while residual guarantees only $N^i\ge\lfloor n\omega^i\rfloor$. Unbiasedness follows because
 
 $$
 \mathbb{E}\left[\sum_{i=1}^{n}f(\tilde\xi^i)\,\Big|\,\mathcal{G}^n\right]
@@ -276,7 +276,7 @@ Because this is a theory note, the "experiments" section is a list of what the p
 
 ## References
 
-1. Douc, R., Cappé, O., Moulines, E. *Comparison of Resampling Schemes for Particle Filtering.* arXiv:cs/0507025, 2005.
+1. Douc, R., Cappé, O., Moulines, E. *Comparison of Resampling Schemes for Particle Filtering.* Proc. 4th International Symposium on Image and Signal Processing and Analysis (ISPA 2005), pp. 64–69. arXiv:cs/0507025.
 2. Gordon, N. J., Salmond, D. J., Smith, A. F. M. *Novel Approach to Nonlinear/Non-Gaussian Bayesian State Estimation.* IEE Proceedings-F 140(2), 1993.
 3. Cappé, O., Moulines, E., Rydén, T. *Inference in Hidden Markov Models.* Springer, 2005.
 4. Kitagawa, G. *Monte Carlo Filter and Smoother for Non-Gaussian Nonlinear State Space Models.* Journal of Computational and Graphical Statistics 5(1), 1996.

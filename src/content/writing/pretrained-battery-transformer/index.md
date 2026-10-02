@@ -1,9 +1,9 @@
 ---
-title: "PBT: Pretrained battery transformer (PBT): A foundation model for battery life prediction"
+title: "PBT: Pretrained battery transformer — A foundation model for battery life prediction"
 paper:
   title: "Pretrained battery transformer (PBT): A foundation model for battery life prediction"
   authors: "Ruifeng Tan et al."
-  venue: "arXiv preprint, 2025"
+  venue: "Energy & Environmental Science, 2026"
   arxiv: "2512.16334"
   license: "creativecommons.org/licenses/by-nc-sa/4.0/"
 series: "ee-timeseries"
@@ -16,7 +16,7 @@ summary: "A transformer whose feed-forward blocks are mixture-of-experts layers 
 
 ## Abstract
 
-PBT is a pretrained model for early prediction of battery cycle life: from at most the first 100 cycles of voltage, current and capacity it predicts the number of cycles until capacity drops to 80% of nominal. Public lifetime data are tiny and heterogeneous, so models pretrained on a pooled corpus have transferred poorly. The authors' answer is architectural. Every feed-forward block is replaced by BatteryMoE, a mixture-of-experts layer whose routing is not learned from the signal but derived from what is known about the cell: a frozen LLM embeds a text description of the aging condition to produce expert scores, and a rule-based mask keeps only the experts that match the cell's cathode, anode, format and temperature. After pretraining on 13 lithium-ion datasets, the model is specialized per scenario by fine-tuning or adapter tuning. It is the best model on all 15 target datasets, by about 22% relative MAPE on average, including sodium-ion, zinc-ion and large industrial cells that pretraining never saw.
+PBT is a pretrained model for early prediction of battery cycle life: from at most the first 100 cycles of voltage, current and capacity it predicts the number of cycles until capacity drops to 80% of nominal. Public lifetime data are tiny and heterogeneous, so models pretrained on a pooled corpus have transferred poorly. The authors' answer is architectural. Every feed-forward block is replaced by BatteryMoE, a mixture-of-experts layer whose routing is not learned from the signal but derived from what is known about the cell: a frozen LLM embeds a text description of the aging condition to produce expert scores, and a rule-based mask keeps only the experts that match the cell's cathode, anode, format and temperature. After pretraining on 13 lithium-ion datasets, the model is specialized per scenario by fine-tuning or adapter tuning. It is the best model on all 15 target datasets: on average 22.02% lower MAPE than the runner-up across the 12 lithium-ion targets, and 11.5–40.1% lower on the sodium-ion, zinc-ion and large industrial cells that pretraining never saw.
 
 **Keywords:** battery cycle life, early prediction, foundation model, mixture-of-experts, knowledge-guided routing, transfer learning, domain shift
 
@@ -127,7 +127,7 @@ The main results are bar charts; the one full numeric table compares PBT-TL with
 
 ## References
 
-1. R. Tan, W. Hong, J. Li, J. Huang, T.-Y. Zhang. *Pretrained battery transformer (PBT): A foundation model for battery life prediction.* arXiv:2512.16334, 2025.
+1. R. Tan, W. Hong, J. Li, J. Huang, T.-Y. Zhang. *Pretrained battery transformer (PBT): A foundation model for battery life prediction.* Energy & Environmental Science, 2026. doi:10.1039/d6ee03446b. arXiv:2512.16334.
 2. R. Tan et al. *BatteryLife: A Comprehensive Dataset and Benchmark for Battery Life Prediction.* KDD 2025. arXiv:2502.18807. (CyclePatch, CPMLP, CPTransformer.)
 3. H. Zhang et al. *Battery lifetime prediction across diverse ageing conditions with inter-cell deep learning.* Nature Machine Intelligence, 2025. (BatLiNet.)
 4. K. A. Severson et al. *Data-driven prediction of battery cycle life before capacity degradation.* Nature Energy 4, 383–391, 2019.

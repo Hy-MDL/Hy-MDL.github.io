@@ -1,6 +1,6 @@
 ---
 title: "Rough volatility: Volatility is rough"
-paper: { title: "Volatility is rough", authors: "Jim Gatheral et al.", venue: "arXiv 2014 (q-fin.ST)", arxiv: "1410.3394", license: "arxiv.org/licenses/nonexclusive-distrib/1.0/" }
+paper: { title: "Volatility is rough", authors: "Jim Gatheral et al.", venue: "Quantitative Finance 18(6):933–949, 2018", arxiv: "1410.3394", license: "arxiv.org/licenses/nonexclusive-distrib/1.0/" }
 series: "stochastic-modeling"
 order: 7
 tags: [rough-volatility, fractional-brownian-motion, hurst-exponent, realized-variance, long-memory, volatility-forecasting, rfsv, fractional-ornstein-uhlenbeck]
@@ -90,7 +90,7 @@ The correct abscissa is therefore $\Delta^{2H}$, not $\Delta$ and not $\log\Delt
 
 The same closed form kills the alternative directly. Since $m(2,\Delta) = 2(\mathrm{Var}[\log\sigma_t] - \mathrm{Cov}[\log\sigma_t,\log\sigma_{t+\Delta}])$, the exact fOU autocovariance gives $m(2,\Delta)$ for any $(H,\alpha)$. Plotted for the FSV estimates of Chronopoulou and Viens ($H = 0.53$) with $\alpha = 0.5$, it rises steeply and then flattens at lag $\approx 1/\alpha$; the empirical points do neither ([Fig. 3.4](https://arxiv.org/pdf/1410.3394#page=20)).
 
-### 3.4 Intuition: what $\alpha \ll 1/T$ buys, and why roughness is visible
+### 3.4 Intuition: what α ≪ 1/T buys, and why roughness is visible
 
 The stationary variance of (4) is $\mathrm{Var}[\log\sigma_t] = H(2H-1)\nu^2\alpha^{-2H}\Gamma(2H-1)$, positive for $H<1/2$ (both $H(2H-1)$ and $\Gamma(2H-1)$ are negative) and divergent as $\alpha \to 0$. That is the whole trick in one line: the level of log-volatility becomes arbitrarily diffuse while every *increment* keeps the fixed law $\mathcal{N}(0,\nu^2\Delta^{2H})$. Over a finite window you see a fBM with an unknown offset; over geological time the process is still stationary. At the paper's $\alpha = 5\times10^{-4}$ per day the reversion scale is about 2,000 days, longer than either dataset.
 
@@ -203,7 +203,7 @@ Table 5.2 repeats the exercise on variance rather than log-variance, with the lo
 | CAC40, $\Delta = 1$ | 0.533 | 0.542 | 0.470 | **0.465** |
 | CAC40, $\Delta = 20$ | 0.982 | 0.952 | 0.912 | **0.828** |
 
-Claim by claim. *RFSV beats AR and HAR* — supported: all 15 cells of Table 5.1 and 14 of 15 in Table 5.2, losing to HAR by $0.001$ on the Nikkei at one day. *Especially at longer horizons* — supported, and the clearest signal in the paper: at $\Delta=1$ the margin over HAR is $0.001$–$0.006$, at $\Delta=20$ it is $0.032$–$0.076$, and the ordering AR $<$ HAR $<$ RFSV is monotone in how much long-range structure each predictor encodes. *With one parameter* — true by construction, and that parameter does not depend on the horizon, whereas AR and HAR coefficients must be re-estimated per horizon. What is missing is any standard error: fifteen wins out of fifteen is hard to get by chance, but nothing quantifies the sampling variability of a $0.001$ gap and no Diebold-Mariano-style test appears. *Rough at any reasonable time scale* — supported down to one day only; below that it is extrapolation. *The microstructure explanation* — Section 6 sketches rather than demonstrates that Hawkes order flow with $\|\varphi\|_1 \approx 1$ and a power-law kernel has an integrated-fractional scaling limit with $H < 1/2$; both empirical regularities it invokes are cited from other papers and nothing is estimated here.
+Claim by claim. *RFSV beats AR and HAR* — supported: all 15 cells of Table 5.1 and 9 of the 10 Table 5.2 cells shown above, losing to HAR by $0.001$ on the Nikkei at one day. *Especially at longer horizons* — supported, and the clearest signal in the paper: at $\Delta=1$ the margin over HAR is $0.001$–$0.006$, at $\Delta=20$ it is $0.032$–$0.076$, and the ordering AR $<$ HAR $<$ RFSV is monotone in how much long-range structure each predictor encodes. *With one parameter* — true by construction, and that parameter does not depend on the horizon, whereas AR and HAR coefficients must be re-estimated per horizon. What is missing is any standard error: fifteen wins out of fifteen is hard to get by chance, but nothing quantifies the sampling variability of a $0.001$ gap and no Diebold-Mariano-style test appears. *Rough at any reasonable time scale* — supported down to one day only; below that it is extrapolation. *The microstructure explanation* — Section 6 sketches rather than demonstrates that Hawkes order flow with $\|\varphi\|_1 \approx 1$ and a power-law kernel has an integrated-fractional scaling limit with $H < 1/2$; both empirical regularities it invokes are cited from other papers and nothing is estimated here.
 
 ## 6 Limitations
 
@@ -213,7 +213,7 @@ Claim by claim. *RFSV beats AR and HAR* — supported: all 15 cells of Table 5.1
 
 ## 7 Extensions
 
-**What was built on this.** The direct descendant is rough Bergomi (Bayer, Friz and Gatheral), which takes $H<1/2$ under the pricing measure and fits the surface; its calibration cost is exactly what [Deep Learning Volatility](/blog/deep-learning-volatility/) removes with a neural surrogate, and [Deep calibration](/blog/deep-calibration-rough-vol/) attacks from the inverse-map side. Rough Heston (El Euch and Rosenbaum) restores an affine structure and a characteristic function, built on the Hawkes limit theorems cited in Section 6. A later literature argues that measurement error alone can manufacture apparent roughness (from general knowledge, unverified). From the data-driven side, [Quant GANs](/blog/quant-gans/) and [SigCWGAN](/blog/conditional-sig-wgan/) target the same stylized facts, and [Neural SDEs](/blog/neural-sde-pricing-hedging/) parameterises the dynamics directly.
+**What was built on this.** The direct descendant is rough Bergomi (Bayer, Friz and Gatheral), which takes $H<1/2$ under the pricing measure and fits the surface; its calibration cost is exactly what [Deep Learning Volatility](/blog/deep-learning-volatility/) removes with a neural surrogate, and [Deep calibration](/blog/deep-calibration-rough-vol/) attacks from the inverse-map side. Rough Heston (El Euch and Rosenbaum) restores an affine structure and a characteristic function, built on the Hawkes limit theorems cited in Section 6. Cont and Das (Sankhyā B, 2024) show that realized volatility looks rough, with apparent $H<1/2$, even when spot volatility is a Brownian diffusion, and attribute the observed roughness to estimation error rather than to the volatility process itself. From the data-driven side, [Quant GANs](/blog/quant-gans/) and [SigCWGAN](/blog/conditional-sig-wgan/) target the same stylized facts, and [Neural SDEs](/blog/neural-sde-pricing-hedging/) parameterises the dynamics directly.
 
 **Open problems.** Is $H$ constant across assets and across time? The two-half split says probably not, and offers no estimator with a standard error to settle it. What does the proxy do below the daily scale, where "rough at any reasonable time scale" is untested? How should $\alpha$ and $m$ be identified when the model is built to be insensitive to them? And what is the right joint law of price and volatility innovations, absent here?
 
@@ -234,10 +234,11 @@ Claim by claim. *RFSV beats AR and HAR* — supported: all 15 cells of Table 5.1
 
 ## References
 
-1. J. Gatheral, T. Jaisson, M. Rosenbaum. *Volatility is rough.* arXiv:1410.3394, 2014.
+1. J. Gatheral, T. Jaisson, M. Rosenbaum. *Volatility is rough.* Quantitative Finance 18(6):933–949, 2018. arXiv:1410.3394.
 2. F. Comte, E. Renault. *Long memory in continuous-time stochastic volatility models.* Mathematical Finance, 1998.
 3. P. Cheridito, H. Kawaguchi, M. Maejima. *Fractional Ornstein-Uhlenbeck processes.* Electronic Journal of Probability, 2003.
 4. M. Fukasawa. *Asymptotic analysis for stochastic volatility: martingale expansion.* Finance and Stochastics, 2011.
 5. C. J. Nuzman, H. V. Poor. *Linear estimation of self-similar processes via Lamperti's transformation.* Journal of Applied Probability, 2000.
 6. F. Corsi. *A simple approximate long-memory model of realized volatility.* Journal of Financial Econometrics, 2009.
-7. T. Jaisson, M. Rosenbaum. *Limit theorems for nearly unstable Hawkes processes.* Annals of Applied Probability, to appear (as cited in the paper).
+7. T. Jaisson, M. Rosenbaum. *Limit theorems for nearly unstable Hawkes processes.* Annals of Applied Probability 25(2):600–631, 2015.
+8. R. Cont, P. Das. *Rough volatility: fact or artefact?* Sankhyā B 86(1):191–223, 2024.

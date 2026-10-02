@@ -1,5 +1,5 @@
 ---
-title: "Rectified Flow: Flow Straight and Fast: Learning to Generate and Transfer Data with Rectified Flow"
+title: "Rectified Flow: Flow Straight and Fast — Learning to Generate and Transfer Data with Rectified Flow"
 paper:
   title: "Flow Straight and Fast: Learning to Generate and Transfer Data with Rectified Flow"
   authors: "Xingchao Liu et al."
@@ -288,7 +288,7 @@ where $h$ is the latent representation of a classifier trained to separate the t
 
 ## 7 Extensions
 
-**What was built on this.** Inside the collection: [Flow Matching](/blog/flow-matching/) and [Stochastic Interpolants](/blog/stochastic-interpolants/) reach the same regression from conditional-vector-field and interpolant-process arguments, and with this paper form the standard account of the objective; [SiT](/blog/sit/) isolates the design choices on a transformer backbone; [SD3](/blog/sd3-rectified-flow-transformers/) scales the linear interpolant to text-to-image with a modified timestep sampler; the [Flow Matching Guide](/blog/flow-matching-guide/) is the textbook treatment. [Consistency Models](/blog/consistency-models/) is the contemporaneous alternative route to one step — learn the solution map rather than straighten the ODE — and [MeanFlow](/blog/mean-flows/) parameterises the average velocity, arguably the fixed point reflow iterates toward. Not cited here: InstaFlow applied reflow-plus-distill to Stable Diffusion, and minibatch-OT pairing before regression became a standard cheap substitute for a reflow round — *(from general knowledge, unverified)*.
+**What was built on this.** Inside the collection: [Flow Matching](/blog/flow-matching/) and [Stochastic Interpolants](/blog/stochastic-interpolants/) reach the same regression from conditional-vector-field and interpolant-process arguments, and with this paper form the standard account of the objective; [SiT](/blog/sit/) isolates the design choices on a transformer backbone; [SD3](/blog/sd3-rectified-flow-transformers/) scales the linear interpolant to text-to-image with a modified timestep sampler; the [Flow Matching Guide](/blog/flow-matching-guide/) is the textbook treatment. [Consistency Models](/blog/consistency-models/) is the contemporaneous alternative route to one step — learn the solution map rather than straighten the ODE — and [MeanFlow](/blog/mean-flows/) parameterises the average velocity, arguably the fixed point reflow iterates toward. Not cited here: InstaFlow (Liu et al., ICLR 2024) applied reflow plus distillation to Stable Diffusion, and minibatch optimal-transport pairing before the regression (Pooladian et al., ICML 2023; Tong et al., TMLR 2024) straightens paths without a reflow round.
 
 **Open problems.**
 - How much of the reflow gain a better *input* coupling could buy instead, since Eq. (8)'s budget is $\mathbb E\lVert X_1-X_0\rVert^2$ and a smarter pairing reduces it directly.
@@ -319,3 +319,6 @@ where $h$ is the latent representation of a classifier trained to separate the t
 4. J. Ho, A. Jain, P. Abbeel. *Denoising Diffusion Probabilistic Models.* NeurIPS 2020. arXiv:2006.11239.
 5. F. Santambrogio. *Optimal Transport for Applied Mathematicians.* Birkhäuser, 2015.
 6. Y. Song, P. Dhariwal, M. Chen, I. Sutskever. *Consistency Models.* ICML 2023. arXiv:2303.01469.
+7. X. Liu, X. Zhang, J. Ma, J. Peng, Q. Liu. *InstaFlow: One Step is Enough for High-Quality Diffusion-Based Text-to-Image Generation.* ICLR 2024. arXiv:2309.06380.
+8. A.-A. Pooladian, H. Ben-Hamu, C. Domingo-Enrich, B. Amos, Y. Lipman, R. T. Q. Chen. *Multisample Flow Matching: Straightening Flows with Minibatch Couplings.* ICML 2023.
+9. A. Tong, K. Fatras, N. Malkin, G. Huguet, Y. Zhang, J. Rector-Brooks, G. Wolf, Y. Bengio. *Improving and Generalizing Flow-Based Generative Models with Minibatch Optimal Transport.* TMLR 2024. arXiv:2302.00482.

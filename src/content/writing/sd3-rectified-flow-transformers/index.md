@@ -243,8 +243,8 @@ Raw metrics at 25 steps (Table 2) put the ordinal ranking in perspective:
 | Ours, depth 24, $512^2$ | 0.62 | 0.74 | 0.63 | 0.34 | 0.36 |
 | Ours, depth 30, $512^2$ | 0.64 | 0.80 | 0.65 | 0.33 | 0.37 |
 | Ours, depth 38, $512^2$ | 0.68 | 0.84 | 0.66 | 0.40 | 0.43 |
-| Ours, depth 38, $512^2$ + DPO | 0.71 | 0.89 | 0.73 | 0.34 | 0.47 |
-| **Ours, depth 38, $1024^2$ + DPO** | **0.74** | **0.94** | **0.72** | 0.33 | **0.60** |
+| Ours, depth 38, $512^2$ + DPO | 0.71 | 0.89 | **0.73** | 0.34 | 0.47 |
+| **Ours, depth 38, $1024^2$ + DPO** | **0.74** | **0.94** | 0.72 | 0.33 | **0.60** |
 
 And sampling efficiency (Table 6), the relative CLIP-score drop against 50-step sampling at fixed seed:
 
@@ -272,7 +272,7 @@ And sampling efficiency (Table 6), the relative CLIP-score drop against 50-step 
 
 ## 7 Extensions
 
-**What was built on this.** The paper is itself the extension of [SiT](/blog/sit/): SiT worked the interpolant and sampler axes at class-conditional scale, and SD3 supplies the loss-weighting axis at text-to-image scale — the same axis SiT's velocity/weighted-score identity identifies. [MeanFlow](/blog/mean-flows/) goes after the few-step regime that SD3's straight path promises but never delivers. The [Flow Matching Guide](/blog/flow-matching-guide/) adopts the same $(a_t,b_t,w_t)$ template as its organising frame. Logit-normal timestep sampling and MM-DiT-style joint attention subsequently became defaults in open image and video models *(from general knowledge, unverified)*.
+**What was built on this.** The paper is itself the extension of [SiT](/blog/sit/): SiT worked the interpolant and sampler axes at class-conditional scale, and SD3 supplies the loss-weighting axis at text-to-image scale — the same axis SiT's velocity/weighted-score identity identifies. [MeanFlow](/blog/mean-flows/) goes after the few-step regime that SD3's straight path promises but never delivers. The [Flow Matching Guide](/blog/flow-matching-guide/) adopts the same $(a_t,b_t,w_t)$ template as its organising frame.
 
 **Open problems.** Whether $\pi(t)$ should be fixed at all: the best weight presumably depends on data, resolution and training progress, and nothing here adapts it. Why larger models tolerate fewer steps is unexplained. The shift is derived for pixel count, with no generalisation to token count, aspect ratio or temporal extent. And noise and data stay independently coupled — minibatch optimal-transport couplings, which would actually straighten the path, are cited but untried.
 
@@ -293,7 +293,7 @@ And sampling efficiency (Table 6), the relative CLIP-score drop against 50-step 
 
 ## References
 
-1. P. Esser, S. Kulal, A. Blattmann, R. Rombach, et al. *Scaling Rectified Flow Transformers for High-Resolution Image Synthesis.* ICML 2024. arXiv:2403.03206.
+1. P. Esser, S. Kulal, A. Blattmann, R. Entezari, et al. *Scaling Rectified Flow Transformers for High-Resolution Image Synthesis.* ICML 2024. arXiv:2403.03206.
 2. X. Liu, C. Gong, Q. Liu. *Flow Straight and Fast: Learning to Generate and Transfer Data with Rectified Flow.* arXiv:2209.03003.
 3. Y. Lipman, R. T. Q. Chen, H. Ben-Hamu, M. Nickel, M. Le. *Flow Matching for Generative Modeling.* ICLR 2023. arXiv:2210.02747.
 4. D. P. Kingma, R. Gao. *Understanding Diffusion Objectives as the ELBO with Simple Data Augmentation.* NeurIPS 2023. arXiv:2303.00848.

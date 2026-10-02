@@ -96,7 +96,7 @@ $$
 \Sigma_t=\sigma\,(\varnothing)+\sigma^2(2)+\sigma^3\big[(2,2)-\tfrac12(1)\big]+O(\sigma^4), \tag{7}
 $$
 
-a genuine element of the class with coefficients decaying like $\sigma^{k+1}/k!$ — at $\sigma=0.2$, that is $0.2$, $0.04$, $0.008$ at levels 0–2, and the first term a depth-4 truncation drops is about $\sigma^5/4!\approx1.3\times10^{-5}$ (my arithmetic, not the paper's). Reported pricing errors of $10^{-4}$ are an order of magnitude larger, which suggests the residual is dominated by the signature-payoff approximation and the optimiser rather than by truncating $\ell$. The example also shows the honest sense of universality: Black–Scholes is not *in* the depth-4 model, it is approximated by it, with quality governed by $\sigma\sqrt T$.
+a genuine element of the class: the coefficient on the word $(2)^{\otimes k}=W_t^k/k!$ is $\sigma^{k+1}$ — at $\sigma=0.2$, that is $0.2$, $0.04$, $0.008$ at levels 0–2 — and the first term a depth-4 truncation drops, $\sigma^6W_t^5/5!$, has standard deviation $\sigma^6\sqrt{945}/5!\approx1.6\times10^{-5}$ at $t=1$ (my arithmetic, not the paper's). Reported pricing errors of $10^{-4}$ are about six times larger, which suggests the residual is dominated by the signature-payoff approximation and the optimiser rather than by truncating $\ell$. The example also shows the honest sense of universality: Black–Scholes is not *in* the depth-4 model, it is approximated by it, with quality governed by $\sigma\sqrt T$.
 
 ### 3.5 Algorithm
 
@@ -199,4 +199,4 @@ There is no ablation, no baseline and no sensitivity study on $N$.
 3. Levin, D., Lyons, T., Ni, H. *Learning from the past, predicting the statistics for the future, learning an evolving system.* [arXiv:1309.0260](https://arxiv.org/abs/1309.0260), 2013.
 4. Chevyrev, I., Lyons, T. *Characteristic functions of measures on geometric rough paths.* Annals of Probability 44(6), 2016.
 5. Flint, G., Hambly, B., Lyons, T. *Discretely sampled signals and the rough Hoff process.* Stochastic Processes and their Applications 126(9), 2016.
-6. Gierjatowicz, P., Sabate-Vidales, M., Šiška, D., Szpruch, L. *Robust pricing and hedging with neural SDEs.* 2020.
+6. Gierjatowicz, P., Sabate-Vidales, M., Šiška, D., Szpruch, L., Žurič, Z. *Robust pricing and hedging via neural SDEs.* arXiv:2007.04154, 2020.

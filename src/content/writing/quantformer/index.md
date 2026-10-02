@@ -3,7 +3,7 @@ title: "Quantformer: from attention to profit with a quantitative transformer tr
 paper:
   title: "Quantformer: from attention to profit with a quantitative transformer trading strategy"
   authors: "Zhaofeng Zhang et al."
-  venue: "arXiv preprint 2024"
+  venue: "Expert Systems with Applications 313, 131567, 2026"
   arxiv: "2404.00424"
   license: "creativecommons.org/licenses/by/4.0/"
 series: "eswa-finance"
@@ -138,7 +138,7 @@ Main results (paper's Table 3):
 
 ## References
 
-1. Z. Zhang, B. Chen, S. Zhu, N. Langrené. *Quantformer: from attention to profit with a quantitative transformer trading strategy.* arXiv:2404.00424.
+1. Z. Zhang, B. Chen, S. Zhu, N. Langrené. *Quantformer: from attention to profit with a quantitative transformer trading strategy.* Expert Systems with Applications 313, 131567, 2026. arXiv:2404.00424.
 2. A. Vaswani et al. *Attention is all you need.* NeurIPS, 2017.
 3. Y. Liu et al. *iTransformer: inverted transformers are effective for time series forecasting.* ICLR, 2024.
 4. F. Barez, P. Bilokon, A. Gervais, N. Lisitsyn. *Exploring the advantages of transformers for high-frequency trading.* arXiv:2302.13850, 2023.

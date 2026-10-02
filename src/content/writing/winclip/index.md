@@ -134,5 +134,5 @@ Main results (AUROC for AC, pixel AUROC for AS, mean ± std):
 1. Jeong, J., Zou, Y., Kim, T., Zhang, D., Ravichandran, A., Dabeer, O. *WinCLIP: Zero-/Few-Shot Anomaly Classification and Segmentation.* CVPR 2023. arXiv:2303.14814.
 2. Radford, A. et al. *Learning Transferable Visual Models From Natural Language Supervision.* ICML 2021. arXiv:2103.00020.
 3. Roth, K. et al. *Towards Total Recall in Industrial Anomaly Detection* (PatchCore). CVPR 2022.
-4. Defard, T. et al. *PaDiM: a Patch Distribution Modeling Framework for Anomaly Detection and Localization.* ICPR 2021. arXiv:2011.08785.
+4. Defard, T. et al. *PaDiM: a Patch Distribution Modeling Framework for Anomaly Detection and Localization.* ICPR 2020 Workshops. arXiv:2011.08785.
 5. Zou, Y. et al. *SPot-the-Difference Self-Supervised Pre-training for Anomaly Detection and Segmentation* (VisA). ECCV 2022.
