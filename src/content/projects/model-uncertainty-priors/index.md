@@ -429,7 +429,7 @@ to 40. Figure 1, right, shows the $d=10$ case. The flow errs the other way, 1 to
 draws lose rank at $d=6$ and $d=9$ (effective rank 4.7 and 7.3). Such diagnostics work here only because the target happens to be known,
 which is exactly what will not be true in the application these priors are meant for.
 
-![Figure 1 — Learned priors against their target. Left: one dimension, log density: a pale histogram of 400,000 target draws, the target's exact density (black dashed), the flow's exact density (purple) and a kernel estimate from 400,000 GAN draws (orange dashed), since the GAN has no density. Right: ten dimensions: the probability that a draw's radius exceeds r, from 400,000 draws of each prior; the target is the shaded area and the black dashed line.](./figs/prior_paper.png)
+![Figure 1 — Learned priors against their target. Left: one dimension, log density: a pale histogram of 400,000 target draws, the target's exact density (black dashed), the flow's exact density (teal) and a kernel estimate from 400,000 GAN draws (ochre dashed), since the GAN has no density. Right: ten dimensions: the probability that a draw's radius exceeds r, from 400,000 draws of each prior; the target is the shaded area and the black dashed line.](./figs/prior_paper.png)
 
 ### 4.2 Recovery and false discovery
 
@@ -570,7 +570,7 @@ driver. It is reported because it was measured, not because it supports anything
 
 ![Figure 9 — The real panel. Left: measured model uncertainty (mixture of g) over a 240-month rolling window. Middle: the pricing error over the next 120 months, the quantity it should predict. Right: Spearman correlations between the two for each prior, with 95% block-bootstrap intervals.](./figs/predictive_real.png)
 
-![Figure 10 — Out-of-sample Sharpe ratio by tercile of measured model uncertainty, with stationary-bootstrap intervals. The dashed ochre line on the right panel is the Sharpe ratio of the true SDF.](./figs/sharpe_by_uncertainty.png)
+![Figure 10 — Out-of-sample Sharpe ratio by tercile of measured model uncertainty, with stationary-bootstrap intervals. The dashed black line on the right panel is the Sharpe ratio of the true SDF.](./figs/sharpe_by_uncertainty.png)
 
 ### 4.7 The Sharpe-ratio claim, with error bars
 
