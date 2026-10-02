@@ -14,7 +14,7 @@ metrics:
   - { label: "Best Sharpe margin over using all factors", value: "+0.0037 [−0.0081, +0.0148]", note: "cGAN model average on the real Fama-French panel: the seminar's ranking reproduces, the margin does not survive a bootstrap" }
 code: "projects/model-uncertainty-priors"
 kind: research
-thumb: "/projects/model-uncertainty-priors/media/bo_thumb.jpg"
+thumb: "/projects/model-uncertainty-priors/media/posterior_thumb.jpg"
 ---
 
 ## Abstract
@@ -60,8 +60,8 @@ makes a learned prior checkable, controllable and adaptable at all. It is not su
 objective, the cheapest thing for the loop to move is the uncertainty measure itself.
 
 <figure class="vid">
-  <video src="/projects/model-uncertainty-priors/media/prior_minimal.mp4" autoplay loop muted playsinline preload="metadata" poster="/projects/model-uncertainty-priors/media/prior_minimal.jpg"></video>
-  <figcaption>The prior (teal) stays put while the likelihood (ochre) narrows as the sample grows; below, prior draws sized by their importance weight.</figcaption>
+  <video src="/projects/model-uncertainty-priors/media/posterior_space.mp4" autoplay loop muted playsinline preload="metadata" poster="/projects/model-uncertainty-priors/media/posterior_space.jpg"></video>
+  <figcaption>Posterior over all 1,024 factor subsets as T grows: the flow's density route (teal) tracks the exact posterior (ink); the same exact prior used only by sampling (ochre) collapses onto a few models.</figcaption>
 </figure>
 
 ## 1 Introduction
@@ -269,6 +269,11 @@ $z = \sinh(t\,\operatorname{asinh}((x-m)/s) - k)$, which control tail weight exa
 is a heavy-tailed scale mixture — and which also work at $d=1$, where coupling layers do not exist. Trained by
 maximum likelihood, i.e. mass-covering forward KL.
 
+<figure class="vid">
+  <video src="/projects/model-uncertainty-priors/media/flow_layers.mp4" autoplay loop muted playsinline preload="metadata" poster="/projects/model-uncertainty-priors/media/flow_layers.jpg"></video>
+  <figcaption>A flow is a prior with a density: Gaussian draws pushed layer by layer into the learned prior, whose contours land on the mixture-of-g target.</figcaption>
+</figure>
+
 **GAN.** A generator $\mathbb{R}^{d}\to\mathbb{R}^{d}$ with a critic, non-saturating loss and an $R_1$ gradient
 penalty. Samples only; no density at any point.
 
@@ -281,8 +286,8 @@ the result is not a marginal likelihood. It is computed anyway, because it is wh
 ### 2.6 Control — Bayesian optimisation over the prior
 
 <figure class="vid">
-  <video src="/projects/model-uncertainty-priors/media/bo_anim.mp4" autoplay loop muted playsinline preload="metadata" poster="/projects/model-uncertainty-priors/media/bo_anim.jpg"></video>
-  <figcaption>Bayesian optimisation over the prior's scale, on the real objective (dashed): nine evaluations.</figcaption>
+  <video src="/projects/model-uncertainty-priors/media/control_entropy.mp4" autoplay loop muted playsinline preload="metadata" poster="/projects/model-uncertainty-priors/media/control_entropy.jpg"></video>
+  <figcaption>Tuning the flow prior's shape: training pricing error moves (ochre), the held-out decision barely does (teal), while the posterior's entropy falls by more than half.</figcaption>
 </figure>
 
 **The decision objective.** For a candidate prior $\pi_\theta$, fit the model-averaged SDF on a 240-month
@@ -473,8 +478,8 @@ to 251.4 out of 256, *improving* with $T$ as (6) predicts. Regressing $\log \mat
 the predicted $-d/2$ wherever the estimator has not hit its floor: $-0.480 \pm 0.002$ at $d=1$ against $-0.5$,
 $-0.937 \pm 0.007$ at $d=2$ against $-1.0$. From $d \ge 4$ the ESS is pinned at 1 across most of the range, so
 the regression is censored and its slope attenuated — the flattening in Figure 5 is that censoring, not a
-failure of the rate. The animation at the top of this page shows the mechanism: the prior standing still, the likelihood
-narrowing past it, the weights collecting on one draw.
+failure of the rate. The animation at the top of this page shows the consequence on the model space: as $T$
+grows, the sampling route's posterior collapses onto a few factor subsets while the density route keeps the exact shape.
 
 The practical version of the same fact, for the three-factor true model at $T=3840$:
 

@@ -35,7 +35,7 @@ const m = (id: string, i = 0) => ex[id]?.data.metrics[i];
         <div class="links"><a href="/research/finphasor/">paper · FinPhasor <small>1st author · {last(pub('finphasor'))}</small></a></div>
       </li>
       <li>
-        <a class="card" href="/research/model-uncertainty-priors/"><img src="/projects/model-uncertainty-priors/media/bo_thumb.jpg" alt="Bayesian optimisation over the learned prior: Gaussian-process surrogate, its uncertainty band and the acquisition curve" loading="lazy"></a>
+        <a class="card" href="/research/model-uncertainty-priors/"><img src="/projects/model-uncertainty-priors/media/posterior_thumb.jpg" alt="Posterior over all 1,024 factor subsets: exact, flow density route, and sampling route collapsing" loading="lazy"></a>
         <div class="kick"><span>Thread 3 · learned surrogates for Bayesian model selection</span><span class="status s-wip">Working paper · experimenting</span></div>
         <a class="t" href="/research/model-uncertainty-priors/">A learned prior as a surrogate — what its density buys, and what a sampler costs</a>
         <p class="k">Topic: the prior in Bayesian factor selection, and what changes when it is learned instead of fixed. Method: replace the mixture-of-g prior with a normalizing flow that keeps an explicit density, check it against the exact posterior over models, compare it with a density-free GAN prior, then tune and re-tune the flow with Bayesian optimisation and track both the selected model and its model-uncertainty measure.</p>
