@@ -473,9 +473,8 @@ to 251.4 out of 256, *improving* with $T$ as (6) predicts. Regressing $\log \mat
 the predicted $-d/2$ wherever the estimator has not hit its floor: $-0.480 \pm 0.002$ at $d=1$ against $-0.5$,
 $-0.937 \pm 0.007$ at $d=2$ against $-1.0$. From $d \ge 4$ the ESS is pinned at 1 across most of the range, so
 the regression is censored and its slope attenuated — the flattening in Figure 5 is that censoring, not a
-failure of the rate. Animation 1 at the top of this page shows the whole mechanism running: the prior family
-standing still, the likelihood narrowing past it, the weights collecting on one draw, and these total
-variations opening up as a consequence.
+failure of the rate. The animation at the top of this page shows the mechanism: the prior standing still, the likelihood
+narrowing past it, the weights collecting on one draw.
 
 The practical version of the same fact, for the three-factor true model at $T=3840$:
 
@@ -591,7 +590,7 @@ portfolio significantly (mixture of g: $+0.0236$, $[-0.0113, +0.0578]$, $p = 0.1
 
 ### 4.8 The seminar's own figures, and what reproduced
 
-Three figures from the deck of 2026-01-08 are his own output and are reproduced here for comparison. The other
+Three figures from my seminar deck of 2026-01-08 are my own output and are reproduced here for comparison. The other
 images on those slides are screenshots of tables from Huang & Shi (2025) — Tables 1, 4 and 5 — or third-party
 illustrations, and are not shown; anything that could not be attributed with confidence was left out.
 
@@ -749,7 +748,7 @@ and was not found by an objective whose noise is of the order of the effect. The
 makes the flow prior a validated drop-in; it is not a substitute for asymptotics. The hyper-g/n consistency
 result rests on the prior's tail behaviour, and a flow-based prior needs an analogous condition — a tail index,
 or a bounded density ratio to a reference prior — before anything can be claimed asymptotically. This is the
-main piece of work remaining, and `PENDING_PAPER.md` says so.
+main piece of work remaining.
 
 **The model space is enumerated.** Visiting all $2^{10}$ models exactly is what makes the comparison possible
 and also caps the factor set at roughly twenty. A realistic zoo needs a stochastic search, and the error

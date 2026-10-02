@@ -18,7 +18,7 @@ const m = (id: string, i = 0) => ex[id]?.data.metrics[i];
       <div><span class="e">Where it stands</span><span class="t">Two papers under review, two working papers, and experiment lines toward the next</span><span class="s">Review stages live on Publications; code and results on each thread's experiment page.</span></div>
     </div>
 
-    <div class="sec-h" style="margin-top:30px"><h2>Ongoing</h2><span class="hnote">four threads — papers under review, a working paper, and experiments meant to become one</span></div>
+    <div class="sec-h" style="margin-top:30px"><h2>Ongoing</h2><span class="hnote">six threads — two papers under review, two working papers, and experiments meant to become one</span></div>
     <ul class="feat threads">
       <li>
         <a class="card" href="/research/diffusion-scenarios/"><img src="/projects/diffusion-scenarios/media/architecture.png" alt="CASE architecture: representation, embeddings, denoiser and sampling" loading="lazy"></a>
@@ -38,7 +38,7 @@ const m = (id: string, i = 0) => ex[id]?.data.metrics[i];
         <a class="card" href="/research/model-uncertainty-priors/"><img src="/projects/model-uncertainty-priors/media/bo_thumb.jpg" alt="Bayesian optimisation over the learned prior: Gaussian-process surrogate, its uncertainty band and the acquisition curve" loading="lazy"></a>
         <div class="kick"><span>Thread 3 · learned surrogates for Bayesian model selection</span><span class="status s-wip">Working paper · experimenting</span></div>
         <a class="t" href="/research/model-uncertainty-priors/">A learned prior as a surrogate — what its density buys, and what a sampler costs</a>
-        <p class="k">A normalizing flow stands in for the mixture-of-g prior and is first checked against the exact posterior over models (TV 0.016), where a sampler-only GAN is not (0.597). Because it has a density it can be controlled and adapted: Bayesian optimisation tunes its shape about 40 times more cheaply than sampling allows, and the measured answer is that the decision barely moves while the entropy-based uncertainty measure collapses, so the prior has to be controlled against calibration, not pricing error.</p>
+        <p class="k">A normalizing flow stands in for the mixture-of-g prior and is first checked against the exact posterior over models (TV 0.016), where the sampling route a GAN is limited to is not (0.597 even with the exact prior; 0.796 for the GAN). Because it has a density it can be controlled and adapted: Bayesian optimisation tunes its shape about 40 times more cheaply than sampling allows, and the measured answer is that the decision barely moves while the entropy-based uncertainty measure collapses, so the prior has to be controlled against calibration, not pricing error.</p>
         <div class="links"><a href="/research/model-uncertainty-priors/">experiments &amp; write-up <small>{m('model-uncertainty-priors')?.value} {m('model-uncertainty-priors')?.label}</small></a></div>
       </li>
       <li>
@@ -60,7 +60,7 @@ const m = (id: string, i = 0) => ex[id]?.data.metrics[i];
         <div class="kick"><span>Thread 6 · an expensive test and a learned surrogate</span><span class="status s-wip">Experiment · new domain</span></div>
         <a class="t" href="/research/battery-protocol-select/">Choosing a fast-charging protocol when the early-life prediction is uncertain</a>
         <p class="k">A first battery study, back toward electrical engineering: an early-life cycle-life predictor that reports its own uncertainty stands in for months of cycling and decides which charging protocols to keep testing. Sequential elimination keeps the same probability of choosing the best cell at 65 % of the testing cost, and an overconfident version of the same predictor drops the true best in 36 % of draws.</p>
-        <div class="links"><a href="/research/battery-protocol-select/">experiments &amp; write-up <small>{m('battery-protocol-select')?.value} {m('battery-protocol-select')?.label}</small></a></div>
+        <div class="links"><a href="/research/battery-protocol-select/">experiments &amp; write-up <small>{m('battery-protocol-select')?.value} {m('battery-protocol-select')?.label}</small></a><a href="/research/battery-degradation-sim/">battery degradation, simulated <small>where a cell collapses</small></a></div>
       </li>
     </ul>
 
@@ -109,18 +109,13 @@ const m = (id: string, i = 0) => ex[id]?.data.metrics[i];
       <li><a href="/research/isf2025-solar-forecasting/">
         <span class="d">2025.07</span>
         <div><div class="t">A Study for Forecasting Solar Energy Power Generation — ISF 2025, Beijing</div>
-          <div class="k">Hourly solar generation in Seoul with a hybrid CNN–LSTM–Transformer against ARIMA, TimesFM and CNN–LSTM; when only two weeks of history exist, diffusion-generated synthetic series stacked on the real data. Joint work with SAS Institute and the University of Seoul; talk delivered 2025.07.01.</div>
-          <div class="pm"><span><b>0.304</b> one-day-ahead RMSE vs 0.392 CNN–LSTM, 3.19 TimesFM, 4.2 ARIMA</span><span><b>2.91 → 1.97</b> RMSE with synthetic data on two weeks of history</span></div></div>
+          <div class="k">Hourly solar generation in Seoul with a hybrid CNN–LSTM–Transformer against ARIMA, TimesFM and CNN–LSTM; when only 15 days (360 h) of history exist, diffusion-generated synthetic series stacked on the real data. Joint work with SAS Institute and the University of Seoul; talk delivered 2025.07.01.</div>
+          <div class="pm"><span><b>0.304</b> one-day-ahead RMSE vs 0.392 CNN–LSTM, 3.19 TimesFM, 4.2 ARIMA</span><span><b>2.91 → 1.97</b> CNN–LSTM RMSE with synthetic data on 15 days (360 h) of history (hybrid 2.97 → 2.00)</span></div></div>
         <div class="r"><span class="status s-acc">Presented · talk</span><span>co-author · slides on the page</span></div></a></li>
-      <li><a href="/projects/eco-route-rl/">
-        <span class="d">2023.04 – 12</span>
-        <div><div class="t">Green-Navi — RL for fuel-optimal urban routing (team lead)</div>
-          <div class="k">Undergraduate research team in the Carbon-Neutral ESG Practical-Problem Research Group at Chung-Ang University (Green AI track, MSIT / NRF <i>Field-Linked Future-Leading Talent</i> programme). Fuel and CO₂ measured on candidate Seoul routes in AIMSUN, then a routing policy; presented at the research fair on 2023.11.02. Rebuilt with simulation methodology as Eco-Route RL.</div></div>
-        <div class="r"><span class="status s-acc">Presented · research fair</span><span>team lead · → Eco-Route RL</span></div></a></li>
       <li><a href="/projects/tiny-yolo-quantization/">
         <span class="d">2024</span>
         <div><div class="t">Light-weighting Tiny YOLOv3 — graduation thesis (졸업논문)</div>
-          <div class="k">Int8 quantization with layer fusion, symmetric scales in the body and asymmetric before the detection heads; weights 1.6 GB → 100 MB, inference 22–64 % faster from a Raspberry Pi 4 to an RTX 3080, mAP −2.78 pt on PASCAL VOC. With S. Kim and H. Kim, advised by Prof. Minhyeok Lee.</div></div>
+          <div class="k">Int8 quantization with layer fusion, symmetric scales in the body and asymmetric before the detection heads; total footprint 1.6 GB → 100 MB (weight file 4× smaller), inference 22–64 % faster from a Raspberry Pi 4 to an RTX 3080, mAP −2.78 pt on PASCAL VOC. With S. Kim and H. Kim, advised by Prof. Minhyeok Lee.</div></div>
         <div class="r"><span class="status s-done">Graduation thesis · 2024</span><span>team of three</span></div></a></li>
       <li><div class="row3">
         <span class="d">2024</span>
@@ -128,15 +123,20 @@ const m = (id: string, i = 0) => ex[id]?.data.metrics[i];
           <div class="k">A latent diffusion model and a predictive AC-GAN as classifiers of expected return and risk on S&amp;P 500 daily prices 1990–2024; the diffusion-conditioned portfolio kept higher returns and a smaller drawdown under uncertainty cut-offs. With M. Lee, GAIL. Manuscript, 2024.</div></div>
         <div class="r"><span class="status s-plan">Manuscript</span><span>1st author</span></div></div></li>
       <li><div class="row3">
-        <span class="d">2023.11</span>
-        <div><div class="t">Dealing with the Imbalanced-Data Problem with a Diffusion Model</div>
-          <div class="k">Diffusion-model oversampling for a credit-card fraud dataset, compared with random over/under-sampling and SMOTE. Korea Institute of Communication Sciences (KICS) fall conference 2023, with M. Lee.</div></div>
-        <div class="r"><span class="status s-acc">Presented · KICS</span><span>1st author</span></div></div></li>
-      <li><div class="row3">
         <span class="d">2024</span>
         <div><div class="t">Personalized Sleep Score Prediction Model Using a Lifelog Dataset</div>
           <div class="k">Smartwatch lifelog data (Withings / Empatica) to nightly sleep-score prediction — ETRI Human Understanding AI Paper Challenge, 2024.</div></div>
         <div class="r"><span class="status s-acc">Submitted · ETRI challenge</span><span>1st author</span></div></div></li>
+      <li><div class="row3">
+        <span class="d">2023.11</span>
+        <div><div class="t">Dealing with the Imbalanced-Data Problem with a Diffusion Model</div>
+          <div class="k">Diffusion-model oversampling for a credit-card fraud dataset, compared with random over/under-sampling and SMOTE. Korea Institute of Communication Sciences (KICS) fall conference 2023, with M. Lee.</div></div>
+        <div class="r"><span class="status s-acc">Presented · KICS</span><span>1st author</span></div></div></li>
+      <li><a href="/projects/eco-route-rl/">
+        <span class="d">2023.04 – 12</span>
+        <div><div class="t">Green-Navi — RL for fuel-optimal urban routing (team lead)</div>
+          <div class="k">Undergraduate research team in the Carbon-Neutral ESG Practical-Problem Research Group at Chung-Ang University (Green AI track, MSIT / NRF <i>Field-Linked Future-Leading Talent</i> programme). Fuel and CO₂ measured on candidate Seoul routes in AIMSUN, then a routing policy; presented at the research fair on 2023.11.02. Rebuilt with simulation methodology as Eco-Route RL.</div></div>
+        <div class="r"><span class="status s-acc">Presented · research fair</span><span>team lead · → Eco-Route RL</span></div></a></li>
       <li><div class="row3">
         <span class="d">2023 – 2024</span>
         <div><div class="t">3D point-cloud classification</div>

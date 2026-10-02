@@ -229,7 +229,7 @@ on the same decisions, as a paired difference with a 95% interval clustered by r
 The animation replays the ancestral sampler of the trained model (seed 0, 25 steps) at one stressed test date and records,
 at every step, the chain state $x_\tau$ and the denoiser's $\hat x_0$ from (3), both pushed through the inverse of (4).
 It is a direct view of the surrogate at work: the untrained default it starts from, the conditional distribution it
-ends at, and the ES it would report at every intermediate step. No number on screen is drawn by hand.
+ends at. No number on screen is drawn by hand.
 
 ## 3 Experiments
 
@@ -240,9 +240,7 @@ three at $k$ = 1 and 10, plus seed 0 at $k$ = 2 and 5, on the 1,000 test dates w
 
 **No real-data track.** A rolling backtest on US ETF prices was planned. The intended keyless source, Stooq, answered
 scripted requests with a JavaScript browser-verification page; that refusal was respected (logged in
-`results/data_fetch_log.json`). An earlier revision then pulled ETF history from an unofficial endpoint while sending a
-browser-like User-Agent; on review that was judged to be working around an access control, so the download, the data and
-every number derived from it were removed. `src/run_real.py` still runs the same rolling backtest on a user-supplied CSV.
+`results/data_fetch_log.json`). `src/run_real.py` runs the same rolling backtest on a user-supplied CSV.
 
 **Decision track.** Training length $n\in\{500, 1000, 2000, 4000, 8000\}$, 40 independent histories per $n$, 5 decision
 dates per history (200 decisions per cell; standard errors clustered by history). Thresholds $q$ = 5.51%, 7.51%, 10.16%
@@ -250,7 +248,7 @@ dates per history (200 decisions per cell; standard errors clustered by history)
 sample mean. The ensemble experiment re-uses exactly the same simulated histories (largest difference in the decision
 dates' regime probabilities from the original run: 0.0) and completed all 2,200 model files for the 200 histories.
 
-**Hardware and checks.** One RTX 3090 on a shared server (64 CPU cores, load averages recorded in the upgrade's results files),
+**Hardware and checks.** One RTX 3090 on a shared server (64 CPU cores, load averages recorded in the results files),
 torch 2.10, at most 16 workers. The original pipeline took 24 minutes; the rolling test runs 1,496 s; the ensemble
 experiment 74,978 worker-seconds. Seventeen pytest checks pass: forward-noising moments, oracle-score samplers recovering
 a Gaussian, a hand-computed Kupiec statistic (LR = 1.9568, p = 0.1619), ES ≥ VaR, FZ0 minimised at the truth, exact
@@ -300,8 +298,8 @@ the best fitted method in each ES-error and FZ0 column.
 
 The one-shot TailFlow is the most accurate 1-day model (its FZ0 is level with FHS) and its 1-day ES is nearly unbiased
 (−0.0% / −2.9%). That aggregate hides an offsetting pattern: on calm dates it over-states 1-day ES at 95% by 4.4%, and
-on stressed dates it under-states it by 15.2% (section 4.5). Its 10-day ES is 13–21% too low. The cause is visible in
-Figure 7: the autocorrelation of squared returns inside generated windows is 0.011, against 0.099 in held-out windows —
+on stressed dates it under-states it by 15.2% (section 4.5). Its 10-day ES is 13–21% too low. The cause shows in the
+within-window autocorrelation of squared returns, 0.011 against 0.099 in held-out windows (Figure 12, right) —
 the model treats the ten days as nearly independent, so it misses the regime persistence that fattens multi-day tails.
 FHS, which propagates its EWMA recursion along each path, is less biased at ten days. The rolled TailFlow row does the
 same thing with the diffusion model (section 4.5), and its bars are included in Figure 5 for

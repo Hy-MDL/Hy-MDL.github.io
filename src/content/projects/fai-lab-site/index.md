@@ -1,5 +1,5 @@
 ---
-title: "fai.yonsei.ac.kr — the Financial AI Investing Lab's website"
+title: "fai.yonsei.ac.kr — the Financial Investment AI Lab's website"
 slug: fai-lab-site
 category: "Web"
 summary: "The public website of my lab at Yonsei, live at fai.yonsei.ac.kr: a single-page React application built with Vite, with home, about, people, research (a publication list filterable by journal type and topic), graduate courses, news and contact pages in Korean and English. A lab project: the site belongs to the lab; I built it in July 2025 and maintain it."
@@ -18,7 +18,7 @@ scope: lab
 thumb: "/projects/fai-lab-site/media/research.jpg"
 ---
 
-A lab website has one job: let a prospective student, collaborator or reviewer find out in a minute what the lab does, who is in it, what it has published and what it teaches. The Financial AI Investing Lab (Prof. Kyong Joo Oh, Department of Industrial Engineering, Yonsei University) did not have one that did that, so I built it. The site is a single-page React application built with Vite, served at fai.yonsei.ac.kr, bilingual where the content is (the introduction and course descriptions are in Korean; navigation, section titles and the publication metadata are in English).
+A lab website has one job: let a prospective student, collaborator or reviewer find out in a minute what the lab does, who is in it, what it has published and what it teaches. The Financial Investment AI Lab (Prof. Kyong Joo Oh, Department of Industrial Engineering, Yonsei University) did not have one that did that, so I built it. The site is a single-page React application built with Vite, served at fai.yonsei.ac.kr, bilingual where the content is (the introduction and course descriptions are in Korean; navigation, section titles and the publication metadata are in English).
 
 ![Home: the lab's name, a one-line statement, and the four research areas.](./figs/home.png)
 

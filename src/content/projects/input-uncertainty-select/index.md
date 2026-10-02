@@ -25,7 +25,7 @@ least $1-\alpha$ in the world the simulator describes. When the simulator's inpu
 from $n$ days of data, that guarantee is conditional on the fitted input model. On a synthetic regime-switching market
 where the true best portfolio and the true feasible set are known by brute force, I run one constrained selection
 problem — highest expected 10-day return among 15 long-only portfolios subject to a 10-day CVaR(95%) cap — and judge
-every decision twice. In the fitted world the procedure delivers its nominal level essentially exactly (P(good
+every decision twice. In the fitted world the procedure meets its nominal 0.95 (P(good
 selection) $=1.000$ for every input model); against the true market it delivers 0.03 to 0.80, and 17%–61% of the
 selections violate the risk cap. The gap is not simulation error — an infinite-budget plug-in oracle scores the same.
 Of three remedies, only a bootstrap feasibility margin helps, and it buys feasibility with return without restoring
@@ -125,7 +125,7 @@ decisions per cell; TailFlow uses 80 histories per $n$; all standard errors are 
 consumes 322–654 sequential observations (38–95 k scenarios) and no run hit its budget cap. The budget curve uses
 fixed-budget plug-in picks ($10^3$–$3\times10^5$ scenarios) on the same pools; block-length sensitivity is a separate
 60-history run at $\ell\in\{10,200\}$. Everything ran on the lab server (3× RTX 3090, 64 cores): classical cells as
-16 single-threaded CPU workers, TailFlow as 8 workers on the assigned GPU, free throughout.
+16 single-threaded CPU workers, TailFlow as 8 workers on the assigned GPU.
 
 ## 4 Results
 
@@ -205,7 +205,7 @@ confirm $\ell=50$ preserves the lag-1 autocorrelation of squared returns to with
 ## 5 Limitations & next steps
 
 - **Synthetic market only.** The "true" world is a regime-switching Student-t factor model, so every number measures
-  behaviour under *that* misspecification. No market data exists in the sibling project and none was downloaded.
+  behaviour under *that* misspecification. No market data was used here or in TailFlow.
 - **One family of decision problems**: 15 long-only portfolios, one objective, one constraint form. Problems where the
   constraint binds differently, or with far more systems, may behave differently.
 - **Bootstrap validity under regime switching is not proven here**, only checked empirically (the block bootstrap

@@ -434,7 +434,7 @@ the calibration of that uncertainty.
   that the rule's α means what it says. Then test whether the measured elimination rate falls to α.
 - **Use a joint posterior, updated online.** Use the GP's joint predictive distribution, and refit as each
   candidate's cycles arrive. This turns the control rule from "drop below α" into a proper sequential
-  Bayesian decision, closer to the KN and OCBA procedures in [rs-lab](/research/rs-lab/).
+  Bayesian decision, closer to the KN procedure in [rs-lab](/research/rs-lab/) and to Bayesian allocation rules such as OCBA.
 - **Select protocols, not cells.** Pool the replicate cells of each policy into a protocol-level posterior.
   Then ask the question at the protocol level, which is the decision Attia et al.'s closed loop actually
   makes.

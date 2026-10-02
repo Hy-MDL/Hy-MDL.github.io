@@ -11,7 +11,7 @@ const one = (p) => (p.data.title.includes(' — ') ? p.data.title.split(' — ')
 <Base title="Projects — Hyeonmin Jeon" active="projects">
   <div class="wrap">
     <div class="list-head">
-      <div><h1>Projects</h1><p>Things I built: projects of my own, and the lab's website. Each page tells what it is, how it was built and how it went. Research threads and their experiments live under <a href="/research/">Research</a>.</p></div>
+      <div><h1>Projects</h1><p>Things I built: projects of my own, and the lab's projects and website. Each page tells what it is, how it was built and how it went. Research threads and their experiments live under <a href="/research/">Research</a>.</p></div>
     </div>
 
     {groups.map((g) => (
@@ -23,7 +23,7 @@ const one = (p) => (p.data.title.includes(' — ') ? p.data.title.split(' — ')
               <a class="card" href={`/projects/${p.id}/`}><img src={p.data.thumb} alt={p.data.title.split(' — ')[0]} loading="lazy"></a>
               <div class="kick"><span>{p.data.category}</span><span class="status s-done">{p.data.status.length > 26 ? 'Code + results' : p.data.status}</span></div>
               <a class="t" href={`/projects/${p.id}/`}>{p.data.title.split(' — ')[0]}</a>
-              <p class="k">{one(p)}{p.data.metrics[0] ? ` — ${p.data.metrics[0].value} ${p.data.metrics[0].label.toLowerCase()}.` : ''}</p>
+              <p class="k">{one(p)}{p.data.metrics[0] ? ` — ${p.data.metrics[0].value} ${p.data.metrics[0].label}.` : ''}</p>
               <div class="tg">{p.data.stack.slice(0, 5).map((t) => <span>{t}</span>)}</div>
             </li>
           ))}

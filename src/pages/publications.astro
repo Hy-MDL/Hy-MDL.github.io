@@ -6,10 +6,10 @@ import { PUBS, gapLabel, daysWaiting } from '../data/publications';
 
   <div class="wrap pubs-root">
     <div class="list-head">
-      <div><h1>Publications</h1><p>Papers, posters, and drafts — with where each one went and what happened to it. Every entry keeps its full submission history.</p></div>
+      <div><h1>Publications</h1><p>Papers, talks and drafts — with where each one went and what happened to it. Every entry keeps its full submission history.</p></div>
       <div class="filters"><button data-g="stage" data-v="all" aria-pressed="true">All</button><button data-g="stage" data-v="submitted">Submitted</button><button data-g="stage" data-v="review">Under review</button><button data-g="stage" data-v="rrc">RRC</button><button data-g="stage" data-v="pending">Pending</button><button data-g="stage" data-v="inprogress">In progress</button><button data-g="stage" data-v="published">Published</button><span style="width:10px"></span><button data-g="role" data-v="any" aria-pressed="true">Any author</button><button data-g="role" data-v="first">1st author</button><button data-g="role" data-v="co">Co-author</button></div>
     </div>
-    <div class="legend">† equal contribution · * corresponding author · bold = me<br>stages: Submitted → With editor → Under review → RRC (required reviews completed, awaiting decision) → Decision · Pending = declined, next venue pending</div>
+    <div class="legend">* corresponding author · bold = me<br>stages: Submitted → With editor → Under review → RRC (required reviews completed, awaiting decision) → Decision · Pending = declined, next venue pending</div>
 
     {PUBS.map((p) => (
       <div class="pubrow" data-stage={p.filterStage} data-role={p.filterRole}><div class="y">{p.year}</div><div>
@@ -26,7 +26,7 @@ import { PUBS, gapLabel, daysWaiting } from '../data/publications';
         ))}</ul>
         <div class="lk"><span class="lkoff">{p.lk}</span>
           {p.page && <a href={p.page}>idea, model &amp; results</a>}
-          <span class="el">{daysWaiting(p)}d at this stage</span></div>
+          <span class="el">since {p.events[p.events.length - 1].date.replace(/-/g, '.')}</span></div>
       </div></div>
     ))}
 
@@ -34,7 +34,7 @@ import { PUBS, gapLabel, daysWaiting } from '../data/publications';
     <div class="pubrow wip" data-stage="inprogress" data-role="first"><div class="y">now</div><div>
       <div class="top"><div><div class="t"><a href="/research/model-uncertainty-priors/">Learned Surrogate Priors for Bayesian Model Selection: Density, Uncertainty, and the Cost of a Sampler</a> <span class="role-chip">working title</span></div><div class="a"><b>Hyeon Min Jeon</b> <span class="role-chip">co-authors to be confirmed</span></div><div class="venue">A normalizing flow as a tractable surrogate for an intractable prior in Bayesian factor selection; uncertainty quantification over the model space · target venue to be decided</div></div><span class="status s-wip">Experimenting</span></div>
       <ol class="stages"><li class="done">Idea</li><li class="cur">Experiments</li><li>Drafting</li><li>Internal review</li><li>Submission</li></ol>
-      <div class="note">The reference setting is Huang &amp; Shi (<i>Journal of Econometrics</i>, 2025): a mixture of <i>g</i>-priors over a factor-zoo model space, model uncertainty read off as the entropy of the posterior model probabilities. The paper treats the learned prior as a <b>surrogate that carries model uncertainty in its architecture</b> and asks three things of it. <b>Checked:</b> a normalizing flow (RealNVP with a sinh–arcsinh tail layer) reproduces the exact posterior over models to total variation 0.016, while a sampler-only GAN reaches the marginal likelihood only through importance weights whose effective sample size collapses (0.597). <b>Controlled:</b> because the flow has a density, Bayesian optimisation can tune its shape about 40 times more cheaply than a sampler allows; on held-out panels the tuned prior moves pricing error only from 0.25135 to 0.25045 while posterior entropy falls from 0.783 to 0.321, so the decision barely depends on the prior and the uncertainty measure does. <b>Adapted:</b> re-tuning the prior at every refit does not beat the flow as trained (stationary −0.00235 [−0.00822, +0.00372]; Fama–French +0.02025 [−0.00018, +0.04385]) and again mainly lowers entropy. Next: control the prior against a calibration target rather than pricing error. Presented as a lab seminar on 2026.01.08; nothing submitted yet.</div>
+      <div class="note">The reference setting is Huang &amp; Shi (<i>Journal of Econometrics</i>, 2025): a mixture of <i>g</i>-priors over a factor-zoo model space, model uncertainty read off as the entropy of the posterior model probabilities. The paper treats the learned prior as a <b>surrogate that carries model uncertainty in its architecture</b> and asks three things of it. <b>Checked:</b> a normalizing flow (RealNVP with a sinh–arcsinh tail layer) reproduces the exact posterior over models to total variation 0.016, while the sampling route a GAN is limited to lands 0.597 away even with the exact prior (0.796 for the GAN), its importance weights collapsing to about one effective draw. <b>Controlled:</b> because the flow has a density, Bayesian optimisation can tune its shape about 40 times more cheaply than a sampler allows; on held-out panels the tuned prior moves pricing error only from 0.25135 to 0.25045 while posterior entropy falls from 0.783 to 0.321, so the decision barely depends on the prior and the uncertainty measure does. <b>Adapted:</b> re-tuning the prior at every refit does not beat the flow as trained (stationary −0.00235 [−0.00822, +0.00372]; Fama–French +0.02025 [−0.00018, +0.04385]) and again mainly lowers entropy. Next: control the prior against a calibration target rather than pricing error. Presented as a lab seminar on 2026.01.08; nothing submitted yet.</div>
       <div class="lk"><a class="go" href="/research/model-uncertainty-priors/">experiments &amp; write-up →</a></div>
     </div></div>
     <div class="pubrow wip" data-stage="inprogress" data-role="first"><div class="y">now</div><div>
@@ -47,16 +47,16 @@ import { PUBS, gapLabel, daysWaiting } from '../data/publications';
     <div class="hsec" style="margin-top:44px"><h2>Conference</h2></div>
     <div class="pubrow" data-stage="presented" data-role="co"><div class="y">2025</div><div>
       <div class="top"><div><div class="t">A Study for Forecasting Solar Energy Power Generation</div><div class="a">YoungDoo Jeong<sup>*</sup>, HaeRim Kim, Dae Hyuk You, <b>Hyeon Min Jeon</b>, Arnie de Castro, TaeYoon Lee <span class="role-chip">co-author · talk</span></div><div class="venue"><b>ISF 2025</b> — 45th International Symposium on Forecasting, Beijing · presented 2025.07.01 · joint work with <b>SAS Institute</b> (Cary, NC) and the University of Seoul</div></div><span class="status s-acc">Presented</span></div>
-      <div class="lk">Hourly solar generation in Seoul (KEPCO market series + KMA ASOS weather) with a hybrid CNN–LSTM–Transformer: one-day-ahead RMSE 0.304 against 0.392 (CNN–LSTM), 3.19 (TimesFM) and 4.2 (ARIMA) over 100 simulations; with only two weeks of history, diffusion-generated synthetic series stacked on the real data cut RMSE from 2.91 to 1.97. <a class="go" href="/talks/isf2025-solar-forecasting.pdf">slides (PDF)</a></div>
+      <div class="lk">Hourly solar generation in Seoul (KEPCO market series + KMA ASOS weather) with a hybrid CNN–LSTM–Transformer: one-day-ahead RMSE 0.304 against 0.392 (CNN–LSTM), 3.19 (TimesFM) and 4.2 (ARIMA) over 100 simulations; with only 15 days (360 h) of history, diffusion-generated synthetic series stacked on the real data cut the CNN–LSTM's RMSE from 2.91 to 1.97 (hybrid 2.97 → 2.00). <a class="go" href="/talks/isf2025-solar-forecasting.pdf">slides (PDF)</a></div>
       <ul class="vtl"><li><span class="d">2025.07.01</span><span class="s ok">Presented</span><span class="k">ISF 2025, Beijing — talk delivered</span></li></ul>
+    </div></div>
+    <div class="pubrow" data-stage="submitted" data-role="first"><div class="y">2024</div><div>
+      <div class="top"><div><div class="t">Personalized Sleep Score Prediction Model Using a Lifelog Dataset</div><div class="a"><b>Hyeon Min Jeon</b> et al. <span class="role-chip first">1st author</span></div><div class="venue"><b>ETRI</b> Human Understanding AI Paper Challenge (competition, not a journal) · 2024 · Chung-Ang University</div></div><span class="status s-rev">Submitted</span></div>
+      <div class="lk">Smartwatch lifelog data (Withings / Empatica) → nightly sleep-score prediction; the model, not the data, was adjusted this time.</div>
     </div></div>
     <div class="pubrow" data-stage="presented" data-role="first"><div class="y">2023</div><div>
       <div class="top"><div><div class="t">Dealing with the Imbalanced-Data Problem with a Diffusion Model</div><div class="a"><b>Hyeon Min Jeon</b>, Minhyeok Lee <span class="role-chip first">1st author</span></div><div class="venue"><b>KICS</b> — Korea Institute of Communication Sciences, fall conference 2023 · Chung-Ang University</div></div><span class="status s-acc">Presented</span></div>
       <div class="lk">Diffusion-model oversampling for a credit-card fraud dataset, compared with random over/under-sampling and SMOTE on precision, recall and accuracy.</div>
-    </div></div>
-    <div class="pubrow" data-stage="presented" data-role="first"><div class="y">2024</div><div>
-      <div class="top"><div><div class="t">Personalized Sleep Score Prediction Model Using a Lifelog Dataset</div><div class="a"><b>Hyeon Min Jeon</b> et al. <span class="role-chip first">1st author</span></div><div class="venue"><b>ETRI</b> Human Understanding AI Paper Challenge (competition, not a journal) · 2024 · Chung-Ang University</div></div><span class="status s-rev">Submitted</span></div>
-      <div class="lk">Smartwatch lifelog data (Withings / Empatica) → nightly sleep-score prediction; the model, not the data, was adjusted this time.</div>
     </div></div>
     <div class="noresult" hidden>Nothing at this stage yet.</div>
   </div>
