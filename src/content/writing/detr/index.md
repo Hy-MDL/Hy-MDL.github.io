@@ -4,7 +4,7 @@ paper: { title: "End-to-End Object Detection with Transformers", authors: "Nicol
 series: "vision"
 order: 4
 tags: [object-detection, transformers, set-prediction, hungarian-matching, panoptic-segmentation]
-date: 2020-06-01
+date: 2020-05-01
 status: draft
 summary: "DETR recasts detection as direct set prediction: a transformer decodes a fixed number of learned queries in parallel, and a Hungarian-matched loss makes anchors and NMS unnecessary."
 ---
@@ -102,7 +102,7 @@ The authors stress that there are no custom layers: inference fits in under 50 l
 
 *COCO validation, retyped from Table 1 of the paper.*
 
-At matched parameter count (about 41M), <mark>DETR ties Faster R-CNN-FPN+ at 42.0 AP, but the composition differs sharply: +7.8 APL and −5.5 APS</mark>. The authors attribute the large-object gain to global attention and the small-object deficit to the single coarse feature map.
+At matched parameter count (about 41M), <mark>DETR ties Faster R-CNN-FPN+ at 42.0 AP, but the composition differs sharply: +7.7 APL and −6.1 APS</mark> by the table above (the paper's text quotes +7.8 and −5.5). The authors attribute the large-object gain to global attention and the small-object deficit to the single coarse feature map.
 
 **Ablations** (ResNet-50, 300 epochs, 40.6 AP baseline):
 

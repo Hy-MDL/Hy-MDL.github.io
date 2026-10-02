@@ -9,7 +9,7 @@ paper:
 series: "normalizing-flows"
 order: 1
 tags: [normalizing-flows, change-of-variables, coupling-layers, exact-likelihood, jacobian-determinant, density-estimation, generative-models]
-date: 2014-11-01
+date: 2014-10-01
 status: draft
 summary: "Split the input in two, leave one half alone and shift the other by an arbitrary neural network of the first: the Jacobian is triangular with a unit diagonal, so exact log-likelihood costs one forward pass and sampling costs one backward pass."
 ---
@@ -133,7 +133,7 @@ $$
 
 the second term being $\log\lvert S_{ii}\rvert$ with $S_{ii}=e^{s_i}$. Every bit of volume change in the entire model lives in $D$ scalars.
 
-The paper reads these scalars as a non-linear eigenspectrum. Setting $\sigma_d=S_{dd}^{-1}$, the $\sigma_d$ are the scales of the independent components; sorting and plotting them ([Fig. 8](https://arxiv.org/pdf/1410.8516#page=13)) gives the flow analogue of a PCA spectrum, and its decay says how many directions the model is actually using. In the limit $S_{ii}\to\infty$ the effective dimensionality drops by one — the model has learned a manifold — and this stays legal as long as $f$ remains invertible at the data. The two terms pull against each other in a way worth stating: the prior term wants $S_{ii}$ large (small $\sigma$, latents pulled to the mode), while $\log S_{ii}$ in (5) diverges to $-\infty$ as $S_{ii}\to0$, so nothing collapses.
+The paper reads these scalars as a non-linear eigenspectrum. Setting $\sigma_d=S_{dd}^{-1}$, the $\sigma_d$ are the scales of the independent components; sorting and plotting them ([Fig. 8](https://arxiv.org/pdf/1410.8516#page=13)) gives the flow analogue of a PCA spectrum, and its decay says how many directions the model is actually using. In the limit $S_{ii}\to\infty$ the effective dimensionality drops by one — the model has learned a manifold — and this stays legal as long as $f$ remains invertible at the data. The two terms pull against each other in a way worth stating: the prior term wants $S_{ii}$ small (latents pulled towards the mode), while $\log S_{ii}$ in (5) diverges to $-\infty$ as $S_{ii}\to0$, so nothing collapses.
 
 ### 3.5 Prior
 
@@ -264,4 +264,4 @@ with the paper's own caveat attached: the deep mixture of factor analysers numbe
 4. Larochelle, H., Murray, I. *The Neural Autoregressive Distribution Estimator.* AISTATS 2011.
 5. Tang, Y., Salakhutdinov, R., Hinton, G. *Deep Mixtures of Factor Analysers.* arXiv:1206.4635.
 6. Uria, B., Murray, I., Larochelle, H. *RNADE: The Real-Valued Neural Autoregressive Density-Estimator.* NIPS 2013.
-7. Grosse, R., Maddison, C., Salakhutdinov, R. *Annealing Between Distributions by Averaging Moments.* ICML 2013.
+7. Grosse, R., Maddison, C., Salakhutdinov, R. *Annealing Between Distributions by Averaging Moments.* NIPS 2013.

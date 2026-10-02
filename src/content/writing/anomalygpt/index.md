@@ -9,7 +9,7 @@ paper:
 series: "industrial-vision"
 order: 6
 tags: [anomaly-detection, vision-language-model, llm, prompt-tuning, few-shot, in-context-learning, mvtec-ad, visa]
-date: 2023-09-01
+date: 2023-08-01
 status: draft
 summary: "AnomalyGPT bolts a small text-matching decoder and a prompt learner onto a frozen PandaGPT so that the language model itself says whether a part is defective and where, removing the per-product score threshold that ordinary anomaly detectors need."
 ---

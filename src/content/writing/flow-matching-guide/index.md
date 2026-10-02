@@ -9,7 +9,7 @@ paper:
 series: "score-to-flow"
 order: 18
 tags: [flow-matching, tutorial, continuous-normalizing-flows, discrete-flow-matching, generator-matching, diffusion, study-guide]
-date: 2025-01-01
+date: 2024-12-01
 status: draft
 summary: "A study guide to the 83-page Meta FAIR tutorial: what each chapter covers, the handful of results everything rests on, which parts to read first, and what the accompanying flow_matching library implements."
 ---
@@ -138,7 +138,7 @@ The manuscript interleaves eleven listings that use the `flow_matching` PyTorch 
 | Code 9–10 | Discrete mixture paths, training and sampling | `MixtureDiscreteProbPath`, `MixturePathGeneralizedKL`, `MixtureDiscreteEulerSolver` |
 | Code 11 | Standalone discrete FM, no library | — |
 
-The design mirrors the theory: a *path* object returns $(X_t, \dot X_t)$ given $(t,x_0,x_1)$, a *scheduler* supplies $\alpha_t,\sigma_t$, a *solver* consumes a wrapped model. Swapping the path is a one-line change. What the listings do **not** cover: Generator Matching (§8–9 has no code — no jump or superposition models), multisample OT couplings, and guidance; the abstract mentions image and text examples in the repository, which I did not inspect for this note.
+The design mirrors the theory: a *path* object returns $(X_t, \dot X_t)$ given $(t,x_0,x_1)$, a *scheduler* supplies $\alpha_t,\sigma_t$, a *solver* consumes a wrapped model. Swapping the path is a one-line change. What the listings do **not** cover: Generator Matching (§8–9 has no code — no jump or superposition models), multisample OT couplings, and guidance; the abstract mentions image and text examples in the repository, which this note does not cover.
 
 ## 5 Discussion
 

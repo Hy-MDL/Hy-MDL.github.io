@@ -3,7 +3,7 @@ title: "πVAE: a stochastic process prior for Bayesian deep learning with MCMC"
 paper:
   title: "πVAE: a stochastic process prior for Bayesian deep learning with MCMC"
   authors: "Swapnil Mishra, Seth Flaxman, Tresnia Berah, Harrison Zhu, Mikko Pakkanen, Samir Bhatt"
-  venue: "arXiv 2020 (v6, September 2022)"
+  venue: "Statistics and Computing 32(6):96, 2022"
   arxiv: "2002.06873"
   license: "creativecommons.org/licenses/by/4.0/"
 series: "surrogates-bo"
@@ -249,10 +249,10 @@ On why πVAE beats the GP, the authors conjecture that $\Phi$'s extra layers cap
 
 **What was built on this**
 
-- PriorVAE (Semenova et al., 2022) is the predecessor, cited in the PDF, with overlapping authors.
-- PriorCVAE, which conditions the decoder on GP hyperparameters so they can be inferred in stage 2 (from general knowledge, unverified).
-- aggVAE, for small-area estimation under changing administrative boundaries (from general knowledge, unverified).
-- A journal version in *Statistics and Computing*, 2022 (from general knowledge, unverified; the PDF read here uses a Springer Nature template but names no venue).
+- PriorVAE (Semenova et al., 2022) is the predecessor, cited in the paper, with overlapping authors.
+- PriorCVAE (Semenova et al., arXiv:2304.04307, 2023) conditions the VAE on the process hyperparameters so that they can be inferred in stage 2.
+- aggVAE (Semenova et al., arXiv:2305.19779, 2023) encodes aggregates over administrative units, for small-area estimation when boundaries change.
+- The journal version appeared in *Statistics and Computing* 32, 96 (2022), doi:10.1007/s11222-022-10151-w.
 
 **Open problems**
 
@@ -263,9 +263,9 @@ On why πVAE beats the GP, the authors conjecture that $\Phi$'s extra layers cap
 
 **Research directions.** *These are ideas, not results — none has been run.*
 
-1. **A latent-space prior inside exact Bayesian factor selection.** The owner's [model-uncertainty project](/research/model-uncertainty-priors/) scores learned priors for SDF factor selection against an exactly computable mixture-of-g-priors posterior. There a normalizing flow, having a tractable density, reproduces the exact posterior, while a GAN, having only a sampler, must average the likelihood over prior draws, an estimator whose effective sample size the page shows decaying like $T^{-d/2}$. A πVAE-style prior sits between: no density over the loadings, but an exact $\mathcal N(0,I)$ density over a small latent that HMC samples cheaply. Hypothesis: marginal likelihoods estimated in latent coordinates from posterior draws (e.g. bridge sampling) recover the exact model probabilities about as well as the flow's density route, while prior sampling through the same decoder does not. Data: the page's simulated panels with known truth. Baseline: its exact posterior, flow density route and GAN sampling route. Metric: total variation from the exact model posterior and error in posterior entropy, as on the page. Likely failure mode: with fewer latent dimensions than loadings the prior is degenerate, so marginal likelihoods across factor subsets of different sizes stop being comparable, and one decoder per model size restores the training burden.
+1. **A latent-space prior inside exact Bayesian factor selection.** My [model-uncertainty project](/research/model-uncertainty-priors/) scores learned priors for SDF factor selection against an exactly computable mixture-of-g-priors posterior. There a normalizing flow, having a tractable density, reproduces the exact posterior, while a GAN, having only a sampler, must average the likelihood over prior draws, an estimator whose effective sample size the page shows decaying like $T^{-d/2}$. A πVAE-style prior sits between: no density over the loadings, but an exact $\mathcal N(0,I)$ density over a small latent that HMC samples cheaply. Hypothesis: marginal likelihoods estimated in latent coordinates from posterior draws (e.g. bridge sampling) recover the exact model probabilities about as well as the flow's density route, while prior sampling through the same decoder does not. Data: the page's simulated panels with known truth. Baseline: its exact posterior, flow density route and GAN sampling route. Metric: total variation from the exact model posterior and error in posterior entropy, as on the page. Likely failure mode: with fewer latent dimensions than loadings the prior is degenerate, so marginal likelihoods across factor subsets of different sizes stop being comparable, and one decoder per model size restores the training burden.
 2. **πVAE as a Bayesian-optimisation surrogate.** Hypothesis: a πVAE trained on GP draws across a lengthscale range, with HMC over $Z$ at each iteration, matches a GP surrogate with marginalised hyperparameters on low-dimensional problems at a roughly constant per-iteration cost, and wins when the prior encodes known shape, as the cubic prior does in Table 1. Data: standard 2–6-dimensional synthetic benchmarks rescaled to the training box. Baseline: GP expected improvement with MCMC hyperparameters. Metric: simple regret against evaluations; wall-clock per iteration. Likely failure mode: near the optimum the $m$-dimensional prior cannot interpolate many close observations, so the posterior mean stalls and the acquisition keeps revisiting sampled regions.
-3. **Intensity priors for exchange arrivals.** The owner's [exchange-queueing project](/projects/exchange-queueing/) fits a grid posterior over rate and dispersion of a gamma-mixed Cox model of BTC/USDT arrivals, finds the 95% predictive interval honest only once the burst-size law is heavy-tailed, and names a Hawkes or batch-arrival likelihood as next. The paper's LGCP example shows a πVAE emitting an intensity path and its integral, the compensator such likelihoods need. Hypothesis: a πVAE intensity prior inside the page's chance-constrained sizing improves coverage over the single-scale gamma-Cox variant. Data: the page's one-minute blocks. Baseline: its gamma-Cox and nested log-normal variants. Metric: its interval coverage, SLA held, and excess over the after-the-fact oracle. Likely failure mode: the page concludes that rate uncertainty is "beside the point" and that the burst tail sets capacity, which a smoother intensity prior does not touch; and a Hawkes intensity depends on the events themselves, so it cannot be pre-drawn as a fixed function of time the way an LGCP intensity can.
+3. **Intensity priors for exchange arrivals.** My [exchange-queueing project](/projects/exchange-queueing/) fits a grid posterior over rate and dispersion of a gamma-mixed Cox model of BTC/USDT arrivals, finds the 95% predictive interval honest only once the burst-size law is heavy-tailed, and names a Hawkes or batch-arrival likelihood as next. The paper's LGCP example shows a πVAE emitting an intensity path and its integral, the compensator such likelihoods need. Hypothesis: a πVAE intensity prior inside the page's chance-constrained sizing improves coverage over the single-scale gamma-Cox variant. Data: the page's one-minute blocks. Baseline: its gamma-Cox and nested log-normal variants. Metric: its interval coverage, SLA held, and excess over the after-the-fact oracle. Likely failure mode: the page concludes that rate uncertainty is "beside the point" and that the burst tail sets capacity, which a smoother intensity prior does not touch; and a Hawkes intensity depends on the events themselves, so it cannot be pre-drawn as a fixed function of time the way an LGCP intensity can.
 
 ## 8 Takeaways
 
@@ -277,7 +277,7 @@ On why πVAE beats the GP, the authors conjecture that $\Phi$'s extra layers cap
 
 ## References
 
-- Mishra, S., Flaxman, S., Berah, T., Zhu, H., Pakkanen, M., Bhatt, S. *πVAE: a stochastic process prior for Bayesian deep learning with MCMC.* arXiv:2002.06873 (v6, 2022).
+- Mishra, S., Flaxman, S., Berah, T., Zhu, H., Pakkanen, M., Bhatt, S. *πVAE: a stochastic process prior for Bayesian deep learning with MCMC.* Statistics and Computing 32(6):96, 2022. doi:10.1007/s11222-022-10151-w. arXiv:2002.06873.
 - Semenova, E., Xu, Y., Howes, A., Rashid, T., Bhatt, S., Mishra, S., Flaxman, S. *PriorVAE: encoding spatial priors with variational autoencoders for small-area estimation.* Journal of the Royal Society Interface 19(191), 2022.
 - Garnelo, M. et al. *Conditional neural processes.* ICML 2018.
 - Kim, H. et al. *Attentive neural processes.* 2019.

@@ -9,7 +9,7 @@ paper:
 series: "ee-timeseries"
 order: 2
 tags: [battery, cycle-life, tutorial, elastic-net, fused-lasso, hybrid-models, data-leakage, interpretability]
-date: 2024-05-01
+date: 2024-04-01
 status: draft
 summary: "A six-page tutorial that maps first-principles, machine-learning and hybrid battery models, walks through an interpretable cycle-life pipeline on the Severson LFP dataset, and argues that leakage, calendar aging and thin diagnostics limit what pure ML can claim."
 ---

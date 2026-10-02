@@ -9,7 +9,7 @@ paper:
 series: "vision"
 order: 6
 tags: [self-supervised-learning, masked-autoencoder, vision-transformer, pre-training, representation-learning, scaling]
-date: 2021-12-01
+date: 2021-11-01
 status: draft
 summary: "Hide three quarters of an image's patches, run a ViT encoder only on what is left, and let a small decoder regress the missing pixels: a pretext task that is both cheaper and more accurate than its alternatives, and that keeps improving as the model grows."
 ---

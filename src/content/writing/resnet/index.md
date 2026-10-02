@@ -4,7 +4,7 @@ paper: { title: "Deep Residual Learning for Image Recognition", authors: "Kaimin
 series: "vision"
 order: 1
 tags: [resnet, residual-learning, skip-connections, cnn, image-classification, optimization]
-date: 2016-01-01
+date: 2015-12-01
 status: draft
 summary: "Letting stacked layers learn a correction to their input, rather than a whole new mapping, removes the training-error degradation of very deep plain networks and makes 100+ layer CNNs trainable."
 ---

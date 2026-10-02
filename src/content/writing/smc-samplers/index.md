@@ -11,7 +11,7 @@ paper:
 series: "sequential-monte-carlo"
 order: 4
 tags: [sequential-monte-carlo, smc-samplers, backward-kernels, annealed-importance-sampling, normalizing-constants, tempering, mcmc]
-date: 2006-07-01
+date: 2006-06-01
 status: draft
 summary: "To sample a sequence of distributions on one common space, you need the marginal proposal density, which an MCMC move does not give you. Introduce artificial backward kernels, do importance sampling on the path space instead, and every MCMC kernel becomes usable inside a particle method."
 ---
@@ -304,7 +304,7 @@ A genuinely on-line variant restricts the MCMC moves to the last five knot point
 
 - The obstruction to using MCMC moves inside a particle method is that you cannot evaluate the marginal proposal density — and for a Metropolis–Hastings kernel you cannot even evaluate the kernel, because the rejection probability is an intractable integral.
 - The fix is not to compute it but to change the target: append artificial backward kernels so the auxiliary target lives on path space and has $\pi_n$ as a marginal by construction. Nothing is approximated; the construction is exact for any choice of $L$.
-- The incremental weight is $\gamma_n(x_n)L_{n-1}(x_n,x_{n-1})/\bigl(\gamma_{n-1}(x_{n-1})K_n(x_{n-1},x_n)\bigr)$, and with the natural MCMC-reversal choice the kernel cancels outright, leaving a ratio of unnormalised targets at the *old* particle.
+- The incremental weight is $\frac{\gamma_n(x_n)L_{n-1}(x_n,x_{n-1})}{\gamma_{n-1}(x_{n-1})K_n(x_{n-1},x_n)}$, and with the natural MCMC-reversal choice the kernel cancels outright, leaving a ratio of unnormalised targets at the *old* particle.
 - $L$ affects variance, never validity. The optimal one is characterised in three lines of the variance decomposition and is exactly the object that would have let you do importance sampling on $E$ in the first place.
 - The reversal choice has a counter-intuitive defect the paper is careful to state: its weights do not depend on the new particle, so a perfectly mixing kernel does not reduce their variance at all.
 - Annealed importance sampling and resample–move are the same special case with and without resampling. Seeing that is what a framework is for.

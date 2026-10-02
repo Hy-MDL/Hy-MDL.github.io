@@ -9,7 +9,7 @@ paper:
 series: "score-to-flow"
 order: 10
 tags: [diffusion, score-matching, probability-flow-ode, heun-solver, preconditioning, noise-schedule, stochastic-sampling, design-space]
-date: 2022-07-01
+date: 2022-06-01
 status: draft
 summary: "EDM rewrites VP, VE and iDDPM as one parameterised ODE, then tunes each knob separately — Heun steps, a polynomial σ grid, σ(t)=t, unit-variance preconditioning, a log-normal noise prior — reaching CIFAR-10 FID 1.79 at 35 network evaluations and ImageNet-64 FID 1.36."
 ---
@@ -126,7 +126,7 @@ $$
 Four requirements then pin down four functions, in this order.
 
 1. *Unit-variance input.* $\operatorname{Var}[c_{\text{in}}(y+n)]=1$ with $y\perp n$ gives $c_{\text{in}}^2(\sigma_{\text{data}}^2+\sigma^2)=1$.
-2. *Unit-variance target.* The target is $\big[(1-c_{\text{skip}})y+c_{\text{skip}}n\big]/c_{\text{out}}$, so $c_{\text{out}}^2=(1-c_{\text{skip}})^2\sigma_{\text{data}}^2+c_{\text{skip}}^2\sigma^2$ — one equation, two unknowns.
+2. *Unit-variance target.* The target is $\big[(1-c_{\text{skip}})y-c_{\text{skip}}n\big]/c_{\text{out}}$, so $c_{\text{out}}^2=(1-c_{\text{skip}})^2\sigma_{\text{data}}^2+c_{\text{skip}}^2\sigma^2$ — one equation, two unknowns.
 3. *Minimal error amplification.* The remaining freedom minimises $c_{\text{out}}$, since the network's error reaches the output multiplied by it. The problem is convex in $c_{\text{skip}}$, and zeroing the derivative gives $(\sigma^2+\sigma_{\text{data}}^2)c_{\text{skip}}=\sigma_{\text{data}}^2$, closing the system:
 
 $$
@@ -250,9 +250,9 @@ Easy to get wrong when reproducing:
 - *Sampling choices are independent of training.* Supported in a specific sense: the improvements transfer to three networks trained under three different theories, but the gain is almost entirely in **NFE, not FID**. For VP the best FID drifts from 2.79 to 2.93 while NFE falls from 512 to 35 — the same quality an order of magnitude cheaper, not better images. VE is the exception (FID 4.78 → 3.73 *and* NFE down 300×), because its geometric grid and $\sqrt t$ schedule were badly matched to the problem.
 - *Heun and $\rho=7$.* Heun beats Euler per unit compute in all three models, and adaptive RK45 lands at similar FID with 2–4× the NFE, so the win is second order, not higher order. The $\rho$ sweep supports 7 only weakly: the curve is flat over $5\le\rho\le10$ while the appendix's own error analysis points at 3, so the choice is perceptual rather than numerical.
 - *Preconditioning improves robustness rather than FID.* The weakest-supported claim, and the framing is post hoc. In config D preconditioning alone makes VP **worse** on three of four datasets (FFHQ 2.78 → 2.94, AFHQv2 2.54 → 2.79) while rescuing VE at $64^2$ (FFHQ 41.62 → 3.39, AFHQv2 15.04 → 3.81). "Robustness" interprets that asymmetry; no robustness quantity is measured.
-- *Loss weighting and noise prior are the main training win.* Supported and large — the biggest single jump in Table 2 (conditional CIFAR-10 VE 2.64 → 1.86). But config E changes $\lambda(\sigma)$ **and** $p_{\text{train}}(\sigma)$ together, so their contributions are not separated.
+- *Loss weighting and noise prior are the main training win.* Supported and large — in the CIFAR-10 VE columns it is the biggest single step in Table 2 (conditional 2.64 → 1.86, unconditional 3.10 → 1.99). But config E changes $\lambda(\sigma)$ **and** $p_{\text{train}}(\sigma)$ together, so their contributions are not separated.
 - *"VP vs VE" was never the important distinction.* Nearly supported. By config F the two agree exactly on CIFAR-10 (1.79 / 1.79 conditional, 1.97 / 1.98 unconditional), but a gap survives at $64^2$: FFHQ 2.39 vs 2.53, AFHQv2 1.96 vs 2.16. Since configs E–F leave only the architecture differing (DDPM++ vs NCSN++), that residual is an architecture effect rather than a VP/VE one — which strengthens the thesis while showing the columns do not quite coincide.
-- *Stochasticity compensates for model error.* Half supported. On CIFAR-10 the reversal is clean: churn helps the original training and hurts EDM training at any level. On ImageNet-64 it does not reverse — the retrained model still improves from FID 2.22 at $S_{\text{churn}}=0$ to <mark>1.36 near $S_{\text{churn}}=40$, and the pre-trained ADM network from 2.66 to 1.57</mark>. The authors' own wording, that more diverse datasets keep benefiting, is the defensible version.
+- *Stochasticity compensates for model error.* Half supported. On CIFAR-10 the reversal is clean: churn helps the original training and hurts EDM training at any level. On ImageNet-64 it does not reverse — the retrained model still improves from FID 2.22 at $S_{\text{churn}}=0$ to <mark>1.36 near $S_{\text{churn}}=40$, and the pre-trained ADM network from 2.64 to 1.55 (Table 4)</mark>. The authors' own wording, that more diverse datasets keep benefiting, is the defensible version.
 - *New state of the art.* CIFAR-10 1.79 / 1.97 against previous records of 1.85 and 2.10; ImageNet-64 1.36 against 1.48. These are published numbers from different architectures and budgets, and each FID is the minimum of three evaluations of a best-of-training checkpoint, so small margins should not be over-read.
 
 ## 6 Limitations
@@ -280,7 +280,7 @@ Easy to get wrong when reproducing:
 - [Consistency models](/blog/consistency-models/) adopt EDM's $\sigma$ grid, preconditioning form and $\sigma(t)=t$ wholesale, then learn to jump along the same ODE trajectory in one step.
 - [Rectified Flow](/blog/rectified-flow/) and [Flow Matching](/blog/flow-matching/) attack the curvature problem from the other end: rather than pick a schedule that makes trajectories nearly straight, they train so that they are straight by construction. §3.2 above is the diffusion-side statement of the same idea.
 - [SD3](/blog/sd3-rectified-flow-transformers/) samples training timesteps from a logit-normal distribution — the flow-matching analogue of EDM's log-normal $p_{\text{train}}(\sigma)$ — and compares schedules in exactly this factorised style.
-- DPM-Solver and progressive distillation, both cited in the PDF, push the NFE axis further. The Heun-plus-$\rho$-grid sampler became a default in open-source diffusion codebases, and the same group later reworked the network's internal normalisation on the same "get the magnitudes right" principle *(from general knowledge, unverified)*.
+- DPM-Solver and progressive distillation push the NFE axis further. The Heun-plus-$\rho$-grid sampler became a default in open-source diffusion codebases, and the same group later reworked the network's internal normalisation on the same "get the magnitudes right" principle.
 
 **Open problems**
 

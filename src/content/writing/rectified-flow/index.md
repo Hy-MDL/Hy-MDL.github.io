@@ -9,7 +9,7 @@ paper:
 series: "score-to-flow"
 order: 13
 tags: [rectified-flow, reflow, ode-sampling, optimal-transport, one-step-generation, distillation, straightness, probability-flow-ode]
-date: 2022-10-01
+date: 2022-09-01
 status: draft
 summary: "Regress a velocity field onto the straight-line direction between paired samples, then retrain on the flow's own endpoint pairs: each round preserves the marginals, cannot raise any convex transport cost, and provably drives a straightness measure to zero, until one Euler step is enough."
 ---

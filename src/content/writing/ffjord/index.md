@@ -9,7 +9,7 @@ paper:
 series: "normalizing-flows"
 order: 7
 tags: [normalizing-flows, continuous-normalizing-flows, neural-ode, hutchinson-trace-estimator, adjoint-method, exact-likelihood, free-form-jacobian]
-date: 2018-11-01
+date: 2018-10-01
 status: draft
 summary: "Let the flow run in continuous time and the log-determinant becomes a trace; estimate that trace with a single vector-Jacobian product and the cost drops to O(D), so the network defining the dynamics needs no coupling, no masking and no triangular structure at all."
 ---
@@ -161,7 +161,7 @@ flowchart LR
 - **Solver.** Runge–Kutta 4(5) with Shampine's tableau, adaptive, with *tolerance set low enough so numerical error is negligible* (Appendix C). GPU implementations of both the solvers and the adjoint method were written for this paper.
 - **Estimator at train versus test.** Hutchinson during training, **exact trace when reporting test results** — except the MNIST and CIFAR-10 density models, where the exact trace was not computationally feasible. There, the authors report that *the variance of the log-likelihood over the validation set induced by the trace estimator is less than $10^{-4}$*. Worth noting that this means the training objective and the reported metric are different functionals almost everywhere in the paper; unbiasedness makes that legitimate in expectation but it is not the same optimisation problem.
 - **Time conditioning.** *We experimented with several ways to incorporate $t$ as an input to $f$, such as hyper-networks, but found that simply concatenating $t$ on to $z(t)$ at the input to every layer worked well* — the simplest thing, reported as such.
-- **Batch sizes.** The method is *slower than competing methods*, but the adjoint's constant memory allows batches up to **10,000** on tabular data and **900** on images. No wall-clock figures are given anywhere. Marked: not stated.
+- **Batch sizes.** The method is *slower than competing methods*, but the adjoint's constant memory allows batches up to **10,000** on tabular data and **900** on images. No wall-clock figures are given anywhere.
 - **The VAE flow is not free-form.** Making the encoder emit all the flow parameters *led to differential equations which were too difficult to integrate numerically*. Instead each layer inside FFJORD takes the form
   $$
   \mathrm{layer}(h;x,W,b)=\sigma\Bigl(\bigl(W+\hat U(x)\hat V(x)^{\mathsf T}\bigr)h+b+\hat b(x)\Bigr), \tag{7}
@@ -191,7 +191,7 @@ Negative log-likelihood, lower is better; nats for tabular, bits/dim for images.
 | TAN | $-0.48$ | $-11.19$ | $15.12$ | $11.01$ | $-157.03$ | – | – |
 | MAF-DDSF | $\mathbf{-0.62}$ | $\mathbf{-11.96}$ | $15.09$ | $\mathbf{8.86}$ | $\mathbf{-157.73}$ | – | – |
 
-The paper's reading, and it is accurate: FFJORD *performs the best out of reversible models by a wide margin but is outperformed by recent autoregressive models*; it beats MAF on all but one dataset (GAS, where MAF's $-10.08$ wins) and beats TAN on MINIBOONE. The caveats it attaches to the autoregressive winners are the right ones — they need $O(D)$ sequential computations to sample, and MAF-DDSF *cannot be sampled from analytically* at all.
+The paper's reading, and it is accurate: FFJORD *performs the best out of reversible models by a wide margin but is outperformed by recent autoregressive models*; it beats MAF on all but one dataset (GAS, where MAF's $-10.08$ wins) and beats TAN on HEPMASS, MINIBOONE and BSDS300 (on HEPMASS it is the best model in the table). The caveats it attaches to the autoregressive winners are the right ones — they need $O(D)$ sequential computations to sample, and MAF-DDSF *cannot be sampled from analytically* at all.
 
 On images, two distinct claims:
 
@@ -212,7 +212,7 @@ Negative ELBO, lower is better; nats except Frey Faces in bits/dim; mean and sta
 | Sylvester | $83.32\pm.06$ | $99.00\pm.04$ | $4.45\pm.04$ | $104.62\pm.29$ |
 | **FFJORD** | $\mathbf{82.82\pm.01}$ | $\mathbf{98.33\pm.09}$ | $\mathbf{4.39\pm.01}$ | $\mathbf{104.03\pm.43}$ |
 
-Best on all four, with a matched experimental setup. The margin over Sylvester is $0.50$, $0.67$, $0.06$ and $0.59$ nats; on Caltech the error bars nearly overlap. Note also that IAF *loses to the no-flow baseline on Caltech Silhouettes* ($111.58$ vs $110.80$), which is a reminder that flexible posteriors are not free.
+Best on all four, with a matched experimental setup. The margin over Sylvester is $0.50$, $0.67$ and $0.59$ nats on MNIST, Omniglot and Caltech Silhouettes, and $0.06$ bits/dim on Frey Faces; on Caltech the error bars nearly overlap. Note also that IAF *loses to the no-flow baseline on Caltech Silhouettes* ($111.58$ vs $110.80$), which is a reminder that flexible posteriors are not free.
 
 And remember (§4) that the FFJORD used here is the rank-$k$-amortised version of (7), not a free-form one.
 
@@ -249,7 +249,7 @@ The replacement bottleneck. Two results:
 
 ## 7 Extensions
 
-**What was built on this.** The NFE problem the paper names became a small literature: regularised neural ODEs (RNODE, which adds kinetic-energy and Jacobian-Frobenius penalties derived from optimal transport to keep the dynamics straight), STEER, and the "how to train your neural ODE" line all exist to bound $\hat L$. The deeper resolution came from abandoning the ODE solve at training time entirely: [Flow Matching](/blog/flow-matching/), [Rectified Flow](/blog/rectified-flow/) and [Stochastic Interpolants](/blog/stochastic-interpolants/) regress a network onto a prescribed conditional velocity field, giving a continuous-time flow trained *simulation-free* — no solver, no trace estimator, no adjoint, in the training loop. Seen from there, FFJORD is the last and best of the maximum-likelihood CNFs and the paper that made their cost structure legible enough to route around. The Hutchinson-in-the-integrand trick survives wherever an exact likelihood of a continuous flow is needed, including likelihood evaluation for [Score-SDE](/blog/score-sde/)'s probability-flow ODE. The [survey](/blog/normalizing-flows-survey/) gives continuous flows their own chapter largely on the strength of this paper.
+**What was built on this.** The NFE problem the paper names became a small literature: regularised neural ODEs (RNODE, which adds kinetic-energy and Jacobian-Frobenius penalties derived from optimal transport to keep the dynamics straight) and STEER both exist to bound $\hat L$. The deeper resolution came from abandoning the ODE solve at training time entirely: [Flow Matching](/blog/flow-matching/), [Rectified Flow](/blog/rectified-flow/) and [Stochastic Interpolants](/blog/stochastic-interpolants/) regress a network onto a prescribed conditional velocity field, giving a continuous-time flow trained *simulation-free* — no solver, no trace estimator, no adjoint, in the training loop. Seen from there, FFJORD is the last and best of the maximum-likelihood CNFs and the paper that made their cost structure legible enough to route around. The Hutchinson-in-the-integrand trick survives wherever an exact likelihood of a continuous flow is needed, including likelihood evaluation for [Score-SDE](/blog/score-sde/)'s probability-flow ODE. The [survey](/blog/normalizing-flows-survey/) gives continuous flows their own chapter largely on the strength of this paper.
 
 **Open problems.** What actually drives NFE growth, and can it be predicted or bounded from properties of the data? Is the trace estimator's variance ever the binding constraint, or is it always the solver? Does the dimension-independence of NFE hold at $D$ in the thousands, where it was never tested? And the one the Rademacher ablation raises: when does estimator variance matter at all?
 

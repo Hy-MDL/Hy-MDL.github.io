@@ -1,10 +1,10 @@
 ---
 title: "PreBit: A multimodal model with Twitter FinBERT embeddings for extreme price movement prediction of Bitcoin"
-paper: { title: "PreBit - A multimodal model with Twitter FinBERT embeddings for extreme price movement prediction of Bitcoin", authors: "Yanzhao Zou et al.", venue: "Expert Systems with Applications, vol. 233, 2023, 120838", arxiv: "2206.00648", license: "creativecommons.org/licenses/by-nc-nd/4.0/" }
+paper: { title: "PreBit - A multimodal model with Twitter FinBERT embeddings for extreme price movement prediction of Bitcoin", authors: "Yanzhao Zou, Dorien Herremans", venue: "Expert Systems with Applications, vol. 233, 2023, 120838", arxiv: "2206.00648", license: "creativecommons.org/licenses/by-nc-nd/4.0/" }
 series: "eswa-finance"
 order: 1
 tags: [bitcoin, twitter, finbert, multimodal, svm, extreme-events, backtesting, class-imbalance]
-date: 2022-07-01
+date: 2022-06-01
 status: draft
 summary: "A late-fusion SVM over a technical-indicator SVM and a FinBERT-embedding CNN flags next-day Bitcoin moves of 2% or 5%; tweets help on upward moves, but the price-only model is the better trader."
 ---
@@ -90,7 +90,7 @@ The fusion SVM takes $x = (p_{\text{TA}}, p_{\text{Twitter}})$, a sigmoid of the
 | **Fusion (sequential)** | 0.31 | 0.50 | **0.38** | 0.76 | **73.70** |
 | Stratified baseline | 0.16 | 0.16 | 0.16 | 0.72 | 72.49 |
 
-<mark>Fusion roughly doubles the recall of the price-only model on 5% up-moves (0.22 to 0.50) at the same precision.</mark> On Up 2% the parallel fusion reaches positive F1 0.61 and accuracy 64.38% against 0.54 and 61.91% for the TA SVM. On the down tasks the gain disappears: for Down 5% the sequential fusion is identical to the TA SVM in every reported metric (F1 0.33, accuracy about 81.4%). The Twitter CNNs alone are weak; the sequential CNN on Up 5% flags almost everything as positive. <mark>The authors report that a Diebold–Mariano test did not reject the null hypothesis</mark>, and note that the stratified baseline's upper interval exceeds the fusion model's accuracy on Up 5%.
+<mark>Fusion roughly doubles the recall of the price-only model on 5% up-moves (0.22 to 0.50) at the same precision.</mark> On Up 2% the parallel fusion reaches positive F1 0.61 and accuracy 64.38% against 0.54 and 61.91% for the TA SVM. On the down tasks the gain disappears: for Down 5% the sequential fusion is identical to the TA SVM in every reported metric (F1 0.33, accuracy about 81.4%). The Twitter CNNs alone are weak; the sequential CNN on Up 5% flags almost everything as positive. Its F1 of 0.22 is as printed; its precision and recall imply about 0.30, and the paper prints 0.30 as that row's negative-class F1, so the two look swapped. <mark>The authors report that a Diebold–Mariano test did not reject the null hypothesis</mark>, and note that the stratified baseline's upper interval exceeds the fusion model's accuracy on Up 5%.
 
 **Backtest** on Up 5% signals: buy at the close when flagged, sell at the next close, no fees, no slippage. Full test year:
 

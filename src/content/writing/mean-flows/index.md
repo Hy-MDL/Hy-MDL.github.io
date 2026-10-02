@@ -4,7 +4,7 @@ paper: { title: "Mean Flows for One-step Generative Modeling", authors: "Zhengya
 series: "score-to-flow"
 order: 19
 tags: [flow-matching, one-step-generation, average-velocity, jvp, consistency-models, classifier-free-guidance]
-date: 2025-06-01
+date: 2025-05-01
 status: draft
 summary: "Instead of learning the instantaneous velocity of a flow and integrating it at sampling time, MeanFlow learns the average velocity over an interval through an exact identity, which makes one network evaluation enough."
 ---

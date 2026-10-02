@@ -9,7 +9,7 @@ paper:
 series: "vision"
 order: 9
 tags: [nerf, view-synthesis, volume-rendering, implicit-representation, positional-encoding]
-date: 2020-04-01
+date: 2020-03-01
 status: draft
 summary: "A single MLP maps a 3D point and a viewing direction to density and colour, and classical volume rendering turns that field into images that can be fit to posed photographs by gradient descent."
 ---
@@ -97,7 +97,7 @@ Three datasets: the four simple Lambertian objects of DeepVoxels (512×512, 479 
 | LLFF | 34.38 / 0.985 / 0.048 | 24.88 / 0.911 / 0.114 | 24.13 / 0.798 / **0.212** |
 | **NeRF** | **40.15 / 0.991 / 0.023** | **31.01 / 0.947 / 0.081** | **26.50 / 0.811** / 0.250 |
 
-<mark>NeRF wins every column except LPIPS on real forward-facing scenes, where LLFF is slightly better</mark>; the authors argue the video results still favour NeRF because LLFF blends separate per-view representations and flickers between them. The gap is largest on the realistic synthetic set, about 5 dB over the best baseline, which is where fine geometry such as the ship rigging and Lego treads is hard for grids ([Fig. 5 in the paper](https://arxiv.org/pdf/2003.08934#page=11)).
+<mark>NeRF wins every column except LPIPS on real forward-facing scenes, where LLFF is slightly better</mark>; the authors argue the video results still favour NeRF because LLFF blends separate per-view representations and flickers between them. The PSNR margin over the best baseline is 5–6 dB on both synthetic sets (5.8 dB on Diffuse, 5.0 dB on Realistic, whose fine geometry such as the ship rigging and Lego treads is hard for grids; [Fig. 5 in the paper](https://arxiv.org/pdf/2003.08934#page=11)) and 2.4 dB on real scenes.
 
 Ablations on the realistic synthetic set (full model 31.01 dB):
 
@@ -137,4 +137,4 @@ On storage, <mark>the network weights take about 5 MB per scene, against more th
 - Mildenhall, B. et al. *Local Light Field Fusion: Practical View Synthesis with Prescriptive Sampling Guidelines.* SIGGRAPH 2019.
 - Sitzmann, V., Zollhöfer, M., Wetzstein, G. *Scene Representation Networks.* NeurIPS 2019.
 - Lombardi, S. et al. *Neural Volumes: Learning Dynamic Renderable Volumes from Images.* SIGGRAPH 2019.
-- Rahaman, N. et al. *On the Spectral Bias of Neural Networks.* ICML 2018 (as cited in the paper).
+- Rahaman, N. et al. *On the Spectral Bias of Neural Networks.* ICML 2019.

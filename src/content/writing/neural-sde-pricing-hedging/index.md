@@ -1,10 +1,10 @@
 ---
 title: "Neural SDEs: Robust pricing and hedging via neural SDEs"
-paper: { title: "Robust pricing and hedging via neural SDEs", authors: "Patryk Gierjatowicz et al.", venue: "arXiv 2020 (q-fin.MF)", arxiv: "2007.04154", license: "arxiv.org/licenses/nonexclusive-distrib/1.0/" }
+paper: { title: "Robust pricing and hedging via neural SDEs", authors: "Patryk Gierjatowicz et al.", venue: "Journal of Computational Finance 26(3):1-32, 2022", arxiv: "2007.04154", license: "arxiv.org/licenses/nonexclusive-distrib/1.0/" }
 series: "stochastic-modeling"
 order: 10
 tags: [neural-sde, model-uncertainty, robust-finance, calibration, local-volatility, control-variate, hedging, generative-model]
-date: 2020-08-01
+date: 2020-07-01
 status: draft
 summary: "Drift and diffusion of an arbitrage-free SDE are neural networks calibrated to vanilla prices; minimising and maximising an exotic's price over all such calibrated models gives data-driven robust price bounds, with a learned hedge doubling as a variance-reducing control variate."
 ---
@@ -120,7 +120,7 @@ Coefficients use one network per maturity bucket $[T_{i-1},T_i]$. A path-depende
 
 ## References
 
-- P. Gierjatowicz, M. Sabate-Vidales, D. Šiška, L. Szpruch, Ž. Žurič. *Robust pricing and hedging via neural SDEs.* arXiv:2007.04154, 2020.
+- P. Gierjatowicz, M. Sabate-Vidales, D. Šiška, L. Szpruch, Ž. Žurič. *Robust pricing and hedging via neural stochastic differential equations.* Journal of Computational Finance 26(3):1–32, 2022. arXiv:2007.04154 (as *Robust pricing and hedging via neural SDEs*).
 - C. Cuchiero, W. Khosrawi, J. Teichmann. *A generative adversarial network approach to calibration of local stochastic volatility models.* arXiv:2005.02505, 2020.
 - A. Hernandez. *Model calibration with neural networks.* Risk, 2016.
 - B. Dupire. *Pricing with a smile.* Risk, 1994.

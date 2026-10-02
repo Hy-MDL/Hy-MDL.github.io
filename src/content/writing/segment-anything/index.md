@@ -9,7 +9,7 @@ paper:
 series: "vision"
 order: 8
 tags: [segmentation, foundation-models, promptable-models, vision-transformer, data-engine, zero-shot]
-date: 2023-05-01
+date: 2023-04-01
 status: draft
 summary: "A promptable segmentation model, trained on 1.1B masks that the model itself helped to label, returns a valid mask for any point, box or mask prompt and transfers zero-shot to many segmentation tasks."
 ---

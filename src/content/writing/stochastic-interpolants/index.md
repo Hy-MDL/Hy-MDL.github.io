@@ -9,7 +9,7 @@ paper:
 series: "score-to-flow"
 order: 15
 tags: [stochastic-interpolants, flow-matching, diffusion, probability-flow-ode, sde-sampling, denoiser, likelihood-bounds, schrodinger-bridge, generative-models]
-date: 2023-04-01
+date: 2023-03-01
 status: draft
 summary: "Write the bridge between two densities as an explicit mixture of two samples and a Gaussian latent, learn a velocity and a denoiser by least squares, then choose afterwards whether to sample with an ODE or with an SDE at any noise level — and get a KL bound that only the SDE enjoys."
 ---

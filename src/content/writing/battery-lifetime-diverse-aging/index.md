@@ -9,7 +9,7 @@ paper:
 series: "ee-timeseries"
 order: 3
 tags: [battery, lifetime-prediction, early-prediction, pairwise-learning, inter-cell-difference, low-resource, transfer, cnn, benchmark]
-date: 2023-11-01
+date: 2023-10-01
 status: draft
 summary: "Predict a cell's cycle life from its first 100 cycles by training one network on the cell itself and a second on its difference to reference cells with known lifetimes, tied together through a shared, bias-free linear head."
 ---

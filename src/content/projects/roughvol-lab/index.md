@@ -87,9 +87,9 @@ The implied-vol solver works on out-of-the-money time value with a bracketed New
 
 ## 3 Experiments
 
-**Hardware.** All runs on one shared server: RTX 3090 (GPU 2), 64 cores, torch 2.10/CUDA 12.8; CPU pools capped at 16 processes. Load averages are stored beside each timing. Seeds are fixed.
+**Hardware.** All runs on one shared server: RTX 3090, 64 cores, torch 2.10/CUDA 12.8; CPU pools capped at 16 processes. Load averages are stored beside each timing. Seeds are fixed.
 
-**Data.** Synthetic throughout. A real-data check on SPY daily ranges was planned, but the intended keyless source, Stooq, answered scripted requests with a JavaScript browser check; that refusal was respected (log in `data/fetch_log.json`), so no market data is used anywhere in this project. Volatility proxies studied on simulated paths: Garman–Klass and Parkinson.
+**Data.** Synthetic throughout; no market data is used anywhere in this project. Volatility proxies studied on simulated paths: Garman–Klass and Parkinson.
 
 **Training set.** 50,000 surfaces at 20,000 paths (scrambled Sobol parameters in $H\in[0.04,0.45]$, $\eta\in[0.8,3]$, $\rho\in[-0.95,-0.3]$, $\xi\in[0.02,0.1]$) and 2,000 held-out surfaces at 200,000 paths, 400 time steps, generated on the GPU in 28 min (26 ms and 0.20 s per surface). 47,500 were used for training, 2,500 for validation; no surface had an invalid implied vol.
 

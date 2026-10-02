@@ -4,7 +4,7 @@ paper: { title: "Scalable Gradients for Stochastic Differential Equations", auth
 series: "stochastic-modeling"
 order: 3
 tags: [neural-sde, adjoint-method, stratonovich, brownian-tree, latent-sde, variational-inference, girsanov, torchsde]
-date: 2020-02-01
+date: 2020-01-01
 status: draft
 summary: "Extends the constant-memory adjoint trick of neural ODEs to SDEs by running a Stratonovich SDE backwards in time, rebuilds the forward noise from a single seed with a virtual Brownian tree, and uses the result to train latent SDEs by variational inference."
 ---

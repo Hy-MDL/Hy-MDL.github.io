@@ -9,7 +9,7 @@ paper:
 series: "ee-timeseries"
 order: 5
 tags: [battery, cycle-life, foundation-model, mixture-of-experts, transfer-learning, transformer, domain-knowledge]
-date: 2026-01-01
+date: 2025-12-01
 status: draft
 summary: "A transformer whose feed-forward blocks are mixture-of-experts layers routed by battery metadata, pretrained on 13 lithium-ion datasets and then fine-tuned per scenario, beats the strongest prior cycle-life predictors on all 15 target datasets."
 ---

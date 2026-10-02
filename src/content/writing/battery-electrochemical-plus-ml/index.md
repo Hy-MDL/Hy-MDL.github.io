@@ -9,7 +9,7 @@ paper:
 series: "ee-timeseries"
 order: 7
 tags: [battery, hybrid-modeling, physics-informed, single-particle-model, residual-learning, grey-box, voltage-prediction]
-date: 2021-04-01
+date: 2021-03-01
 status: draft
 summary: "Pair a cheap single-particle battery model with a small feedforward network, and feed the network the physical model's internal state (bulk and surface state of charge) rather than only its output; voltage error at up to 10 C falls by roughly an order of magnitude."
 ---

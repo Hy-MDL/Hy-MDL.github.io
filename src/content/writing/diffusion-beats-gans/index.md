@@ -4,7 +4,7 @@ paper: { title: "Diffusion Models Beat GANs on Image Synthesis", authors: "Prafu
 series: "score-to-flow"
 order: 7
 tags: [diffusion, classifier-guidance, conditional-generation, u-net, adagn, imagenet, fidelity-diversity, adm]
-date: 2021-06-01
+date: 2021-05-01
 status: draft
 summary: "Two separable claims — that the diffusion U-Net was simply under-tuned, and that diffusion had no analogue of GAN truncation — each tested and each fixed: an architecture ablation (ADM) and a classifier-gradient mean shift whose scale s is a temperature on the conditional, together giving better ImageNet FID than BigGAN-deep at higher recall."
 ---
@@ -229,7 +229,7 @@ Attention configuration (Table 2, baseline 1 head = 14.08): 2 heads −0.50, 4 h
 - [LDM](/blog/latent-diffusion/) keeps guidance but moves the whole chain into an autoencoder latent space, attacking the sampling cost the authors flag; the ADM U-Net with AdaGN is its starting architecture.
 - [DiT](/blog/dit/) replaces that U-Net with a transformer and keeps AdaGN as adaLN, showing the conditioning mechanism outlived the backbone.
 - [EDM](/blog/edm/) re-derives the sampler and schedule from scratch and makes several of ADM's tuned choices unnecessary.
-- The guidance-as-gradient idea generalises to any differentiable function of $x_t$; the authors already anticipate steering with a noised CLIP model, which is the recipe later text-to-image systems adopt (from general knowledge, unverified).
+- The guidance-as-gradient idea generalises to any differentiable function of $x_t$; the authors already anticipate steering with a noised CLIP model.
 
 **Open problems**
 

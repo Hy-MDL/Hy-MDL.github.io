@@ -4,7 +4,7 @@ paper: { title: "Scaling Rectified Flow Transformers for High-Resolution Image S
 series: "score-to-flow"
 order: 17
 tags: [rectified-flow, flow-matching, timestep-sampling, logit-normal, log-snr-weighting, mm-dit, text-to-image, scaling]
-date: 2024-04-01
+date: 2024-03-01
 status: draft
 summary: "Rectified flow becomes a production text-to-image recipe only once the training timestep is drawn from a logit-normal rather than a uniform law — a reweighting over log-SNR — with a two-stream transformer and a resolution-dependent shift doing the rest."
 ---

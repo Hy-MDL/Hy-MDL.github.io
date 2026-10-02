@@ -9,7 +9,7 @@ paper:
 series: "industrial-vision"
 order: 1
 tags: [anomaly-detection, anomaly-localization, mvtec-ad, mahalanobis-distance, pretrained-features, one-class-learning]
-date: 2020-12-01
+date: 2020-11-01
 status: draft
 summary: "Fit one multivariate Gaussian per patch position on frozen multi-layer CNN features and score test patches by Mahalanobis distance, which gives strong defect localization with no network training and constant-cost inference."
 ---
@@ -56,7 +56,7 @@ The paper's own overview is [Fig. 2 in the paper](https://arxiv.org/pdf/2011.087
 
 The image is divided into a $W \times H$ grid, where $W \times H$ is the resolution of the largest feature map used. Deeper, coarser maps are aligned to that grid and concatenated, giving one vector $x_{ij}$ per position. For ResNet-type backbones the first three layer groups are used; for EfficientNet-B5, layers 7, 20 and 26. With ResNet18 the concatenated vector has 448 dimensions.
 
-These vectors are redundant, so the authors shrink them, with an odd finding: <mark>keeping a random subset of dimensions beats PCA at the same size</mark>. With 100 dimensions, random selection gives (96.7, 90.5) in (AUROC, PRO) across all classes against (93.5, 85.7) for PCA, and only 0.4 points of AUROC below the full 448 dimensions. Their explanation is that PCA keeps the highest-variance directions of normal data, which need not be where defects show up.
+These vectors are redundant, so the authors shrink them, with an odd finding: <mark>keeping a random subset of dimensions beats PCA at the same size</mark>. With 100 dimensions, random selection gives (96.7, 90.5) in (AUROC, PRO) across all classes against (93.5, 85.7) for PCA (the paper's Table II; its Table III reports PRO 90.1 for the same model), and only 0.4 points of AUROC below the full 448 dimensions. Their explanation is that PCA keeps the highest-variance directions of normal data, which need not be where defects show up.
 
 ### 3.2 Learning normality
 

@@ -9,7 +9,7 @@ paper:
 series: "ee-timeseries"
 order: 6
 tags: [battery, degradation-diagnostics, physics-informed-ml, pinn, co-kriging, delta-learning, data-augmentation, extrapolation]
-date: 2024-05-01
+date: 2024-04-01
 status: draft
 summary: "Four ways of injecting a half-cell physics model into small ML models are compared on the task of predicting late-life electrode degradation from about seven months of test data."
 ---

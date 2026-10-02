@@ -4,7 +4,7 @@ paper: { title: "SiT: Exploring Flow and Diffusion-based Generative Models with 
 series: "score-to-flow"
 order: 16
 tags: [stochastic-interpolants, flow-matching, diffusion, transformers, sde-sampling, diffusion-coefficient, kl-bound, ablation, imagenet]
-date: 2024-02-01
+date: 2024-01-01
 status: draft
 summary: "A controlled ablation that freezes the DiT backbone and walks from DDPM to a velocity-trained linear interpolant with a post-hoc tunable SDE sampler, attributing every FID point to a named cause."
 ---

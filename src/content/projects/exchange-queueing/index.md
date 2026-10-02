@@ -2,16 +2,16 @@
 title: "Exchange Queueing — auditing a course study of crypto exchange traffic, then re-running its statistics"
 slug: exchange-queueing
 category: "Stochastic Modeling"
-summary: "Part A recomputes fifteen numeric claims of a 2025 team report on BTC/USDT exchange traffic from the repository's own result files: eleven reproduce, four do not, and the two headline diagnostics exist only as literals in figure scripts. Part B re-runs the statistics on 1.30 GB of the original tick data and finds that the over-dispersion survives regime conditioning, that the adaptive binning rule does not transfer out of sample, and that meeting the report's own 100 ms SLA on the real arrival stream needs roughly 48 servers where Erlang-C says one. Part C makes the arrival process a Bayesian object: a discount-filtered posterior over rate and dispersion, capacity sized by a 95 % chance constraint on the simulated queue. A gamma-mixed Cox model, however finely binned, leaves the 95 % predictive interval covering 3–57 % of real blocks; only a log-normal burst law at a nested scale reaches nominal coverage, and it then spends about four times the after-the-fact minimum. Part D puts the uncertainty this process actually has into the model: trades that share a millisecond form one batch, batch sizes get a Dirichlet posterior that forgets block by block, and a surrogate trained on the queue simulator re-solves the chance constraint every minute in 0.02 s. Capacity falls to 1.00–1.99 times the oracle, but the SLA holds on 63–95 % of blocks against about 97 % promised. Adding 10 ms clustering of the batch epochs (D2) raises that by up to 8 points, and a look-ahead diagnostic places the rest in large batches arriving close together in time, which an i.i.d. size law cannot carry."
+summary: "Part A recomputes fifteen numeric claims of a 2025 team report on BTC/USDT exchange traffic from the repository's own result files: eleven reproduce, four do not, and the two headline diagnostics exist only as literals in figure scripts. Part B re-runs the statistics on 1.30 GB of the original tick data and finds that the over-dispersion survives regime conditioning, that the adaptive binning rule does not transfer out of sample, and that meeting the report's own 100 ms SLA on the real arrival stream needs roughly 48 servers where Erlang-C says one. Part C makes the arrival process a Bayesian object: a discount-filtered posterior over rate and dispersion, capacity sized by a 95 % chance constraint on the simulated queue. A gamma-mixed Cox model, however finely binned, leaves the 95 % predictive interval covering 3–53 % of real blocks; only a log-normal burst law at a nested scale reaches nominal coverage, and it then spends about four times the after-the-fact minimum. Part D puts the uncertainty this process actually has into the model: trades that share a millisecond form one batch, batch sizes get a Dirichlet posterior that forgets block by block, and a surrogate trained on the queue simulator re-solves the chance constraint every minute in 0.02 s. Capacity falls to 1.00–1.99 times the oracle, but the SLA holds on 63–95 % of blocks against about 97 % promised. Adding 10 ms clustering of the batch epochs (D2) raises that by up to 9 points, and a look-ahead diagnostic places the rest in large batches arriving close together in time, which an i.i.d. size law cannot carry."
 period: "team course project (2025) · reanalysis 2026.09 – 10"
-status: "Team course project (2025) · reanalysis 2026.09"
+status: "Team course project (2025) · reanalysis 2026.09 – 10"
 stack: [Python, NumPy, SciPy, PyTorch, Matplotlib, pandas, multiprocessing, pytest, ffmpeg]
 tags: [queueing-theory, erlang-c, point-processes, poisson-testing, time-rescaling, volume-clock, high-frequency-data, batch-arrivals, surrogate-model, reproducibility]
 metrics:
   - { label: "Report claims recomputed", value: "11 of 15 reproduce", note: "from the course project's own results/*.csv; CV 2.72 and VMR 111 are literals in figure scripts, the CSVs give 2.016 and 93.18" }
   - { label: "Servers for the 100 ms SLA on real arrivals", value: "c ≈ 48 vs Erlang-C's 1", note: "2024-10-01, P(W_q>100 ms) ≤ 0.01, trace-driven G/G/c on 2.1 M real timestamps" }
   - { label: "Adaptive rule K*(λ), within-day exponent", value: "+0.62 (95 % CI 0.35–0.90)", note: "47 half-hour blocks of 2024-10-01; the report states λ^-1, and −1 is outside the interval" }
-  - { label: "SVB slippage headline as a band", value: "$12.5 k – $13.7 M (1,098×)", note: "144 assumption sets; the report's $7.16 M reproduces as one of them" }
+  - { label: "SVB slippage headline as a band", value: "$12.5 k – $13.7 M (1,098×)", note: "144 assumption sets; the report's $7.11 M reproduces as one of them" }
   - { label: "Coverage of the 95 % predictive interval, Bayesian sizing", value: "7 % → 96 % (at 4.3× the oracle c)", note: "gamma-Cox at 1 s bins vs nested log-normal burst law, 120 one-minute blocks of 2024-10-01; the posterior is honest only once the burst-size tail is heavy enough, and then it over-provisions" }
   - { label: "Batch posterior + surrogate controller (Part D2)", value: "SLA held 84 % at 1.26× the oracle c", note: "all 1,438 one-minute blocks of 2024-10-01, 0.03 s per decision; it promised 97 %, and on the SVB day it holds 72 % against 98 % promised" }
 code: "projects/exchange-queueing"
@@ -24,7 +24,7 @@ thumb: "/projects/exchange-queueing/media/queue_thumb.jpg"
 
 *Course project submitted with Jaemin Kim and Youngjin Son as co-authors (IIE 6103, Yonsei).
 I carried out the original work — data collection, queueing model, simulation, cost analysis,
-figures and write-up — and the audit and reanalysis below are mine, done in September 2026.
+figures and write-up — and the audit and reanalysis below are mine, done in September–October 2026.
 So Part A is a re-examination of my own analysis, not of someone else's.*
 
 The 2025 report **Stochastic Modeling of Cryptocurrency Exchange Traffic** argues that raw
@@ -313,17 +313,15 @@ original calibration day), **2024-10-05** (490,636, 5.68/s — calm Saturday, he
 cannot both fit, so **the FTX, China-crackdown, Terra/Luna and 2024-Q1 claims are checked
 only arithmetically** against the shipped CSVs, never against their trades.
 
-**Compute.** `felabworkstation`, CPU only, 16 workers, `nice -n 10`, seeds fixed;
-`step3_sizing.py` runs 168 trace simulations in 17.5 s at load average 3.50, and every JSON
-records `/proc/loadavg`. Whole pipeline, about 3 minutes. Part C (`step5_bayes_sizing.py`,
-2026-10-02, 64-core server, 16 workers, load average 13.95 at the end): 8 model variants
+**Compute.** The lab server, CPU only, 16 workers, seeds fixed;
+`step3_sizing.py` runs 168 trace simulations in 17.5 s, and the whole pipeline
+takes about 3 minutes. Part C (`step5_bayes_sizing.py`): 8 model variants
 × 4 days × 120 blocks = 3,840 chance-constrained sizings, each 48 posterior draws on a
 16-step ladder, 302 s wall; the filters run over all 1,439 blocks of every day. Part D
-(`step6_batch_surrogate.py`, same server and workers, CPU only, load average 13.91 at the
-end): surrogate training 54 s, of which 42 s is simulating its 9,000 labelled blocks, then
+(`step6_batch_surrogate.py`): surrogate training 54 s, of which 42 s is simulating its 9,000 labelled blocks, then
 36–54 s per day to run D-sur, D-phys and Erlang-C on all 1,438 blocks and D-sim on 120.
 Part D2 (`step7_nested_batch.py`): two surrogates in 93 s and 95 s, eight day × fine-law
-evaluations and four decompositions, 862 s in all, load average 22.52 at the end. The
+evaluations and four decompositions, 862 s in all. The
 host's three RTX 3090s were not used; the MLP is small enough for the CPU.
 
 **Tests.** 85 pytest checks, all passing on the server in 7.8 s, including Erlang-C against hand-worked table values, a
@@ -466,11 +464,11 @@ of an aggregated trade is \$37 on the calibration day and \$205 on SVB, against 
 charged to every record.
 
 Across the 144 combinations the SVB saving runs from **\$12,482 to \$13,709,943**, a factor of
-1,098, median \$383,834, with the report's \$7.16 M one point in that band. By influence:
+1,098, median \$383,834, with the report's \$7.11 M one point in that band. By influence:
 \$2.86 M median with the assumed notional against \$82 k with the measured median; \$824 k
 against the $c=1$ baseline against \$160 k against the smallest stable $c$; \$554 k with every
 move adverse against \$277 k with half. Measured notional, 15 s volatility, half the moves
-adverse, the $\mathbb{E}|Z|$ factor and a feasible baseline give **\$96,896**, 74 times below
+adverse, the $\mathbb{E}|Z|$ factor and a feasible baseline give **\$96,896**, 73 times below
 the headline. The operator side on the same window is **\$0.092**; even at \$96,896 the ratio
 favours provisioning by six orders of magnitude, so the report's *conclusion* survives
 comfortably. The precision of "\$7.1 million" does not.
@@ -737,7 +735,7 @@ batch structure, into the model turned the posterior into something a cheap surr
 control and re-solve every minute. Capacity came down from the 2.2–4.3 times the oracle of Part C's
 calibrated rule to 1.00–1.47 times it on three days and about twice on the COVID day. What did not work is the promise. On the three days with dependent batch sizes the
 controller says 97–98 % and delivers 63–87 %. Sub-second clustering of the epochs, the
-obvious candidate, recovers up to 8 points of that. The rest sits in a quantity the model
+obvious candidate, recovers up to 9 points of that. The rest sits in a quantity the model
 does not yet have: how batch size depends on time and on intensity.
 
 ## 5 Limitations & next steps

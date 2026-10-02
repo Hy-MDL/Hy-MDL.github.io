@@ -9,7 +9,7 @@ paper:
 series: "industrial-vision"
 order: 9
 tags: [lithium-metal-battery, dendrites, x-ray-ct, semantic-segmentation, vision-transformer, u-net, quality-control]
-date: 2023-03-01
+date: 2023-02-01
 status: draft
 summary: "A ViT-style encoder with a convolutional decoder segments lithium dendrites in synchrotron X-ray CT slices of a Li–polymer–Li cell, reaching higher IoU and Dice than U-Net and Y-Net on hand-labelled patches at roughly three times the latency."
 ---

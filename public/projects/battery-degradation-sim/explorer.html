@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cell explorer</title>
+<link rel="icon" href="data:,">
+<meta name="description" content="Pick a cell, a charge rate and an ambient temperature, and watch the simulated cell fade, bend into a knee and reach end of life.">
+<style>
+  :root{
+    --bg:#FFFFFF; --ink:#17191D; --ink2:#4A4E57; --mute:#6B7280; --rule:#E5E7EB; --rule2:#D1D5DB;
+    --teal:#1F6F7A; --ochre:#B7791F; --indigo:#5B6BB5; --green:#2E7D4F; --grey:#6B7280; --ghost:#D1D5DB;
+    --soft:#E3EFF1;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink)}
+  body{font-family:"IBM Plex Sans",-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  main{max-width:900px;margin:0 auto;padding:14px 16px 18px}
+  h1{font-size:16px;font-weight:600;margin:0}
+  h2{font-size:13px;font-weight:600;margin:0;color:var(--ink)}
+  .sub{margin:1px 0 8px;color:var(--mute);font-size:12.5px}
+  .controls{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 10px}
+  fieldset{border:0;margin:0;padding:0;min-width:0}
+  legend{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);padding:0;margin-bottom:3px}
+  .seg{display:flex;flex-wrap:wrap;border:1px solid var(--rule2);border-radius:8px;overflow:hidden;width:max-content;max-width:100%}
+  .seg label{position:relative;cursor:pointer}
+  .seg label + label{border-left:1px solid var(--rule2)}
+  .seg input{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+  .seg span{display:block;padding:5px 11px;font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .seg input:checked + span{background:var(--teal);color:#fff}
+  .seg input:focus-visible + span{outline:2px solid var(--ochre);outline-offset:-3px}
+  .seg label:hover input:not(:checked) + span{background:#F3F4F6}
+  .verdict{margin:4px 0 2px;font-size:15px;line-height:1.45}
+  .verdict b{font-weight:600}
+  .detail{margin:0 0 10px;color:var(--ink2);font-size:13px}
+  .whatif{display:inline-block;font-size:11px;padding:1px 7px;border-radius:999px;background:#F6EBD6;color:#7A4F12;margin-left:6px;vertical-align:1px}
+  section{border-top:1px solid var(--rule);padding-top:8px;margin-top:8px}
+  .ph{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:2px 12px}
+  .readout{font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums}
+  .readout b{color:var(--ink);font-weight:600}
+  .chart{width:100%;touch-action:pan-y}
+  .chart svg{display:block;overflow:visible}
+  .scrub{display:flex;align-items:center;gap:10px;margin:4px 0 0}
+  .scrub input[type=range]{flex:1;accent-color:var(--teal);min-width:0}
+  .scrub output{font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums;min-width:86px;text-align:right}
+  button{font:inherit;font-size:13px;border:1px solid var(--rule2);background:#fff;color:var(--ink);border-radius:7px;padding:4px 12px;cursor:pointer;min-width:66px}
+  button:hover{background:#F3F4F6}
+  :focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+  .legend{display:flex;flex-wrap:wrap;gap:2px 12px;margin:4px 0 2px;font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+  .note{margin:4px 0 0;color:var(--mute);font-size:12px;line-height:1.45}
+  .src{margin-top:10px;color:var(--mute);font-size:11.5px}
+  .err{color:#9B2C2C}
+  svg text{font-family:inherit}
+  svg text.halo{paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+</head>
+<body>
+<main>
+  <h1>Cell explorer</h1>
+  <p class="sub">Every curve is a simulated run of the physics model; nothing is fitted or interpolated between protocols.</p>
+
+  <div class="controls">
+    <fieldset>
+      <legend>Cell</legend>
+      <div class="seg" id="g-cell">
+        <label><input type="radio" name="cell" value="published"><span>published</span></label>
+        <label><input type="radio" name="cell" value="fragile" checked><span>what-if: LAM-n ×30</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Charge rate</legend>
+      <div class="seg" id="g-c">
+        <label><input type="radio" name="c" value="0.5"><span>0.5C</span></label>
+        <label><input type="radio" name="c" value="1"><span>1C</span></label>
+        <label><input type="radio" name="c" value="2"><span>2C</span></label>
+        <label><input type="radio" name="c" value="3" checked><span>3C</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Ambient temperature</legend>
+      <div class="seg" id="g-T">
+        <label><input type="radio" name="T" value="5" checked><span>5 °C</span></label>
+        <label><input type="radio" name="T" value="15"><span>15 °C</span></label>
+        <label><input type="radio" name="T" value="25"><span>25 °C</span></label>
+        <label><input type="radio" name="T" value="45"><span>45 °C</span></label>
+      </div>
+    </fieldset>
+  </div>
+
+  <p class="verdict" id="verdict" aria-live="polite">Loading the simulation results…</p>
+  <p class="detail" id="detail"></p>
+
+  <section aria-labelledby="h-cap">
+    <div class="ph"><h2 id="h-cap">Capacity vs cycle</h2><span class="readout" id="readout"></span></div>
+    <div class="chart" id="cap"></div>
+    <div class="scrub">
+      <button type="button" id="play" aria-pressed="false">Play</button>
+      <input type="range" id="cyc" min="1" max="2" step="1" value="2" aria-label="Cycle shown">
+      <output id="cycOut" for="cyc"></output>
+    </div>
+    <p class="note">1C discharge capacity, % of cycle 1. Grey: the other 15 protocols of this cell. Drag the slider or click the chart.</p>
+  </section>
+
+  <section aria-labelledby="h-bars">
+    <div class="ph"><h2 id="h-bars">What the capacity was lost to</h2><span class="readout" id="barsAt"></span></div>
+    <div class="legend" id="legend"></div>
+    <div class="chart" id="bars"></div>
+    <p class="note">Lithium consumed by side reactions and electrode capacity lost (LAM) are separate inventories. Lithium held in the disconnected material is lost as well and is not in the top bar, so the bars do not add up to the measured loss.</p>
+  </section>
+
+  <section aria-labelledby="h-tr">
+    <div class="ph"><h2 id="h-tr">Negative-electrode potential during charge</h2><span class="readout" id="trAt"></span></div>
+    <div class="chart" id="trace"></div>
+    <p class="note">At the separator. Shaded, below 0 V: lithium plating is favoured. Saved at a few cycles per run; the later curve is the last one at or before the slider.</p>
+  </section>
+
+  <p class="src" id="src">Data: <code>media/explorer.json</code>, a compact copy of the project's <code>results/grid*.json</code> and <code>traces*.json</code>.</p>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  var NS = 'http://www.w3.org/2000/svg';
+  var C = { teal: '#1F6F7A', ochre: '#B7791F', indigo: '#5B6BB5', green: '#2E7D4F', grey: '#6B7280', ghost: '#D1D5DB',
+            ink: '#17191D', ink2: '#4A4E57', mute: '#6B7280', grid: '#E5E7EB' };
+  var LOSS = [
+    { k: 'sei', name: 'SEI', col: C.teal, row: 0 },
+    { k: 'sei_cracks', name: 'SEI on cracks', col: C.indigo, row: 0 },
+    { k: 'plating', name: 'plating (irreversible)', col: C.ochre, row: 0 },
+    { k: 'lam_ne', name: 'LAM, negative', col: C.green, row: 1 },
+    { k: 'lam_pe', name: 'LAM, positive', col: C.grey, row: 1 }
+  ];
+  var TERM = { sei: 'SEI', sei_cracks: 'SEI on cracks', plating: 'irreversible plating', lam_ne: 'loss of active material in the negative electrode', lam_pe: 'loss of active material in the positive electrode' };
+  var STATUS = {
+    reached_stop_capacity: 'stopped at 65 %',
+    wall_budget: 'stopped by the wall-clock budget',
+    reached_cycle_cap: 'stopped at the cycle cap'
+  };
+
+  var SHORT = { reached_stop_capacity: 'stopped at 65 %', wall_budget: 'time budget', reached_cycle_cap: 'cycle cap' };
+  var D = null, state = { cell: 'fragile', c: 3, T: 5, s: null }, playing = false, raf = 0;
+  var $ = function (id) { return document.getElementById(id); };
+  var fmt = function (v) { return Math.round(v).toLocaleString('en-US'); };
+  var mv = function (v) { return (v < 0 ? '−' : '') + Math.abs(Math.round(v)) + ' mV'; };
+
+  function el(tag, attrs, parent, text) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (text != null) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function svg(container, w, h, label) {
+    container.innerHTML = '';
+    return el('svg', { width: w, height: h, viewBox: '0 0 ' + w + ' ' + h, role: 'img', 'aria-label': label }, container);
+  }
+  function ticks(lo, hi, n) {
+    var raw = (hi - lo) / n, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p;
+    var step = (m < 1.5 ? 1 : m < 3 ? 2 : m < 7 ? 5 : 10) * p, out = [];
+    for (var v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) out.push(+v.toFixed(6));
+    return out;
+  }
+  function interp(xs, ys, x) {
+    if (x <= xs[0]) return ys[0];
+    var n = xs.length;
+    if (x >= xs[n - 1]) return ys[n - 1];
+    var lo = 0, hi = n - 1;
+    while (hi - lo > 1) { var mid = (lo + hi) >> 1; if (xs[mid] <= x) lo = mid; else hi = mid; }
+    var t = (x - xs[lo]) / (xs[hi] - xs[lo]);
+    return ys[lo] + t * (ys[hi] - ys[lo]);
+  }
+  function lastAtOrBefore(xs, x) {
+    var i = 0;
+    for (var j = 0; j < xs.length; j++) if (xs[j] <= x) i = j;
+    return i;
+  }
+  function axes(g, x, y, W, H, m, xt, yt, xl, yl, yfmt) {
+    yt.forEach(function (v) {
+      el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: C.grid, 'stroke-width': 1 }, g);
+      el('text', { x: m.l - 6, y: y(v) + 3.5, 'text-anchor': 'end', 'font-size': 11, fill: C.mute }, g, yfmt ? yfmt(v) : v);
+    });
+    xt.forEach(function (v) {
+      el('line', { x1: x(v), x2: x(v), y1: m.t, y2: H - m.b, stroke: C.grid, 'stroke-width': 1 }, g);
+      el('text', { x: x(v), y: H - m.b + 14, 'text-anchor': 'middle', 'font-size': 11, fill: C.mute }, g, v.toLocaleString('en-US'));
+    });
+    el('line', { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, stroke: C.ink2, 'stroke-width': 1 }, g);
+    el('line', { x1: m.l, x2: m.l, y1: m.t, y2: H - m.b, stroke: C.ink2, 'stroke-width': 1 }, g);
+    if (xl) el('text', { x: (m.l + W - m.r) / 2, y: H - 3, 'text-anchor': 'middle', 'font-size': 11.5, fill: C.ink2 }, g, xl);
+    if (yl) el('text', { x: 11, y: (m.t + H - m.b) / 2, 'text-anchor': 'middle', 'font-size': 11.5, fill: C.ink2, transform: 'rotate(-90 11 ' + (m.t + H - m.b) / 2 + ')' }, g, yl);
+  }
+  function pts(xs, ys, x, y, upto) {
+    var s = [];
+    for (var i = 0; i < xs.length; i++) {
+      if (upto != null && xs[i] > upto) break;
+      s.push(x(xs[i]).toFixed(1) + ',' + y(ys[i]).toFixed(1));
+    }
+    return s.join(' ');
+  }
+
+  function cell() { return D.cells[state.cell]; }
+  function run() {
+    var rs = cell().runs;
+    for (var i = 0; i < rs.length; i++) if (rs[i].c === state.c && rs[i].T === state.T) return rs[i];
+    return null;
+  }
+
+  // ---------- verdict ----------
+  function verdict(r) {
+    var v = $('verdict'), d = $('detail');
+    var tag = state.cell === 'fragile' ? '<span class="whatif">what-if cell, not the LG M50</span>' : '';
+    var name = r.c + 'C charge, ' + r.T + ' °C ambient';
+    if (r.eol != null && r.knee != null) {
+      v.innerHTML = name + ': <b>lasts ' + fmt(r.eol) + ' cycles</b> to 80 %, and <b>collapses at cycle ' + fmt(r.knee) +
+        '</b> (knee: fade rate after the break ' + r.knee_ratio.toFixed(2) + '× the rate before).' + tag;
+      d.innerHTML = 'Why there: the negative electrode is down to ' + r.q_neg_at_knee_Ah.toFixed(2) + ' Ah (from ' + r.q_neg0_Ah.toFixed(2) +
+        ' Ah at cycle 1) against ' + r.q_dis_at_knee_Ah.toFixed(2) + ' Ah discharged, so its spare capacity is gone; ' + TERM[r.accelerating_at_knee] +
+        ' is the term that speeds up most across the knee.';
+    } else {
+      var bound = r.status === 'reached_stop_capacity' ? '' : ' (' + STATUS[r.status] + ', so its life is only a lower bound)';
+      v.innerHTML = name + ': <b>does not reach 80 %</b> in ' + fmt(r.n_cycles) + ' simulated cycles' + bound + ', with ' +
+        r.q_final_pct.toFixed(1) + ' % left. <b>No knee</b>: the fade slows down (post/pre fade-rate ratio ' + r.knee_ratio.toFixed(2) + ').' + tag;
+      d.innerHTML = 'Lowest anode potential during charge: ' + mv(r.phi_min_first_mV) + ' at cycle 1, ' + mv(r.phi_min_last_mV) +
+        ' at cycle ' + fmt(r.n_cycles) + '. Largest lithium loss at the end: ' + TERM[r.largest_li_term] + '.';
+    }
+  }
+
+  // ---------- capacity chart ----------
+  function drawCap(r, s) {
+    var box = $('cap'), W = Math.max(300, box.clientWidth), H = W < 520 ? 210 : 240;
+    var m = { l: 42, r: 14, t: 10, b: 34 };
+    var xmax = state.cell === 'fragile' ? 2500 : 5000;
+    var x = function (v) { return m.l + (v / xmax) * (W - m.l - m.r); };
+    var y = function (v) { return m.t + (1 - (v - 60) / 40) * (H - m.t - m.b); };
+    var g = svg(box, W, H, 'Capacity versus cycle for the selected protocol');
+    axes(g, x, y, W, H, m, ticks(0, xmax, W < 520 ? 4 : 5), [60, 70, 80, 90, 100], 'cycle', 'capacity (%)');
+    var clip = el('clipPath', { id: 'capclip' }, el('defs', {}, g));
+    el('rect', { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b }, clip);
+    var p = el('g', { 'clip-path': 'url(#capclip)' }, g);
+    cell().runs.forEach(function (o) {
+      if (o === r) return;
+      el('polyline', { points: pts(o.cyc, o.q_pct, x, y), fill: 'none', stroke: C.ghost, 'stroke-width': 1 }, p);
+    });
+    el('line', { x1: m.l, x2: W - m.r, y1: y(80), y2: y(80), stroke: C.grey, 'stroke-width': 1, 'stroke-dasharray': '4 3' }, g);
+    el('text', { x: W - m.r - 2, y: y(80) - 4, 'text-anchor': 'end', 'font-size': 10.5, fill: C.mute, 'class': 'halo' }, g, '80 % = end of life');
+    el('polyline', { points: pts(r.cyc, r.q_pct, x, y), fill: 'none', stroke: C.teal, 'stroke-opacity': 0.22, 'stroke-width': 1.5 }, p);
+    el('polyline', { points: pts(r.cyc, r.q_pct, x, y, s), fill: 'none', stroke: C.teal, 'stroke-width': 2, 'stroke-linejoin': 'round' }, p);
+
+    if (r.eol != null && s >= r.eol) {
+      el('line', { x1: x(r.eol), x2: x(r.eol), y1: y(80) - 7, y2: y(80) + 7, stroke: C.ochre, 'stroke-width': 2.5 }, g);
+      el('text', { x: x(r.eol) + 7, y: y(80) + 16, 'font-size': 11, fill: C.ochre, 'font-weight': 600, 'class': 'halo' }, g, 'EOL ' + fmt(r.eol));
+    }
+    if (r.knee != null && s >= r.knee) {
+      var qk = interp(r.cyc, r.q_pct, r.knee);
+      el('circle', { cx: x(r.knee), cy: y(qk), r: 5.5, fill: '#fff', stroke: C.ink, 'stroke-width': 1.6 }, g);
+      el('text', { x: x(r.knee) - 8, y: y(qk) - 9, 'text-anchor': 'end', 'font-size': 11, fill: C.ink, 'font-weight': 600, 'class': 'halo' }, g, 'knee ' + fmt(r.knee));
+    }
+    var qs = interp(r.cyc, r.q_pct, s);
+    el('line', { x1: x(s), x2: x(s), y1: m.t, y2: H - m.b, stroke: C.ink, 'stroke-opacity': 0.35, 'stroke-width': 1 }, g);
+    el('circle', { cx: x(s), cy: y(qs), r: 3.5, fill: C.teal }, g);
+    if (s >= r.n_cycles) {
+      var lx = x(r.n_cycles), anchorEnd = lx > W - 160, below = qs > 70;
+      var ty = below ? y(qs) + 18 : y(qs) + 4;
+      if (Math.abs(ty - (y(80) - 4)) < 12) ty = y(qs) - 9;   // keep clear of the "80 % = end of life" label
+      el('text', { x: anchorEnd ? lx - 6 : lx + 7, y: ty, 'text-anchor': anchorEnd ? 'end' : 'start', 'font-size': 10.5, fill: C.ink2, 'class': 'halo' }, g,
+        'run ends at ' + fmt(r.n_cycles) + ': ' + SHORT[r.status]);
+    }
+    capGeom = { l: m.l, w: W - m.l - m.r, xmax: xmax, n: r.n_cycles };
+
+    var life = r.life, li = lastAtOrBefore(life.cycle, s);
+    $('readout').innerHTML = 'cycle <b>' + fmt(s) + '</b> · <b>' + qs.toFixed(1) + ' %</b> left · lowest anode potential ' +
+      mv(life.phi_min_mV[li]) + ' · peak cell ' + life.T_max_C[li].toFixed(1) + ' °C';
+  }
+
+  // click / drag on the capacity chart moves the cycle (listeners on the container, which outlives each redraw)
+  var capGeom = null;
+  function capFromEvent(ev) {
+    if (!capGeom) return;
+    var rect = $('cap').getBoundingClientRect();
+    var c = ((ev.clientX - rect.left) - capGeom.l) / capGeom.w * capGeom.xmax;
+    setCycle(Math.round(Math.max(1, Math.min(capGeom.n, c))));
+  }
+  $('cap').addEventListener('pointerdown', function (ev) { stop(); capFromEvent(ev); try { $('cap').setPointerCapture(ev.pointerId); } catch (e) {} });
+  $('cap').addEventListener('pointermove', function (ev) { if (ev.buttons) capFromEvent(ev); });
+
+  // ---------- loss bars ----------
+  var barMax = {};
+  function bdAt(r, s) {
+    var o = {};
+    LOSS.forEach(function (L) { o[L.k] = interp(r.bd.cycle, r.bd[L.k], s); });
+    o.measured = r.q0_Ah * (1 - interp(r.cyc, r.q_pct, s) / 100);
+    return o;
+  }
+  function drawBars(r, s) {
+    var b = bdAt(r, s);
+    if (barMax[state.cell] == null) {
+      var mx = 0;
+      cell().runs.forEach(function (o) {
+        var e = bdAt(o, o.n_cycles);
+        mx = Math.max(mx, e.sei + e.sei_cracks + e.plating, e.lam_ne + e.lam_pe, e.measured);
+      });
+      barMax[state.cell] = mx;
+    }
+    var xmax = barMax[state.cell];
+    $('legend').innerHTML = LOSS.map(function (L) {
+      return '<span><i style="background:' + L.col + '"></i>' + L.name + ' ' + b[L.k].toFixed(3) + '</span>';
+    }).join('') + '<span><i style="background:#fff;border:1.5px solid ' + C.ink + '"></i>measured loss ' + b.measured.toFixed(3) + '</span>';
+    $('barsAt').textContent = 'A·h, at cycle ' + fmt(s);
+
+    var box = $('bars'), W = Math.max(300, box.clientWidth), narrow = W < 560;
+    var m = { l: narrow ? 8 : 200, r: 46, t: 6, b: 30 }, bh = 16, lab = narrow ? 15 : 0, rowH = lab + bh + 10, H = m.t + 3 * rowH + m.b;
+    var x = function (v) { return m.l + (v / xmax) * (W - m.l - m.r); };
+    var g = svg(box, W, H, 'Capacity lost to each mechanism at the selected cycle, in ampere-hours');
+    var rows = [
+      { label: 'lithium lost to side reactions', parts: LOSS.filter(function (L) { return L.row === 0; }) },
+      { label: 'electrode capacity lost', parts: LOSS.filter(function (L) { return L.row === 1; }) },
+      { label: 'measured capacity loss', parts: null }
+    ];
+    ticks(0, xmax, narrow ? 4 : 6).forEach(function (v) {
+      el('line', { x1: x(v), x2: x(v), y1: m.t, y2: H - m.b, stroke: C.grid }, g);
+      el('text', { x: x(v), y: H - m.b + 14, 'text-anchor': 'middle', 'font-size': 11, fill: C.mute }, g, v);
+    });
+    el('text', { x: (m.l + W - m.r) / 2, y: H - 3, 'text-anchor': 'middle', 'font-size': 11.5, fill: C.ink2 }, g, 'A·h');
+    rows.forEach(function (row, i) {
+      var top = m.t + i * rowH + lab + 5;
+      el('text', narrow ? { x: m.l, y: top - 4, 'font-size': 11.5, fill: C.ink2 } : { x: m.l - 8, y: top + bh / 2 + 4, 'text-anchor': 'end', 'font-size': 11.5, fill: C.ink2 }, g, row.label);
+      var x0 = 0, total;
+      if (row.parts) {
+        row.parts.forEach(function (L) {
+          var v = b[L.k];
+          el('rect', { x: x(x0), y: top, width: Math.max(0, x(x0 + v) - x(x0)), height: bh, fill: L.col }, g);
+          x0 += v;
+        });
+        total = x0;
+      } else {
+        total = b.measured;
+        el('rect', { x: x(0), y: top + 0.75, width: Math.max(0, x(total) - x(0)), height: bh - 1.5, fill: '#fff', stroke: C.ink, 'stroke-width': 1.5 }, g);
+      }
+      el('text', { x: x(total) + 5, y: top + bh / 2 + 4, 'font-size': 11, fill: C.ink, 'font-variant-numeric': 'tabular-nums' }, g, total.toFixed(2));
+    });
+    if (!narrow) el('line', { x1: m.l, x2: m.l, y1: m.t, y2: H - m.b, stroke: C.ink2 }, g);
+  }
+
+  // ---------- charge traces ----------
+  function drawTrace(r, s) {
+    var tr = r.traces, early = tr[0], idx = lastAtOrBefore(tr.map(function (t) { return t.cycle; }), s);
+    var late = idx > 0 ? tr[idx] : null;
+    var box = $('trace'), W = Math.max(300, box.clientWidth), H = W < 520 ? 190 : 200;
+    var m = { l: 46, r: 14, t: 10, b: 34 }, ylo = -400, yhi = 250;
+    var tmax = Math.max(early.t_min[early.t_min.length - 1], late ? late.t_min[late.t_min.length - 1] : 0);
+    var x = function (v) { return m.l + (v / tmax) * (W - m.l - m.r); };
+    var y = function (v) { return m.t + (1 - (v - ylo) / (yhi - ylo)) * (H - m.t - m.b); };
+    var g = svg(box, W, H, 'Negative-electrode potential at the separator during charge, cycle 1 and a later cycle');
+    el('rect', { x: m.l, y: y(0), width: W - m.l - m.r, height: y(ylo) - y(0), fill: C.ochre, 'fill-opacity': 0.06 }, g);
+    axes(g, x, y, W, H, m, ticks(0, tmax, W < 520 ? 4 : 6), [-400, -300, -200, -100, 0, 100, 200], 'time from start of charge (min)', 'mV vs Li/Li⁺');
+    el('line', { x1: m.l, x2: W - m.r, y1: y(0), y2: y(0), stroke: C.ink, 'stroke-width': 1.2 }, g);
+    var clip = el('clipPath', { id: 'trclip' }, el('defs', {}, g));
+    el('rect', { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b }, clip);
+    var p = el('g', { 'clip-path': 'url(#trclip)' }, g);
+    var lines = [{ t: early, col: C.teal }];
+    if (late) lines.push({ t: late, col: C.ochre });
+    var used = [];
+    lines.forEach(function (L) {
+      el('polyline', { points: pts(L.t.t_min, L.t.phi_mV, x, y), fill: 'none', stroke: L.col, 'stroke-width': 1.8, 'stroke-linejoin': 'round' }, p);
+      var mi = 0;
+      L.t.phi_mV.forEach(function (v, i) { if (v < L.t.phi_mV[mi]) mi = i; });
+      var mxp = x(L.t.t_min[mi]), myp = y(L.t.phi_mV[mi]);
+      el('circle', { cx: mxp, cy: myp, r: 3, fill: L.col }, g);
+      var ly = Math.min(H - m.b - 6, myp + 15);
+      used.forEach(function (u) { if (Math.abs(u - ly) < 13) ly = u + 14; });
+      used.push(ly);
+      var right = mxp > W - m.r - 175, txt = 'cycle ' + fmt(L.t.cycle) + ': lowest ' + mv(L.t.phi_mV[mi]), tw = txt.length * 6.3;
+      var tx = right ? Math.max(mxp - 7, m.l + 4 + tw) : Math.min(mxp + 7, W - m.r - tw);   // keep the label inside the plot
+      el('text', { x: tx, y: ly, 'text-anchor': right ? 'end' : 'start', 'font-size': 11, fill: L.col, 'font-weight': 600, 'class': 'halo' }, g, txt);
+    });
+    $('trAt').textContent = late ? 'cycle 1 vs cycle ' + fmt(late.cycle) : 'cycle 1 (move the slider for a later cycle)';
+  }
+
+  // ---------- state ----------
+  function render() {
+    var r = run(); if (!r) return;
+    var s = Math.max(1, Math.min(r.n_cycles, state.s == null ? r.n_cycles : state.s));
+    var rng = $('cyc');
+    rng.max = r.n_cycles; rng.value = s;
+    rng.setAttribute('aria-valuetext', 'cycle ' + fmt(s) + ' of ' + fmt(r.n_cycles));
+    $('cycOut').textContent = fmt(s) + ' / ' + fmt(r.n_cycles);
+    drawCap(r, s); drawBars(r, s); drawTrace(r, s);
+  }
+  function setCycle(s) { state.s = s; render(); }
+  function select() {
+    stop();
+    state.cell = document.querySelector('input[name=cell]:checked').value;
+    state.c = +document.querySelector('input[name=c]:checked').value;
+    state.T = +document.querySelector('input[name=T]:checked').value;
+    state.s = null;
+    verdict(run());
+    render();
+  }
+  function stop() {
+    playing = false; cancelAnimationFrame(raf);
+    var b = $('play'); b.textContent = 'Play'; b.setAttribute('aria-pressed', 'false');
+  }
+  function play() {
+    var r = run(), n = r.n_cycles, cur = state.s == null ? n : state.s;
+    if (cur >= n) cur = 1;
+    var dur = 7000, t0 = performance.now() - (cur - 1) / (n - 1) * dur;
+    playing = true;
+    var b = $('play'); b.textContent = 'Pause'; b.setAttribute('aria-pressed', 'true');
+    (function step(now) {
+      if (!playing) return;
+      var f = Math.min(1, (now - t0) / dur);
+      setCycle(Math.max(1, Math.round(1 + f * (n - 1))));
+      if (f < 1) raf = requestAnimationFrame(step); else stop();
+    })(performance.now());
+  }
+
+  document.querySelectorAll('input[type=radio]').forEach(function (i) { i.addEventListener('change', select); });
+  $('cyc').addEventListener('input', function (e) { stop(); setCycle(+e.target.value); });
+  $('play').addEventListener('click', function () { playing ? stop() : play(); });
+  var lastW = 0;
+  window.addEventListener('resize', function () {
+    if (!D) return;
+    var w = document.querySelector('main').clientWidth;
+    if (w !== lastW) { lastW = w; render(); }
+  });
+
+  fetch('./media/explorer.json').then(function (res) {
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return res.json();
+  }).then(function (json) {
+    D = json;
+    var pk = D.hardware_of_runs.packages;
+    $('src').innerHTML = 'PyBaMM ' + pk.pybamm + ' DFN, O’Kane 2022 degradation, LG M50 parameters (numpy ' + pk.numpy + ', casadi ' + pk.casadi + '). ' +
+      'Data: <code>media/explorer.json</code>, copied from the project’s <code>results/grid*.json</code> and <code>traces*.json</code>.';
+    select();
+  }).catch(function (e) {
+    $('verdict').innerHTML = '<span class="err">Could not load the simulation results (' + e.message + '). Open this page from the website rather than as a local file.</span>';
+  });
+})();
+</script>
+</body>
+</html>

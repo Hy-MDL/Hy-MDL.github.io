@@ -9,7 +9,7 @@ paper:
 series: "stochastic-modeling"
 order: 1
 tags: [neural-ode, adjoint-method, continuous-depth, normalizing-flows, continuous-time, time-series, latent-variable, instantaneous-change-of-variables]
-date: 2018-07-01
+date: 2018-06-01
 status: draft
 summary: "Replace a stack of residual layers with a learned vector field integrated by a black-box ODE solver, and train it with the adjoint method so that memory does not grow with depth."
 ---
@@ -63,7 +63,7 @@ The $O(\varepsilon^2)$ terms vanish in the limit, so <mark>(3) is exact, not an 
 
 ### 3.2 One augmented state for the parameters and the times
 
-The parameter gradient comes from the same machinery rather than a separate derivation. Treat $\theta$ and $t$ as extra state variables with trivial dynamics, $d\theta/dt = 0$ and $dt/dt = 1$, and stack them: $z_{\text{aug}} = [z, \theta, t]$. The Jacobian of the augmented dynamics has $\partial f/\partial z$, $\partial f/\partial \theta$, $\partial f/\partial t$ in its first block row and zeros elsewhere, so applying (3) to the augmented system splits into three scalar-free equations. Integrating the $\theta$ component from the terminal condition $a_\theta(t_1) = 0$ gives
+The parameter gradient comes from the same machinery rather than a separate derivation. Treat $\theta$ and $t$ as extra state variables with trivial dynamics, $d\theta/dt = 0$ and $dt/dt = 1$, and stack them: $z_{\text{aug}} = [z, \theta, t]$. The Jacobian of the augmented dynamics has $\partial f/\partial z$, $\partial f/\partial \theta$, $\partial f/\partial t$ in its first block row and zeros elsewhere, so applying (3) to the augmented system splits into three separate equations. Integrating the $\theta$ component from the terminal condition $a_\theta(t_1) = 0$ gives
 
 $$
 \frac{dL}{d\theta} = -\int_{t_1}^{t_0} a(t)^{\top} \frac{\partial f(z(t), t, \theta)}{\partial \theta}\, dt ,
@@ -185,7 +185,7 @@ Two details are easy to get wrong when reproducing. First, an implicit solver wa
 
 ## 7 Extensions
 
-**What was built on this.** [Latent ODE](/blog/latent-ode/) replaces the RNN recognition network with an ODE-RNN and tests the time-series model on real data. [Stochastic Adjoint](/blog/scalable-sde-gradients/) extends the construction to SDEs, where backwards reconstruction is much harder because Brownian paths must be reproduced; [Neural JSDE](/blog/neural-jump-sde/) adds jumps at event times, and [SDE-GAN](/blog/neural-sde-gan/) trains continuous-time generators adversarially. On the generative side, [Score-SDE](/blog/score-sde/)'s probability-flow ODE is equation (6) applied to a diffusion's marginals and [DDIM](/blog/ddim/) discretises that same deterministic flow, while [Rectified Flow](/blog/rectified-flow/) and [Flow Matching](/blog/flow-matching/) keep the ODE but train the field by regression, avoiding the trace and the solver at training time. FFJORD (Hutchinson's estimator for an unbiased stochastic trace) and Augmented Neural ODEs (extra state dimensions for flows a non-crossing trajectory cannot express) answer the two limitations above (from general knowledge, unverified).
+**What was built on this.** [Latent ODE](/blog/latent-ode/) replaces the RNN recognition network with an ODE-RNN and tests the time-series model on real data. [Stochastic Adjoint](/blog/scalable-sde-gradients/) extends the construction to SDEs, where backwards reconstruction is much harder because Brownian paths must be reproduced; [Neural JSDE](/blog/neural-jump-sde/) adds jumps at event times, and [SDE-GAN](/blog/neural-sde-gan/) trains continuous-time generators adversarially. On the generative side, [Score-SDE](/blog/score-sde/)'s probability-flow ODE is equation (6) applied to a diffusion's marginals and [DDIM](/blog/ddim/) discretises that same deterministic flow, while [Rectified Flow](/blog/rectified-flow/) and [Flow Matching](/blog/flow-matching/) keep the ODE but train the field by regression, avoiding the trace and the solver at training time. [FFJORD](/blog/ffjord/) (Grathwohl et al., ICLR 2019) removes the trace-cost limitation above with Hutchinson's unbiased stochastic trace estimator, and Augmented Neural ODEs (Dupont, Doucet and Teh, NeurIPS 2019) add state dimensions for maps that non-crossing trajectories cannot express.
 
 **Open problems.** How to control NFE rather than watch it grow; how to regularise the learned vector field so that the solver stays cheap without losing accuracy; how to get an exact trace in high dimension; how to bound the error the backwards reconstruction of $z(t)$ introduces into the gradient, rather than checking it informally.
 

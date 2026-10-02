@@ -9,7 +9,7 @@ paper:
 series: "industrial-vision"
 order: 3
 tags: [anomaly-detection, surface-inspection, synthetic-anomalies, reconstruction, segmentation, mvtec-ad]
-date: 2021-09-01
+date: 2021-08-01
 status: draft
 summary: "DRAEM pastes crude synthetic defects onto normal images, trains one network to repair them and a second network to segment the defect from the pair (input, repair), and thereby gets a learned, pixel-accurate anomaly detector without a single real defect."
 ---

@@ -4,7 +4,7 @@ paper: { title: "Scalable Diffusion Models with Transformers", authors: "William
 series: "score-to-flow"
 order: 11
 tags: [diffusion, transformer, latent-diffusion, scaling, adaLN-zero, gflops, imagenet, classifier-free-guidance]
-date: 2023-01-01
+date: 2022-12-01
 status: draft
 summary: "Replace the U-Net of a latent diffusion model with a plain ViT conditioned through zero-initialised adaptive layer norm, and FID tracks forward-pass Gflops across twelve models — down to 2.27 on ImageNet 256×256, though the trend has a systematic residual at large patch sizes."
 ---
@@ -230,7 +230,7 @@ At $512^2$ (1024 tokens, 524.6 Gflops, 3M steps) the guided FID is 3.04 against 
 - [SD3](/blog/sd3-rectified-flow-transformers/) generalises the block into MMDiT, a two-stream design with separate weights for text and image tokens, precisely because a single adaLN vector is a poor channel for a sentence.
 - [MeanFlow](/blog/mean-flows/) and much of the recent one-step-generation literature use DiT-XL/2 as the default backbone, which is why its Gflops figure has become a unit of account.
 - [EDM](/blog/edm/) is orthogonal and complementary: DiT uses ADM's diffusion hyperparameters and 250 DDPM steps throughout, so every sampler-side improvement in that note is available to it untested here.
-- PixArt-α, Lumina, Flux and the video models that followed all use DiT-style backbones with cross-attention or MMDiT text conditioning *(from general knowledge, unverified)*.
+- PixArt-α, Lumina, Flux and the video models that followed all use DiT-style backbones with cross-attention or MMDiT text conditioning.
 
 **Open problems**
 

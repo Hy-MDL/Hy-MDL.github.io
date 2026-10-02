@@ -9,7 +9,7 @@ paper:
 series: "industrial-vision"
 order: 5
 tags: [anomaly-detection, clip, zero-shot, few-shot, vision-language, prompt-ensemble, mvtec-ad, visa]
-date: 2023-04-01
+date: 2023-03-01
 status: draft
 summary: "A frozen CLIP, asked with a composed bank of 'flawless / damaged' prompts and applied over sliding windows at several scales, detects and localises industrial defects with no training images, and adding one to four normal reference images pushes it past earlier few-shot detectors."
 ---

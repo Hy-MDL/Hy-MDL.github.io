@@ -9,7 +9,7 @@ paper:
 series: "vision"
 order: 7
 tags: [self-supervised-learning, vision-transformer, foundation-models, data-curation, distillation]
-date: 2023-05-01
+date: 2023-04-01
 status: draft
 summary: "Self-supervised ViTs trained on 142M automatically curated images give frozen features that match or beat text-supervised encoders on image-level and pixel-level tasks."
 ---

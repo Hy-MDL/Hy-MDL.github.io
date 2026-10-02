@@ -2,14 +2,14 @@
 title: "MTL-TSMOM: Constructing Time-Series Momentum Portfolios with Deep Multi-Task Learning"
 paper:
   title: "Constructing Time-Series Momentum Portfolios with Deep Multi-Task Learning"
-  authors: "Joel Ong et al."
-  venue: "Expert Systems with Applications 2023 (accepted preprint)"
+  authors: "Joel Ong, Dorien Herremans"
+  venue: "Expert Systems with Applications 230 (2023) 120587"
   arxiv: "2306.13661"
   license: "creativecommons.org/licenses/by-nc-nd/4.0/"
 series: "eswa-finance"
 order: 3
 tags: [momentum, multi-task-learning, volatility, portfolio-construction, lstm, futures]
-date: 2023-07-01
+date: 2023-06-01
 status: draft
 summary: "An LSTM trained on the Sharpe ratio learns trend and position sizing together, and five auxiliary volatility-forecasting heads push its net Sharpe from 0.69 to 0.81 on 78 futures over 2000-2020."
 ---
@@ -148,7 +148,7 @@ Ablation over auxiliary tasks (Table 3 of the paper):
 
 ## References
 
-1. Ong, J., Herremans, D. "Constructing Time-Series Momentum Portfolios with Deep Multi-Task Learning." arXiv:2306.13661, 2023 (accepted to Expert Systems with Applications).
+1. Ong, J., Herremans, D. "Constructing Time-Series Momentum Portfolios with Deep Multi-Task Learning." Expert Systems with Applications 230, 120587, 2023. arXiv:2306.13661.
 2. Moskowitz, T., Ooi, Y. H., Pedersen, L. H. "Time series momentum." Journal of Financial Economics, 2012.
 3. Lim, B., Zohren, S., Roberts, S. "Enhancing time-series momentum strategies using deep neural networks." 2019.
 4. Wood, K., Giegerich, S., Roberts, S., Zohren, S. "Trading with the Momentum Transformer: An intelligent and interpretable architecture." 2021.

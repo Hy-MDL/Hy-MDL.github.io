@@ -9,7 +9,7 @@ paper:
 series: "normalizing-flows"
 order: 2
 tags: [normalizing-flows, affine-coupling, multi-scale-architecture, bits-per-dimension, masked-convolution, exact-likelihood, batch-normalization]
-date: 2016-06-01
+date: 2016-05-01
 status: draft
 summary: "Give the coupling layer a scale as well as a shift and the flow stops preserving volume; add checkerboard and channel masks, a squeeze, a multi-scale factor-out and batch norm inside the coupling networks, and exact-likelihood density estimation reaches 3.49 bits per dimension on CIFAR-10 with parallel sampling."
 ---

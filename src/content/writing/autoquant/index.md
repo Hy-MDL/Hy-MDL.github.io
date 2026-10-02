@@ -9,7 +9,7 @@ paper:
 series: "eswa-finance"
 order: 10
 tags: [backtesting, cryptocurrency, perpetual-futures, bayesian-optimization, overfitting, transaction-costs, reproducibility]
-date: 2026-01-01
+date: 2025-12-01
 status: draft
 summary: "A backtest-governance pipeline for crypto perpetuals that hard-codes next-bar execution, no-look-ahead funding and full costs, tunes with Bayesian search, and then screens candidates across windows and cost scenarios; its own diagnostics show how much overfitting survives."
 ---

@@ -241,7 +241,7 @@ cycles, so no candidate dies before the last epoch at 100 cycles and the reveal 
 - **Rules re-run:** P(best) after 100 cycles and elimination at α = 0.01 and 0.05.
 
 **Compute.**
-- **Hardware:** the lab server `felabworkstation`, 64 cores, CPU only, at most 16 worker processes. The GP
+- **Hardware:** the lab server, 64 cores, CPU only, at most 16 worker processes. The GP
   fits involve at most 124 cells, so no GPU was needed.
 - **Run times:** E2 and E3 ran in 218 s. E1 took 53 s, the CV choice of GP configuration 52 s, and the
   Q(V) validation 119 s. Every result file records its host and wall time.

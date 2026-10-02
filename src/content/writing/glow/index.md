@@ -9,7 +9,7 @@ paper:
 series: "normalizing-flows"
 order: 3
 tags: [normalizing-flows, invertible-1x1-convolution, actnorm, lu-decomposition, temperature-sampling, celeba-hq, exact-likelihood]
-date: 2018-08-01
+date: 2018-07-01
 status: draft
 summary: "Replace the fixed channel permutation between coupling layers with a learned invertible 1×1 convolution and replace batch norm with a data-initialised per-channel affine, and a flow trained on plain log-likelihood produces 256×256 faces in under a second."
 ---
@@ -93,7 +93,7 @@ W=PL\bigl(U+\operatorname{diag}(s)\bigr),
 \qquad \log\lvert\det W\rvert=\operatorname{sum}\bigl(\log\lvert s\rvert\bigr), \tag{5}
 $$
 
-with $P$ a fixed permutation, $L$ lower triangular with unit diagonal, $U$ strictly upper triangular, $s$ a vector. Initialisation samples a random rotation $W$, computes the corresponding $P$ (held fixed) and the initial $L,U,s$ (optimised). The honest footnote: *the difference in computational cost will become significant for large $c$, although for the networks in our experiments we did not measure a large difference in wallclock computation time.* Which parameterisation produced Table 2 is not stated, and the reference implementation in Appendix B uses the direct determinant. Marked: not stated.
+with $P$ a fixed permutation, $L$ lower triangular with unit diagonal, $U$ strictly upper triangular, $s$ a vector. Initialisation samples a random rotation $W$, computes the corresponding $P$ (held fixed) and the initial $L,U,s$ (optimised). The honest footnote: *the difference in computational cost will become significant for large $c$, although for the networks in our experiments we did not measure a large difference in wallclock computation time.* Which parameterisation produced Table 2 is not stated, and the reference implementation in Appendix B uses the direct determinant.
 
 Note what fixing $P$ costs. $W$ ranges over matrices with a *particular* LU pattern; the permutation is chosen once at initialisation from a random rotation and never learned. So the "learned permutation" is learned only up to a fixed one — a subtlety the paper does not draw out.
 
@@ -112,13 +112,13 @@ Stated plainly: *each step of flow above should be preceded by some kind of perm
 
 ### 3.6 Temperature
 
-Sampling at temperature $T$ means sampling from
+The paper defines sampling at temperature $T$ as sampling from
 
 $$
 p_{\theta,T}(x)\propto\bigl(p_\theta(x)\bigr)^{T^2}, \tag{6}
 $$
 
-which for additive coupling layers is achieved simply by multiplying the standard deviation of $p_\theta(z)$ by $T$. (The squared exponent is the convention that makes the scaling of a Gaussian's standard deviation by $T$ correspond to raising the density to the power $T^2$ up to normalisation.) All the qualitative figures use $T<1$: 0.7 for the CelebA-HQ samples, 0.875 for LSUN bedrooms, 0.75 for the class-conditional grids. **This is not the model whose bits/dim is reported.** The likelihood numbers describe $p_\theta$; the pictures describe $p_{\theta,T}$, a sharpened distribution with lower entropy. Both are legitimate; conflating them is not, and the paper's abstract — *a generative model optimized towards the plain log-likelihood objective is capable of efficient realistic-looking synthesis* — comes close.
+which for additive coupling layers is achieved simply by multiplying the standard deviation of $p_\theta(z)$ by $T$. (The printed exponent is inverted: scaling a Gaussian's standard deviation by $T$ corresponds to raising its density to the power $1/T^2$, so the printed $T^2$ would flatten rather than sharpen the distribution for $T<1$. The standard-deviation recipe is the operative definition.) All the qualitative figures use $T<1$: 0.7 for the CelebA-HQ samples, 0.875 for LSUN bedrooms, 0.75 for the class-conditional grids. **This is not the model whose bits/dim is reported.** The likelihood numbers describe $p_\theta$; the pictures describe $p_{\theta,T}$, a sharpened distribution with lower entropy. Both are legitimate; conflating them is not, and the paper's abstract — *a generative model optimized towards the plain log-likelihood objective is capable of efficient realistic-looking synthesis* — comes close.
 
 ### 3.7 Algorithm
 
@@ -159,7 +159,7 @@ flowchart LR
 ## 4 Implementation notes
 
 - **Coupling network.** Three convolutional layers. The two hidden layers have ReLU and 512 channels. First and last convolutions are $3\times3$; the middle one is $1\times1$, *since both its input and output have a large number of channels, in contrast with the first and last convolution* — a pure FLOP-saving choice.
-- **Optimiser.** Adam, $\alpha=0.001$, default $\beta_1,\beta_2$. No schedule and no training length are reported anywhere. Marked: not stated.
+- **Optimiser.** Adam, $\alpha=0.001$, default $\beta_1,\beta_2$. No schedule and no training length are reported anywhere.
 - **Quantitative configurations** (Appendix C, Table 4), all affine coupling:
 
   | Dataset | Batch | Levels $L$ | Depth per level $K$ |
@@ -221,7 +221,7 @@ MAF is excluded on the explicit and defensible grounds that *synthesis from MAF 
 **My reading.**
 
 - **The headline table confounds four changes.** §5.2 above. The one clean ablation (§5.1) is on CIFAR-10 at $K=32,L=3$ only, and its numbers are not tabulated.
-- **Likelihood and pictures describe different distributions.** Everything visually impressive is sampled at $T\le0.875$ from 5-bit models; everything quantitative is 8-bit at $T=1$. No figure shows an 8-bit $T=1$ CelebA-HQ sample.
+- **Likelihood and pictures describe different distributions.** Everything visually impressive is sampled at $T\le0.875$ from 5-bit models; every number in Table 2 is 8-bit at $T=1$. No figure shows an 8-bit $T=1$ CelebA-HQ sample.
 - **No sample-quality metric anywhere.** In mid-2018 FID was available and in use. Its absence means the comparison against GANs — the implicit comparison the faces figure is making — is never made.
 - **$\det W$ is unconstrained and can approach zero.** The objective contains $h\cdot w\cdot\log\lvert\det W\rvert$, which diverges to $-\infty$ as $W$ becomes singular, so the loss pushes away from singularity; but nothing bounds the condition number, and $W^{-1}$ is needed for sampling. The paper does not report conditioning, failure rates, or any regularisation of $W$. With the LU parameterisation the same issue appears as $s$ approaching zero.
 - **The fixed permutation $P$ in the LU form** means the "learned invertible linear map" is learned within a coset chosen at random once. Unremarked.
@@ -247,7 +247,7 @@ MAF is excluded on the explicit and defensible grounds that *synthesis from MAF 
 - Actnorm is the quietly important change. It gives the conditioning benefit of batch norm with no batch-size dependence and, crucially for a density model, no minibatch dependence in the density itself.
 - Zero-initialising the last convolution of every coupling network makes each layer start as the identity, which is what makes 100-plus-layer flows trainable.
 - The clean ablation is Figure 3 — three permutation choices, two coupling types, three seeds, matched parameter count. The headline table is not an ablation and the paper does not pretend it is; readers do.
-- Every impressive picture is a 5-bit model sampled below temperature 1. Every bits/dim number is an 8-bit model at temperature 1. Keep them apart.
+- Every impressive picture is a 5-bit model sampled below temperature 1. Every bits/dim number in Table 2 is an 8-bit model at temperature 1. Keep them apart.
 - Latent interpolation and attribute-vector editing come free from having an exact encoder. That is the practical dividend of invertibility, and it is why a flow is a different tool from a GAN even when the GAN's samples are better.
 - For non-image data the transferable lesson is the mixing step: a coupling flow needs *some* coordinate mixing between layers, and when the data has no spatial prior to supply a mask, learning a linear map is the principled way to choose one.
 

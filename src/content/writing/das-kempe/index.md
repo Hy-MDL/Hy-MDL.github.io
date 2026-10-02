@@ -9,7 +9,7 @@ paper:
 series: "submodular-optimization"
 order: 5
 tags: [submodular-optimization, submodularity-ratio, feature-selection, forward-regression, orthogonal-matching-pursuit, sparse-approximation, r-squared]
-date: 2011-03-01
+date: 2011-02-01
 status: draft
 summary: "R² is not submodular, so the greedy guarantee does not apply to forward selection. Measure how badly it fails — the submodularity ratio γ — and the bound degrades gracefully to 1 − e^{−γ}, with γ a better empirical predictor of greedy's performance than any spectral quantity."
 ---

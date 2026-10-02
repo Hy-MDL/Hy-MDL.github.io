@@ -29,7 +29,7 @@ const isArxiv = /^(\d{4}\.\d{4,5}(v\d+)?|[a-z-]+(\.[A-Z]{2})?\/\d{7})$/.test(d.p
         <div class="crumb"><a href="/blog/">Blog</a> / {SERIES[d.series].label} · {i + 1} of {sib.length} / Paper review</div>
         <h1>{d.title}</h1>
         <div class="sub">{d.paper.authors} — {d.paper.venue}. {d.summary}</div>
-        <div class="meta"><span>Written <b>{fmt(d.date)}</b></span><span>{Math.max(1, Math.round(words / 230))} min read</span><span>Paper license: {lic}</span></div>
+        <div class="meta"><span>Paper <b>{fmt(d.date).slice(0, 7)}</b></span><span>{Math.max(1, Math.round(words / 230))} min read</span><span>Paper license: {lic}</span></div>
         <div class="acts">
           {isArxiv ? (
             <>

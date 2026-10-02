@@ -11,7 +11,7 @@ paper:
 series: "sequential-monte-carlo"
 order: 1
 tags: [sequential-monte-carlo, particle-filter, bootstrap-filter, state-space-models, resampling, bayesian-filtering, bearings-only-tracking]
-date: 1993-05-01
+date: 1993-04-01
 status: draft
 summary: "Represent the filtering density by a cloud of samples rather than a function: push each sample through the system model, weight it by the likelihood of the new measurement, and resample. Six pages, no restrictions on nonlinearity or noise, and the whole particle-filter literature follows."
 ---

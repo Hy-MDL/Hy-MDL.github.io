@@ -2,14 +2,14 @@
 title: "Neural JSDE: Neural Jump Stochastic Differential Equations"
 paper:
   title: "Neural Jump Stochastic Differential Equations"
-  authors: "Junteng Jia et al."
+  authors: "Junteng Jia, Austin R. Benson"
   venue: "NeurIPS 2019"
   arxiv: "1905.10403"
   license: "arxiv.org/licenses/nonexclusive-distrib/1.0/"
 series: "stochastic-modeling"
 order: 5
 tags: [neural-ode, jump-process, temporal-point-process, hawkes, adjoint-method, hybrid-systems, event-sequences, marked-point-process]
-date: 2019-06-01
+date: 2019-05-01
 status: draft
 summary: "A Neural ODE latent state is allowed to jump at random event times whose intensity it controls itself, and the adjoint method is extended with a jump rule so the whole hybrid system trains with constant memory."
 ---
@@ -203,7 +203,7 @@ Easy to get wrong, or simply absent:
 *Italic = oracle (the fitted family is the generating family). Bold = best non-oracle.*
 
 - *"In all cases, our neural JSDE model is a better fit for the data than the RNN and other point process models (except for the ground truth model)."* Half supported. Against the RNN it holds in all four columns, by a wide margin on exponential Hawkes (5.9 vs 22.0) and a narrow one on power-law Hawkes (17.1 vs 20.1). <mark>Against the other parametric models it fails in the Poisson column: the misspecified Hawkes fits score 0.1 and 0.3 against the model's 1.3.</mark> That is not a fluke — both Hawkes families *nest* the Poisson process at $\alpha=0$, so they are oracles in disguise there, which the row labels hide. The defensible claim: across the three history-dependent generators the model is the best non-oracle in every column, and a genuinely misspecified family can be off by more than 100%.
-- *The model captures the delayed power-law kernel.* Supported qualitatively by [Fig. 3D](https://arxiv.org/pdf/1905.10403#page=7) — the jump lands in $h$ immediately, the intensity peaks later when $c$ has responded — and consistent with the 17.1 error, its worst column relative to the oracle. No quantitative measure of the lag is given.
+- *The model captures the delayed power-law kernel.* Supported qualitatively by [Fig. 3D](https://arxiv.org/pdf/1905.10403#page=7) — the jump lands in $h$ immediately, the intensity peaks later when $c$ has responded — and consistent with the 17.1 error, its highest in the table. No quantitative measure of the lag is given.
 - No variance is reported anywhere in Table 1: one run per cell, no seeds, no intervals.
 
 **Discrete marks.** Stack Overflow (badge histories of 6633 users, 22 badge types, 2 years) and MIMIC2 (clinical visits of 650 ICU patients, 75 visit reasons, 7 years), five-fold cross-validation, predicting each held-out event type as the arg-max of $p(k\mid z(\tau_j))$. Baselines are quoted from Mei and Eisner (2017), not re-run.
@@ -237,7 +237,7 @@ For earthquakes above magnitude 4.0, a model trained on 1970–2006 with a five-
 
 ## 7 Extensions
 
-**What was built on this.** The nearest neighbours in this collection are [Neural ODE](/blog/neural-ode/), the framework being extended, and [Latent ODE](/blog/latent-ode/), cited here as concurrent work that interrupts a continuous latent path with RNN updates rather than learned jumps. The complementary problem — adjoint gradients when the *continuous* part is stochastic instead of the discrete part — is solved in [Stochastic Adjoint](/blog/scalable-sde-gradients/), not a follow-up to this paper but the other half of a full jump-diffusion. Beyond the collection, the jump-adjoint idea was carried into continuous-time spatio-temporal point process models and into attention-based neural point processes that replace the ODE state with a transformer (from general knowledge, unverified — neither is cited in this PDF).
+**What was built on this.** The nearest neighbours in this collection are [Neural ODE](/blog/neural-ode/), the framework being extended, and [Latent ODE](/blog/latent-ode/), cited here as concurrent work that interrupts a continuous latent path with RNN updates rather than learned jumps. The complementary problem — adjoint gradients when the *continuous* part is stochastic instead of the discrete part — is solved in [Stochastic Adjoint](/blog/scalable-sde-gradients/), not a follow-up to this paper but the other half of a full jump-diffusion.
 
 **Open problems.**
 

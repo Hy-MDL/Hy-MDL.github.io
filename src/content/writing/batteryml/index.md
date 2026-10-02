@@ -9,7 +9,7 @@ paper:
 series: "ee-timeseries"
 order: 8
 tags: [battery-degradation, remaining-useful-life, state-of-health, state-of-charge, benchmark, open-source-platform, feature-engineering]
-date: 2023-11-01
+date: 2023-10-01
 status: draft
 summary: "BatteryML puts seven public cycling datasets into one data format, wraps feature extraction, labelling and a dozen-plus models behind a config-driven pipeline, and uses it to show that no model family wins battery life prediction across datasets."
 ---

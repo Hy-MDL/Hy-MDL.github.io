@@ -3,13 +3,13 @@ title: "X-ray PBD / MDCNet: Towards Automatic Power Battery Detection: New Chall
 paper:
   title: "Towards Automatic Power Battery Detection: New Challenge, Benchmark Dataset and Baseline"
   authors: "Xiaoqi Zhao et al."
-  venue: "arXiv 2023"
+  venue: "CVPR 2024"
   arxiv: "2312.02528"
   license: "arxiv.org/licenses/nonexclusive-distrib/1.0/"
 series: "industrial-vision"
 order: 11
 tags: [battery, x-ray-inspection, keypoint-localization, segmentation, multi-task-learning, benchmark, industrial-vision]
-date: 2024-01-01
+date: 2023-12-01
 status: draft
 summary: "Defines power battery detection, the task of locating every anode and cathode plate endpoint in an X-ray image, releases a 1,500-image benchmark with eight metrics, and shows that a point-segmentation network with line and counting auxiliary heads beats detection, counting and corner baselines while still failing on about half of the hardest images."
 ---
@@ -155,7 +155,7 @@ The authors' proposed next steps include semi-supervised and few-shot learning, 
 
 ## References
 
-1. X. Zhao, Y. Pang, Z. Chen, Q. Yu, L. Zhang, H. Liu, J. Zuo, H. Lu. *Towards Automatic Power Battery Detection: New Challenge, Benchmark Dataset and Baseline.* arXiv:2312.02528, 2023.
+1. X. Zhao, Y. Pang, Z. Chen, Q. Yu, L. Zhang, H. Liu, J. Zuo, H. Lu. *Towards Automatic Power Battery Detection: New Challenge, Benchmark Dataset and Baseline.* CVPR 2024, pp. 22020-22029. arXiv:2312.02528.
 2. X. Yuan, G. Cheng, K. Yan, Q. Zeng, J. Han. *Small Object Detection via Coarse-to-Fine Proposal Generation and Imitation Learning (CFINet).* ICCV 2023.
 3. Z. Ma, X. Wei, X. Hong, Y. Gong. *Bayesian Loss for Crowd Count Estimation with Point Supervision.* ICCV 2019.
 4. T.-Y. Lin et al. *Feature Pyramid Networks for Object Detection.* CVPR 2017.

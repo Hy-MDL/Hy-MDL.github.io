@@ -9,7 +9,7 @@ paper:
 series: "score-to-flow"
 order: 5
 tags: [score-matching, sde, diffusion, probability-flow-ode, predictor-corrector, exact-likelihood, controllable-generation, sub-vp]
-date: 2020-12-01
+date: 2020-11-01
 status: draft
 summary: "SMLD and DDPM are discretisations of two SDEs; reversing an SDE with a learned score turns sampling into numerical integration, yields an equivalent ODE with exact likelihoods, and makes conditioning a sampling-time edit rather than a retraining job."
 ---

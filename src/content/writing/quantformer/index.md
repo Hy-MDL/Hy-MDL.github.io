@@ -9,7 +9,7 @@ paper:
 series: "eswa-finance"
 order: 7
 tags: [transformer, stock-selection, factor-investing, china-a-shares, backtest, attention, portfolio]
-date: 2024-05-01
+date: 2024-04-01
 status: draft
 summary: "A stripped-down transformer encoder reads 20 steps of return and turnover per stock, classifies next-period return quantiles, and is used as a single stock-selection factor that outperforms 100 price-volume factors in a 2020-2023 Chinese-market backtest."
 ---

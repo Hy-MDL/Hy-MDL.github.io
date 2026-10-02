@@ -9,7 +9,7 @@ paper:
 series: "stochastic-modeling"
 order: 12
 tags: [diffusion, time-series, forecasting, guidance, unconditional-generation, langevin, crps, synthetic-data]
-date: 2023-08-01
+date: 2023-07-01
 status: draft
 summary: "Train one unconditional diffusion model per dataset, then turn it into a forecaster at inference time by guiding the reverse chain with the model's own one-step denoised estimate, reuse its density as a prior to polish other forecasters, and sample from it to make training data."
 ---

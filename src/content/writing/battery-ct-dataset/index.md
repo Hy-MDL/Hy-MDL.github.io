@@ -9,7 +9,7 @@ paper:
 series: "industrial-vision"
 order: 10
 tags: [battery, computed-tomography, dataset, manufacturing-quality, industrial-inspection, computer-vision]
-date: 2024-04-01
+date: 2024-03-01
 status: draft
 summary: "A data descriptor for 1,015 industrial CT scans of as-bought lithium-ion and sodium-ion cells across seven cell models, released as PNG slices, with two large batches of 400 and 500 identical cells for studying cell-to-cell variation."
 ---

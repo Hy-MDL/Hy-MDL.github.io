@@ -2,14 +2,14 @@
 title: "NCSNv2: Improved Techniques for Training Score-Based Generative Models"
 paper:
   title: "Improved Techniques for Training Score-Based Generative Models"
-  authors: "Yang Song et al."
+  authors: "Yang Song, Stefano Ermon"
   venue: "NeurIPS 2020"
   arxiv: "2006.09011"
   license: "arxiv.org/licenses/nonexclusive-distrib/1.0/"
 series: "score-to-flow"
 order: 2
 tags: [score-based-models, langevin-dynamics, noise-schedule, concentration-of-measure, ema, tweedie, ncsn]
-date: 2020-07-01
+date: 2020-06-01
 status: draft
 summary: "Five rules, each derived on a solvable surrogate, that replace NCSN's hand-picked noise ladder and sampler settings with quantities computed from the data — and take score-based generation from 32x32 to 256x256."
 ---

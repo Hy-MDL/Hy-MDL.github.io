@@ -11,7 +11,7 @@ paper:
 series: "submodular-optimization"
 order: 3
 tags: [submodular-optimization, matroid-constraint, multilinear-extension, continuous-greedy, pipage-rounding, approximation-algorithms, value-oracle-model]
-date: 2009-10-01
+date: 2009-09-01
 status: draft
 summary: "Extend the set function to the cube by its expectation under independent rounding, run a gradient flow inside the matroid polytope for unit time, and round back. The flow's value grows at least as fast as its own deficit, which is exactly the differential equation whose solution is 1 − 1/e."
 ---

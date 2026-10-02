@@ -9,7 +9,7 @@ paper:
 series: "ee-timeseries"
 order: 4
 tags: [battery, lifetime-prediction, dataset, benchmark, time-series, patching, transformer, domain-shift, transfer]
-date: 2025-03-01
+date: 2025-02-01
 status: draft
 summary: "A 990-cell, 16-source battery life dataset with a unified benchmark of 18 models, showing that mainstream time-series forecasters transfer poorly and that treating each charge–discharge cycle as a token (CyclePatch) is the most reliable gain."
 ---

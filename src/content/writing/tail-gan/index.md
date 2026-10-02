@@ -4,7 +4,7 @@ paper: { title: "Tail-GAN: Learning to Simulate Tail Risk Scenarios", authors: "
 series: "generative-finance"
 order: 3
 tags: [gan, tail-risk, value-at-risk, expected-shortfall, elicitability, scoring-functions, scenario-generation, market-simulation, eigenportfolios]
-date: 2022-04-01
+date: 2022-03-01
 status: draft
 summary: "A GAN whose discriminator is a learned (VaR, ES) estimator trained with a strictly consistent score on the PnL of benchmark trading strategies, so multi-asset scenarios are fitted where risk management looks — in the tails — and judged against a sampling-error floor."
 ---

@@ -9,7 +9,7 @@ paper:
 series: "vision"
 order: 3
 tags: [swin-transformer, shifted-windows, hierarchical-backbone, self-attention, object-detection, semantic-segmentation]
-date: 2021-04-01
+date: 2021-03-01
 status: draft
 summary: "Restricting self-attention to small non-overlapping windows, shifting the window grid every other layer, and merging patches between stages gives a Transformer backbone with linear cost in image size that works for detection and segmentation as well as classification."
 ---

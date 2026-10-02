@@ -559,3 +559,21 @@ pre .k{color:var(--accent)}pre .c{color:var(--mute)}pre .s{color:var(--warn)}
 .prose figure.mdfig img{margin:0 auto}
 .prose figure.mdfig figcaption{font-size:13.5px;color:var(--mute);line-height:1.6;margin-top:11px}
 .prose figure.mdfig figcaption b{color:var(--ink2);font-weight:500}
+
+/* phone width: the nav wraps onto a second row and the blog list stacks, so no page scrolls sideways */
+@media (max-width:640px){
+  .nav{flex-wrap:wrap;row-gap:10px}
+  .links{flex-wrap:wrap;gap:6px 14px;width:100%}
+  .wl-list .yr{grid-template-columns:1fr;gap:8px}
+  .wl-list .rows a{grid-template-columns:1fr;gap:4px}
+  .wl-list .rows .r{align-items:flex-start}
+  .wl > *,.wl-list .yr > *{min-width:0}
+  .pubrow{grid-template-columns:1fr;gap:6px}
+  .pubrow > *,.pubs li > div{min-width:0}
+  .pubrow .top,.pubs .head{flex-wrap:wrap}
+  .vtl li{grid-template-columns:auto 1fr;gap:2px 10px}
+  .vtl li .k{grid-column:1 / -1}
+  .tag{white-space:normal}
+  .prose code{overflow-wrap:anywhere}
+  main{overflow-x:clip}
+}

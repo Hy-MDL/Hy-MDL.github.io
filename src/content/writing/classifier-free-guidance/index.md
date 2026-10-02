@@ -9,7 +9,7 @@ paper:
 series: "score-to-flow"
 order: 9
 tags: [diffusion, guidance, classifier-free-guidance, conditional-generation, score-matching, fidelity-diversity, conditioning-dropout]
-date: 2022-08-01
+date: 2022-07-01
 status: draft
 summary: "Drop the label at random during training so one network learns both the conditional and the unconditional score, then extrapolate between the two at sampling time: the fidelity-diversity knob of classifier guidance, with no classifier, for two network evaluations per step."
 ---

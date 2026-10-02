@@ -9,7 +9,7 @@ paper:
 series: "stochastic-modeling"
 order: 13
 tags: [diffusion, time-series, generation, seasonal-trend-decomposition, transformer, fourier, guidance, imputation, reconstruction-guidance]
-date: 2024-04-01
+date: 2024-03-01
 status: draft
 summary: "A DDPM for multivariate time series whose transformer decoder can only emit a polynomial trend plus top-K Fourier seasonality plus a residual, trained to predict the clean window with an added FFT loss, and turned into a forecaster or imputer at sampling time by reconstruction-gradient guidance — whose printed update has the wrong sign."
 ---
@@ -212,7 +212,7 @@ Ablation, discriminative score (Table 2 / Table 9):
 
 *"Interpretability with almost no accuracy loss."* Only half-supported. The decomposition ablation on MuJoCo imputation (Table 10) is more informative than the pictures: residual alone gives 0.51 / 0.59 / 0.85, adding season or trend improves it to roughly 0.45–0.50, and the full model reaches 0.37 / 0.43 / 0.73 — but season+trend *without* the residual is the worst configuration at 0.63 / 1.05 / 1.42. The uninterpretable term is doing the heaviest lifting, which is precisely what an interpretability claim needs to quantify and does not.
 
-*"Each component matters."* Mostly. Dropping the FFT loss, the decomposition or the transformer each costs discriminative score on five of six datasets, and $\epsilon$-prediction is the single worst variant on Sines, Stocks and ETTh (Sines: 0.040 against 0.006). The exception is fMRI, where the convolution-only variant at 0.123 beats the full model's 0.167 — a 50-channel, high-frequency set on which self-attention apparently hurts. The paper notes this and does not explain it.
+*"Each component matters."* Mostly. Dropping the FFT loss or the decomposition costs discriminative score on all six datasets, dropping the transformer on five; $\epsilon$-prediction is the single worst variant on Sines, Stocks and ETTh (Sines: 0.040 against 0.006). The exception is fMRI, where the convolution-only variant at 0.123 beats the full model's 0.167 — a 50-channel, high-frequency set on which self-attention apparently hurts. The paper notes this and does not explain it.
 
 *Sensitivity.* Table 6 shows guidance is delicate: at 90% missing on MuJoCo, MSE is 0.73 at $\gamma=5\cdot10^{-2}$, 0.82 at $10^{-1}$, 1.07 at $10^{-2}$, 6.8 at $\gamma=1$ and 19.6 at $10^{-3}$ — a factor of 27 across a range the authors themselves searched.
 
@@ -229,7 +229,7 @@ Ablation, discriminative score (Table 2 / Table 9):
 
 ## 7 Extensions
 
-**What was built on this.** The lineage backwards is explicit and verifiable in the paper: the polynomial trend basis is N-BEATS's, the Fourier synthetic layer follows ETSformer and the TBATS trigonometric seasonality, the guidance argument is diffusion posterior sampling (Chung et al.), and the repeated inner gradient steps are borrowed from Diffusion-LM. Forwards, the closest sibling is [TSDiff](/blog/tsdiff/), which reaches the same "one unconditional model, many conditional tasks" conclusion by a different route — self-guidance with an observation likelihood rather than a decomposition head. Diffusion-TS has since become a standard baseline in time-series generation benchmarks (from general knowledge, unverified).
+**What was built on this.** The lineage backwards is explicit and verifiable in the paper: the polynomial trend basis is N-BEATS's, the Fourier synthetic layer follows ETSformer and the TBATS trigonometric seasonality, the guidance argument is diffusion posterior sampling (Chung et al.), and the repeated inner gradient steps are borrowed from Diffusion-LM. Forwards, the closest sibling is [TSDiff](/blog/tsdiff/), which reaches the same "one unconditional model, many conditional tasks" conclusion by a different route — self-guidance with an observation likelihood rather than a decomposition head.
 
 **Open problems.** Sampling cost is the authors' own; the obvious attacks are distillation or a consistency objective ([Consistency Models](/blog/consistency-models/)) and better solvers ([EDM](/blog/edm/)), neither tried here. How to choose $K$ and $p$ from data, rather than fixing them, is untouched. Whether the residual can be constrained — penalised, whitened, or given its own noise model — so that the decomposition is identifiable rather than merely visible is, to me, the more interesting question.
 

@@ -9,7 +9,7 @@ paper:
 series: "score-to-flow"
 order: 8
 tags: [diffusion, latent-space, autoencoder, cross-attention, text-to-image, compute-efficiency, two-stage-models]
-date: 2022-01-01
+date: 2021-12-01
 status: draft
 summary: "Train a perceptual autoencoder once, diffuse in its 4x-8x smaller latent, and inject conditioning through cross-attention: FID 3.60 on class-conditional ImageNet 256x256 for 271 V100-days, against ADM-G's 962."
 ---
@@ -143,7 +143,7 @@ for t in ddim_schedule(200 or 250 steps):
 x = D(sigma * z)
 ```
 
-The guidance scale $s$ needs a warning. The paper reports $s=1.5$ and $s=1.25$ for ImageNet and $s=1.5$, $s=10.0$ for text, but never prints a formula for it. The line above assumes the convention $\tilde\epsilon=\epsilon_u+s(\epsilon_c-\epsilon_u)$, i.e. $s=1+w$ in the notation of [classifier-free guidance](/blog/classifier-free-guidance/), so LDM's $s=1.5$ would be Ho and Salimans' $w=0.5$. I could not verify that from the PDF; only the released code settles it.
+The guidance scale $s$ needs a warning. The paper reports $s=1.5$ and $s=1.25$ for ImageNet and $s=1.5$, $s=10.0$ for text, but never prints a formula for it. The line above follows the released code, whose DDIM sampler (`ldm/models/diffusion/ddim.py`) computes `e_t_uncond + unconditional_guidance_scale * (e_t - e_t_uncond)`, that is $\tilde\epsilon=\epsilon_u+s(\epsilon_c-\epsilon_u)$, i.e. $s=1+w$ in the notation of [classifier-free guidance](/blog/classifier-free-guidance/), so LDM's $s=1.5$ is Ho and Salimans' $w=0.5$.
 
 ## 4 Implementation notes
 
@@ -183,7 +183,7 @@ Easy to get wrong when reproducing:
 - **Convolutional sampling at $>256^2$** works for concatenated spatial conditions only, and is sensitive to the latent scale.
 - Not stated: optimizer settings, EMA decay, warm-up, gradient clipping, dropout (except 0.1 for layout), the loss weights in Eq. (2), the codebook dimensionality, and $\eta$ for most DDIM runs.
 
-Three appendix entries look like printing errors, and a reproduction would inherit them: the inpainting learning rate is printed as `1.0e-6`, two orders of magnitude below every other entry in the same table; Table 13 prints the LDM-32 latent shape as `88 × 8 × 32`, presumably $8\times8\times32$, which matches no entry of the autoencoder zoo (its $f=32$ VQ model has 16 channels), so **which first stage LDM-32 used cannot be recovered from the PDF**; and Table 15 claims a single A100 for the 1.45B text model at batch size 680, which is not credible.
+Three appendix entries look like printing errors, and a reproduction would inherit them: the inpainting learning rate is printed as `1.0e-6`, two orders of magnitude below every other entry in the same table; Table 13 prints the LDM-32 latent shape as `88 × 8 × 32`, presumably $8\times8\times32$, which matches no entry of the autoencoder zoo (its $f=32$ VQ model has 16 channels), so **which first stage LDM-32 used cannot be recovered from the paper**; and Table 15 claims a single A100 for the 1.45B text model at batch size 680, which is not credible.
 
 ## 5 Experiments
 
@@ -234,17 +234,17 @@ Three appendix entries look like printing errors, and a reproduction would inher
 - The pipeline is no longer purely likelihood-based. The first stage is adversarial, so the mode-covering argument made against GANs in the introduction applies only to the second stage. Recall drops from 0.62 to 0.48 exactly when guidance is turned on: that is the honest price of the headline FID.
 - Nothing measures the gap between $\mathcal{D}(\mathcal{E}(x))$ and $x$ *in the metric the downstream task cares about*. R-FID is distributional; inpainting and super-resolution need per-image accuracy.
 - The latent is a black box here: no analysis of its statistics beyond variance, and no explanation for the VQ-versus-KL result.
-- Throughput comparisons are not step-matched (LDM at 200 DDIM steps against ADM at 1000), so part of the speed-up belongs to [DDIM](/blog/ddim/), not to the latent.
+- Throughput comparisons are not always step-matched (on LSUN-Bedrooms, LDM at 200 DDIM steps against ADM at 1000), so part of the speed-up belongs to [DDIM](/blog/ddim/), not to the latent.
 - Several appendix entries are internally inconsistent (Churches at 410K/100 steps in Table 18 vs 500K/200 steps in Tables 12 and 1; CelebA-HQ FID 5.11 in Table 1 vs 5.15 in Fig. 28; Bedrooms listed at 60 generator but 55 overall V100-days).
 
 ## 7 Extensions
 
 **What was built on this**
 
-- The released weights became Stable Diffusion, which is why this architecture — frozen autoencoder, U-Net, cross-attention on text tokens — is the one most later work assumes. *(from general knowledge, unverified)*
+- Stable Diffusion (CompVis with Stability AI and Runway) is a latent diffusion model of this design, trained on 512×512 images from a LAION-5B subset with a frozen CLIP ViT-L/14 text encoder, which is why frozen autoencoder, U-Net and cross-attention on text tokens are what most later work assumes.
 - [DiT](/blog/dit/) keeps the latent and replaces the U-Net with a transformer, showing the backbone was separable from the idea; [SD3](/blog/sd3-rectified-flow-transformers/) keeps the latent and replaces the diffusion process with a rectified flow.
 - [Consistency models](/blog/consistency-models/) attack the sequential-sampling limitation the authors state.
-- Adapter-style spatial conditioning (ControlNet and relatives) generalizes the concatenation path of Section 3.3 into a plug-in network. *(from general knowledge, unverified)*
+- ControlNet (Zhang, Rao and Agrawala, ICCV 2023) adds spatial conditioning to a frozen text-to-image diffusion model through a trainable copy of its encoder, a plug-in generalization of the concatenation path of Section 3.3.
 
 **Open problems**
 

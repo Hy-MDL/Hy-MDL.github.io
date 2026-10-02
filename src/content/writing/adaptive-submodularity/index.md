@@ -9,7 +9,7 @@ paper:
 series: "submodular-optimization"
 order: 4
 tags: [submodular-optimization, adaptive-submodularity, active-learning, stochastic-optimization, greedy-policy, lazy-evaluation, pomdp]
-date: 2010-04-01
+date: 2010-03-01
 status: draft
 summary: "Redefine diminishing returns in terms of the expected marginal gain conditioned on everything observed so far, and the greedy policy — pick the item with the largest conditional expected gain, then look at what it shows you — recovers 1 − 1/e against the optimal adaptive policy."
 ---

@@ -1,10 +1,10 @@
 ---
 title: "Deep Hedging"
-paper: { title: "Deep Hedging", authors: "Hans Buehler et al.", venue: "arXiv 2018 (q-fin.CP)", arxiv: "1802.03042", license: "arxiv.org/licenses/nonexclusive-distrib/1.0/" }
+paper: { title: "Deep Hedging", authors: "Hans Buehler et al.", venue: "Quantitative Finance 19(8), 2019", arxiv: "1802.03042", license: "arxiv.org/licenses/nonexclusive-distrib/1.0/" }
 series: "generative-finance"
 order: 6
 tags: [hedging, convex-risk-measures, cvar, transaction-costs, heston, reinforcement-learning, incomplete-markets]
-date: 2018-03-01
+date: 2018-02-01
 status: draft
 summary: "Hedging under frictions is recast as minimising a convex risk measure of terminal P&L over neural-network trading strategies trained on simulated paths, with no Greeks and no pricing model."
 ---
@@ -130,7 +130,7 @@ Each strategy wins on the criterion it was trained for. For a tight call spread 
 
 ## References
 
-1. H. Buehler, L. Gonon, J. Teichmann, B. Wood. *Deep Hedging*. arXiv:1802.03042, 2018.
+1. H. Buehler, L. Gonon, J. Teichmann, B. Wood. *Deep Hedging*. Quantitative Finance 19(8):1271–1291, 2019. arXiv:1802.03042.
 2. H. Föllmer, A. Schied. *Stochastic Finance: An Introduction in Discrete Time*. De Gruyter, 2016.
 3. A. E. Whalley, P. Wilmott. *An asymptotic analysis of an optimal hedging model for option pricing with transaction costs*. Mathematical Finance, 1997.
 4. K. Hornik. *Approximation capabilities of multilayer feedforward networks*. Neural Networks, 1991.

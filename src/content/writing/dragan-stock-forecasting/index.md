@@ -4,7 +4,7 @@ paper: { title: "Stock market forecasting using DRAGAN and feature matching", au
 series: "eswa-finance"
 order: 2
 tags: [gan, dragan, wgan-gp, feature-matching, stock-forecasting, gru, conditional-gan, rmse]
-date: 2023-02-01
+date: 2023-01-01
 status: draft
 summary: "A GRU generator and CNN critic trained with a Wasserstein loss, the DRAGAN gradient penalty and feature matching give lower next-day RMSE than WGAN-GP, a basic GAN and an LSTM on six US tech stocks."
 ---

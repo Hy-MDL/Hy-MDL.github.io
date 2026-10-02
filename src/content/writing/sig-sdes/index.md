@@ -9,7 +9,7 @@ paper:
 series: "stochastic-modeling"
 order: 11
 tags: [signatures, rough-paths, neural-sde, calibration, exotic-options, expected-signature, lead-lag, volatility-modeling, market-simulation]
-date: 2020-07-01
+date: 2020-06-01
 status: draft
 summary: "Volatility is written as a linear functional of the signature of time-augmented Brownian motion, which makes the price path, exotic option prices and the calibration objective explicit algebraic expressions in 31 coefficients — elegant algebra, demonstrated on a single Black–Scholes recovery."
 ---

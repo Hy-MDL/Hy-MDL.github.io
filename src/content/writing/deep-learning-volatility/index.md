@@ -1,10 +1,10 @@
 ---
 title: "Deep Learning Volatility: A deep neural network perspective on pricing and calibration in (rough) volatility models"
-paper: { title: "Deep Learning Volatility: A deep neural network perspective on pricing and calibration in (rough) volatility models", authors: "Blanka Horvath et al.", venue: "arXiv 2019 (q-fin.MF)", arxiv: "1901.09647", license: "arxiv.org/licenses/nonexclusive-distrib/1.0/" }
+paper: { title: "Deep Learning Volatility: A deep neural network perspective on pricing and calibration in (rough) volatility models", authors: "Blanka Horvath et al.", venue: "Quantitative Finance 21(1), 2021", arxiv: "1901.09647", license: "arxiv.org/licenses/nonexclusive-distrib/1.0/" }
 series: "stochastic-modeling"
 order: 8
 tags: [rough-volatility, rough-bergomi, calibration, implied-volatility, surrogate-model, monte-carlo, option-pricing]
-date: 2019-02-01
+date: 2019-01-01
 status: draft
 summary: "A small feed-forward network learns the map from stochastic-volatility parameters to a whole implied-volatility grid offline, so that calibrating rough Bergomi becomes a millisecond deterministic least-squares problem."
 ---
@@ -78,7 +78,7 @@ Three arguments are given for this grid-based training. Neighbouring grid points
 
 ### 3.3 Architecture and training
 
-The network is deliberately small: four hidden layers of 30 units, ELU activations, linear output of size 88. For the 11-parameter Bergomi-type models this is 6,808 weights. ELU is chosen over ReLU for a specific reason: the approximation theorem of Hornik, Stinchcombe and White for derivatives requires a smooth activation, and the calibration step relies on $\nabla_\theta \tilde F \approx \nabla_\theta \tilde P$. Inputs are rescaled to $[-1,1]$, outputs are standardised, batch size is 32, and training runs up to 200 epochs with early stopping.
+The network is deliberately small: four hidden layers of 30 units, ELU activations, linear output of size 88. For the 11-parameter Bergomi-type models the paper reports 6,808 weights, although its formula counts one hidden-to-hidden block too many: four layers of 30 units give 5,878. ELU is chosen over ReLU for a specific reason: the approximation theorem of Hornik, Stinchcombe and White for derivatives requires a smooth activation, and the calibration step relies on $\nabla_\theta \tilde F \approx \nabla_\theta \tilde P$. Inputs are rescaled to $[-1,1]$, outputs are standardised, batch size is 32, and training runs up to 200 epochs with early stopping.
 
 ### 3.4 The calibration step
 
@@ -116,7 +116,7 @@ Gradient-based solvers (Levenberg–Marquardt, BFGS, L-BFGS-B, SLSQP) are compar
 
 **Strengths.** The division of labour is the lasting contribution. Because the network only replaces a deterministic function of parameters, its error can be audited against the simulator on as many points as one likes, and nothing about the model's hedging or risk interpretation changes. Handling a piecewise-constant forward variance curve is what makes the method usable on real term structures. Code is released.
 
-**Weaknesses.** The error plots are reported over the 68,000 *training* parameter sets according to their captions; out-of-sample generalisation is asserted in the text but I could not find matching test-set heat maps. A 25% worst-case error is large, and the paper does not say where in parameter space it occurs. The surrogate is tied to one grid and one parameter box; a market regime outside $[0.01,0.16]$ forward variance requires retraining. Nothing enforces absence of static arbitrage in the output surface. The offline cost, 80,000 surfaces at roughly half a second each, is not discussed.
+**Weaknesses.** The error plots are reported over the 68,000 *training* parameter sets according to their captions; out-of-sample generalisation is asserted in the text, but the paper shows no test-set counterpart. A 25% worst-case error is large, and the paper does not say where in parameter space it occurs. The surrogate is tied to one grid and one parameter box; a market regime outside $[0.01,0.16]$ forward variance requires retraining. Nothing enforces absence of static arbitrage in the output surface. The offline cost, 80,000 surfaces at roughly half a second each, is not discussed.
 
 **Not shown.** No comparison with the direct inverse-map approach on the same data, no noise-robustness study for market quotes, and no analysis of parameter identifiability beyond the CDF plots.
 
@@ -130,8 +130,8 @@ Gradient-based solvers (Levenberg–Marquardt, BFGS, L-BFGS-B, SLSQP) are compar
 
 ## References
 
-- B. Horvath, A. Muguruza, M. Tomas. *Deep Learning Volatility: A deep neural network perspective on pricing and calibration in (rough) volatility models.* arXiv:1901.09647, 2019.
-- C. Bayer, P. Friz, J. Gatheral. *Pricing under rough volatility.* Quantitative Finance, 2015.
+- B. Horvath, A. Muguruza, M. Tomas. *Deep Learning Volatility: A deep neural network perspective on pricing and calibration in (rough) volatility models.* Quantitative Finance 21(1):11–27, 2021. arXiv:1901.09647.
+- C. Bayer, P. Friz, J. Gatheral. *Pricing under rough volatility.* Quantitative Finance 16(6), 2016.
 - J. Gatheral, T. Jaisson, M. Rosenbaum. *Volatility is rough.* Cited in the paper as the source of the historical estimate of $H$.
-- A. Hernandez. *Model calibration with neural networks.* Risk, 2016.
+- A. Hernandez. *Model calibration with neural networks.* Risk, 2017.
 - C. Bayer, B. Stemper. *Deep calibration of rough stochastic volatility models.* arXiv:1810.03399, 2018.

@@ -9,7 +9,7 @@ paper:
 series: "vision"
 order: 2
 tags: [vision-transformer, self-attention, inductive-bias, transfer-learning, scaling, image-classification]
-date: 2020-11-01
+date: 2020-10-01
 status: draft
 summary: "A plain Transformer encoder fed with a sequence of image patches loses to ResNets on ImageNet-sized data but overtakes them once pre-training reaches tens to hundreds of millions of images, at lower pre-training compute."
 ---

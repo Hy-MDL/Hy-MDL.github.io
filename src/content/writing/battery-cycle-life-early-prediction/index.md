@@ -9,7 +9,7 @@ paper:
 series: "ee-timeseries"
 order: 1
 tags: [battery, cycle-life, gaussian-process, elastic-net, feature-engineering, early-prediction, replication]
-date: 2021-11-01
+date: 2021-10-01
 status: draft
 summary: "A student replication of the Severson et al. early-prediction setup that swaps the elastic net for a Gaussian process on seven hand-built features from the first 100 cycles, and reports a much lower error — though only on the data the model was fitted to."
 ---

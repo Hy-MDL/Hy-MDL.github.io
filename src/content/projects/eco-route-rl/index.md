@@ -3,7 +3,7 @@ title: "Eco-Route RL — choosing a low-CO₂ route on a real Seoul network with
 slug: eco-route-rl
 category: "Green AI"
 summary: "A route on a real OpenStreetMap network of southern Seoul is chosen with a statistical guarantee instead of a fixed simulation budget: fully sequential indifference-zone selection with a travel-time feasibility check attains P(correct selection) = 0.956 against a nominal 0.95, where the same project's eight-replications-per-route design reaches 0.742 and cannot separate its two best routes at all. The procedures are built and measured first on a synthetic signalised corridor whose truth is computable, then applied to Eclipse SUMO with HBEFA3 emissions. The write-up also measures why common random numbers buy a median 13.7x on that synthetic corridor and only 1.39x on the real network."
-period: "archived report (date not recorded) · reimplementation 2026.09"
+period: "2023 undergraduate project · reimplementation 2026.09"
 status: "Archived report + reimplementation"
 stack: [Python, Eclipse SUMO, TraCI, OpenStreetMap, NumPy, SciPy, Matplotlib, multiprocessing, pytest]
 tags: [ranking-and-selection, simulation-optimization, common-random-numbers, feasibility-determination, eco-routing, traffic-simulation, sumo, openstreetmap, hbefa3, co2, simulation-methodology]
@@ -20,7 +20,7 @@ thumb: "/projects/eco-route-rl/media/drive_thumb.jpg"
 
 ## Abstract
 
-An earlier Green AI project of mine compared three Seoul driving routes for fuel and CO₂ in the commercial microsimulator AIMSUN and drew its conclusions from **one run per scenario**. This project re-derives that report, rebuilds its comparison on the real road, and then makes the route choice the way simulation methodology prescribes — with a statistical guarantee instead of a fixed budget of runs. §2 transcribes the report's 62 numbers with page references and lists five places where its wording disagrees with its own tables. §3 rebuilds the three corridors it names on an OpenStreetMap network of southern Seoul, converted by `netconvert` into Eclipse SUMO with real lane counts, real junction geometry and 494 signalised intersections, with CO₂ from SUMO's published HBEFA3 model — whose class, chosen from the car's attributes before any comparison, reproduces its rated 143 g/km to 142.8. Over eight common-random-number replications the least-CO₂ route is the 15.5 km direct path, but the two best arms **cannot be separated**: shortest versus fastest is +10.7 ± 35.0 g. §4 builds the machinery that fixes that, on a synthetic 5 km arterial whose truth is computable — fully sequential indifference-zone selection, sequential feasibility determination under a travel-time constraint, and common random numbers — where one run per plan recommends an infeasible plan 23 % of the time while the sequential procedure with CRN is acceptable in 1,000 of 1,000 macro-replications. §5 applies it to the real problem on a bank of 1,600 SUMO runs: the sequential procedure attains **P(correct selection) = 0.956 against a nominal 0.95** with every selection acceptable, for 490 runs against the 40 the fixed budget spent, and at a 20-minute trip budget it answers "no route qualifies" rather than recommending one that breaks it — which the fixed budget does 7.2 % of the time. The tie is then settled at a stated zone: shortest − fastest = **+13.35 g (95 % CI [+7.87, +18.82])**, which is *inside* the δ = 25 g indifference zone declared in advance, so at that zone the two are reported indistinguishable; tightened to δ = 10 g the guarantee applies and the procedure returns the fastest path in 97.7 % of macro-replications for 83 runs. Finally, CRN buys a median 13.7× on the synthetic corridor and only 1.39× here, and §5.5 measures why: holding the shared demand draw fixed removes none of the ego's variance, because a different route makes SUMO consume its random stream in a different order. The geometry and the emission model are real; the demand is not, and every CO₂ figure on the real network is a free-flow figure.
+An earlier Green AI project of mine named three Seoul driving routes, simulated two of them for fuel and CO₂ in the commercial microsimulator AIMSUN, and drew its conclusions from **one run per scenario**. This project re-derives that report, rebuilds its comparison on the real road, and then makes the route choice the way simulation methodology prescribes — with a statistical guarantee instead of a fixed budget of runs. §2 transcribes the report's 62 numbers with page references and lists five places where its wording disagrees with its own tables. §3 rebuilds the three corridors it names on an OpenStreetMap network of southern Seoul, converted by `netconvert` into Eclipse SUMO with real lane counts, real junction geometry and 494 signalised intersections, with CO₂ from SUMO's published HBEFA3 model — whose class, chosen from the car's attributes before any comparison, reproduces its rated 143 g/km to 142.8. Over eight common-random-number replications the least-CO₂ route is the 15.5 km direct path, but the two best arms **cannot be separated**: shortest versus fastest is +10.7 ± 35.0 g. §4 builds the machinery that fixes that, on a synthetic 5 km arterial whose truth is computable — fully sequential indifference-zone selection, sequential feasibility determination under a travel-time constraint, and common random numbers — where one run per plan recommends an infeasible plan 23 % of the time while the sequential procedure with CRN is acceptable in 1,000 of 1,000 macro-replications. §5 applies it to the real problem on a bank of 1,600 SUMO runs: the sequential procedure attains **P(correct selection) = 0.956 against a nominal 0.95** with every selection acceptable, for 490 runs against the 40 the fixed budget spent, and at a 20-minute trip budget it answers "no route qualifies" rather than recommending one that breaks it — which the fixed budget does 7.2 % of the time. The tie is then settled at a stated zone: shortest − fastest = **+13.35 g (95 % CI [+7.87, +18.82])**, which is *inside* the δ = 25 g indifference zone declared in advance, so at that zone the two are reported indistinguishable; tightened to δ = 10 g the guarantee applies and the procedure returns the fastest path in 97.7 % of macro-replications for 83 runs. Finally, CRN buys a median 13.7× on the synthetic corridor and only 1.39× here, and §5.5 measures why: holding the shared demand draw fixed removes none of the ego's variance, because a different route makes SUMO consume its random stream in a different order. The geometry and the emission model are real; the demand is not, and every CO₂ figure on the real network is a free-flow figure.
 
 <figure class="vid">
   <video src="/projects/eco-route-rl/media/drive.mp4" autoplay loop muted playsinline preload="metadata" poster="/projects/eco-route-rl/media/drive.jpg"></video>
@@ -41,14 +41,8 @@ An earlier Green AI project of mine compared three Seoul driving routes for fuel
   arterial at 18:00 would look nothing like this, and the saving shown is a free-flow saving.
   <strong>Two rendering notes.</strong> Lane widths are drawn 1.6× their true width so that lanes stay countable at a
   zoom wide enough to show the surrounding street grid; positions, lane counts and geometry are untouched
-  (<code>data/view_settings.xml</code>). And this is the 2D view: the picture this animation was modelled on is
-  SUMO's OSG 3D view, and <code>results/osg_availability.json</code> records every way an OSG build could have
-  arrived here and why none did — the installed wheel's build-features line carries no OSG and its
-  <code>--help</code> offers no <code>--osg</code> option, PyPI's latest <code>eclipse-sumo</code> release ships six
-  platform wheels and none is an OSG variant, <code>conda search -c conda-forge eclipse-sumo</code> answers "No match
-  found", the Ubuntu package (sumo 1.4.0) needs root and <code>sudo -n</code> answers that a password is required,
-  and <code>ldconfig -p</code> lists no OpenSceneGraph library for anything to link against. A source build was out
-  of scope.</figcaption>
+  (<code>data/view_settings.xml</code>). And this is SUMO's 2D view; its OSG 3D view was not available on the
+  machine used.</figcaption>
 </figure>
 
 ## 1 Introduction
@@ -77,7 +71,7 @@ The last move is the point of the project. The first two make it possible to sta
 
 ### 2.1 What it contains
 
-The report simulates a 2023 Hyundai Grandeur 2.5 (rated 11.7 km/ℓ combined, 10.0 urban, 14.5 highway, 143 g CO₂/km) on three road sequences (p.3–4), all from 개포자이 프레지던스 to 중앙대학교 정문:
+The report simulates a 2023 Hyundai Grandeur 2.5 (rated 11.7 km/ℓ combined, 10.0 urban, 14.5 highway, 143 g CO₂/km) on three road sequences (p.3–4), all from Gaepo Xi Presidence (개포자이 프레지던스) to the main gate of Chung-Ang University (중앙대학교 정문):
 
 | | Route as the report prints it | Character |
 |---|---|---|
@@ -107,12 +101,12 @@ The single most informative comparison it does contain is one 5.5 km urban segme
 
 ### 3.1 Recovering the corridors
 
-Origin and destination are OSM features looked up by name, not coordinates I typed: the 개포자이프레지던스아파트 land-use way (357824808) and the 중앙대정문 bus-stop node (4178638914), snapped to the network 135 m and 3 m away.
+Origin and destination are OSM features looked up by name, not coordinates I typed: the land-use way of the Gaepo Xi Presidence apartments (개포자이프레지던스아파트, way 357824808) and the Chung-Ang University main-gate bus stop (중앙대정문, node 4178638914), snapped to the network 135 m and 3 m away.
 
 A corridor is the shortest path that enters the report's named roads **in the report's order**: the search state is (SUMO edge, how many of those roads have been entered), entering the next road advances the index by exactly one, and an edge on none of them costs twice its length. Roads the classified network does not carry are dropped first, with the reason recorded. Two drops matter:
 
-- **동작교** is a bridge name; no way in the extract carries it.
-- **강남순환로 and 경부고속도로 in corridor B.** The classified extract has no direct link between them — the shortest connection is 1,498 m of other roads — so forcing both in order detours corridor B to 27.3 km against the report's stated 17.627 km. They are dropped from B's ordering constraint (corridor C still carries 강남순환로 for 7.2 km), and B then comes out at 17.001 km, 3.6 % short of the report's own total. Corridor A comes out 2.2 km long (17.525 vs 15.325 km); the report's four AIMSUN segments were split to fit an educational licence and need not cover the whole door-to-door trip.
+- **Dongjak Bridge (동작교)** is a bridge name; no way in the extract carries it.
+- **Gangnam Sunhwan-ro (강남순환로) and the Gyeongbu Expressway (경부고속도로) in corridor B.** The classified extract has no direct link between them — the shortest connection is 1,498 m of other roads — so forcing both in order detours corridor B to 27.3 km against the report's stated 17.627 km. They are dropped from B's ordering constraint (corridor C still carries Gangnam Sunhwan-ro for 7.2 km), and B then comes out at 17.001 km, 3.6 % short of the report's own total. Corridor A comes out 2.2 km longer (17.525 vs 15.325 km); the report's four AIMSUN segments were split to fit an educational licence and need not cover the whole door-to-door trip.
 
 Two baselines are found on the same network with no named-road preference: the **shortest** path by distance and the **fastest** path by length ÷ speed limit.
 
@@ -120,15 +114,9 @@ Two baselines are found on the same network with no named-road preference: the *
 
 One Overpass request (2026-09-21, bbox 37.445–37.535 N, 126.905–127.090 E, 5.90 MB of XML, cached gzipped in `cache/`) returns every classified way — motorway/trunk/primary/secondary/tertiary and their links — with all their nodes and tags. `netconvert` then builds the network with `--geometry.remove --ramps.guess --junctions.join --tls.guess-signals --tls.join`, so lane counts, junction shapes and signals all come from the OSM tags.
 
-**Speed limits needed care.** Only 514 of the 3,716 downloaded ways carry `maxspeed`, and SUMO's stock OSM type map falls back to German defaults — 100 km/h on a primary road, which is wrong for Seoul. So the build first measures the tagged speeds *in this extract* and uses the length-weighted mean per class as that class's default: 110 km/h motorway, 77.2 trunk, 54.2 primary, 47.8 secondary, 44.0 tertiary. A class with no tagged way at all falls back to the Korean statutory urban limit (50 km/h, 30 on side streets; 도로교통법 시행규칙 제19조, the 안전속도 5030 scheme). Individual ways keep their own tag wherever they have one.
+**Speed limits needed care.** Only 514 of the 3,716 downloaded ways carry `maxspeed`, and SUMO's stock OSM type map falls back to German defaults — 100 km/h on a primary road, which is wrong for Seoul. So the build first measures the tagged speeds *in this extract* and uses the length-weighted mean per class as that class's default: 110 km/h motorway, 77.2 trunk, 54.2 primary, 47.8 secondary, 44.0 tertiary. A class with no tagged way at all falls back to the Korean statutory urban limit (50 km/h, 30 on side streets: Article 19 of the Road Traffic Act's Enforcement Rule [도로교통법 시행규칙 제19조], the Safe Speed 5030 scheme [안전속도 5030]). Individual ways keep their own tag wherever they have one.
 
-**No Korean speed or count source would serve us.** `src/seoul_data_sources.py` made exactly one request to each of five, with a truthful user agent, and recorded the answers verbatim in `results/speed_sources.json`:
-
-- 서울 열린데이터광장 OpenAPI, both the speed and the volume service: `<RESULT><CODE>ERROR-300</CODE><MESSAGE><![CDATA[필수 값이 누락되어 있습니다. 요청인자를 참고 하십시오.]]></MESSAGE></RESULT>` — the missing required argument is the API key.
-- 국가교통정보센터 (ITS) OpenAPI, HTTP 401: `<resultCode>4005</resultCode><resultMsg>유효하지 않은 인증키입니다. 인증키를 확인해 주시고, 발급받지 않은 경우에는 국가교통정보센터에서 인증키를 발급받아 이용해 주시기 바랍니다.</resultMsg>`
-- The 열린데이터광장 dataset page and the TOPIS 자료실 both returned HTML shells with no data.
-
-None was retried, and none was scraped after declining. Everything below therefore rests on OSM tags plus the statutory limits, and says so.
+**No Korean speed or count source is used yet.** The speed and volume APIs of the Seoul Open Data Plaza (서울 열린데이터광장) and the National Transport Information Center (국가교통정보센터) need registered keys and are not used in this version. Everything below therefore rests on OSM tags plus the statutory limits, and says so.
 
 ### 3.3 The five routes
 
@@ -208,7 +196,7 @@ Five arms × 8 background-traffic replications = 40 SUMO runs, 4,200 s of simula
   the two direct paths 15 km; at this demand level the extra distance is never repaid by the expressways' higher speed.</figcaption>
 </figure>
 
-At this demand the ranking is set by distance: the direct 15.5 km path emits 17–24 % less CO₂ than any of the report's three corridors and also arrives 2–3.5 minutes earlier, so there is no eco-versus-fast trade-off to find here. Corridor C, the tunnel expressway, is both the longest and the highest-emitting despite having the fewest signals and the highest mean speed. Per kilometre the ordering reverses — C is the *most* efficient route at 172.8 g/km against the fastest path's 178.1 — which is the expressway effect the report was looking for; it is simply swamped by 4.3 extra kilometres.
+At this demand the ranking is set by distance: the direct 15.5 km path emits 15–19 % less CO₂ than any of the report's three corridors and also arrives 2–3.5 minutes earlier, so there is no eco-versus-fast trade-off to find here. Corridor C, the tunnel expressway, is both the longest and the highest-emitting despite having the fewest signals and the highest mean speed. Per kilometre the ordering reverses — C is the *most* efficient route at 172.8 g/km against the fastest path's 178.1 — which is the expressway effect the report was looking for; it is simply swamped by 4.3 extra kilometres.
 
 **Two things this table cannot do, and does not pretend to.** The shortest and fastest paths differ by +10.7 ± 35.0 g: the interval covers zero and both signs, so the winner is *not* established. And common random numbers bought almost nothing — the variance reduction ranges from 0.48× to 2.28×, i.e. sometimes less than nothing. Both are questions about how the eight runs were spent, and eight runs chosen in advance cannot answer either. §4 builds the machinery that can; §5 applies it.
 
@@ -278,9 +266,9 @@ $$
 
 where $S_{il}^{2}$ is the first-stage variance of the *difference* — so the procedure stays valid, and gets cheaper, under CRN. Feasibility uses the same triangular region on Σ(TTᵢⱼ − q) with tolerance ε (Andradóttir & Kim, 2010). In the simultaneous variant both checks share observations and only a rival already declared feasible can eliminate a plan. The error budget α = 0.05 is split evenly, with Bonferroni constants β = α/(2K) per feasibility decision and β = α/(2(K−1)) per pairwise comparison in (5), valid under CRN.
 
-The procedures come from `rsel`, a library from the sibling project `rs-lab`, copied unmodified after its 23 tests passed from inside this project; `src/rsel_min.py` is my own minimal implementation, kept as a cross-check. Before use, both were run on normal slippage configurations (k = 10, σ = 3, δ = ε = 1; 2,000 macro-replications): empirical PCS was 0.958–0.987 against the nominal 0.95 in all six cases, with identical KN and feasibility decisions on identical data (`results/corridor_rsel_verification.json`).
+The procedures come from `rsel`, the library of my [rs-lab](/research/rs-lab/) project, copied unmodified after its 23 tests passed from inside this project; `src/rsel_min.py` is a second, minimal implementation, kept as a cross-check. Before use, both were run on normal slippage configurations (k = 10, σ = 3, δ = ε = 1; 2,000 macro-replications): empirical PCS was 0.958–0.987 against the nominal 0.95 in all six cases, with identical KN and feasibility decisions on identical data (`results/corridor_rsel_verification.json`).
 
-**Two cautions.** The guarantee P(correct selection) ≥ 1 − α assumes every rival of the best feasible plan is infeasible by at least ε or worse by at least δ. δ = 2.5 g and ε = 5 s (each about 1 %) were set as differences that would not matter in practice, but **after** seeing a 32-replication pilot, and the ground truth puts the runner-up only 0.71 g behind the best. The assumption thus fails for exact selection; what the procedure can be expected to control here is the probability of an *acceptable* selection. Both are reported. And for several thresholds the library's recycled procedure uses β = α/(2K); that bound is the library author's own derivation, not a constant from the literature.
+**Two cautions.** The guarantee P(correct selection) ≥ 1 − α assumes every rival of the best feasible plan is infeasible by at least ε or worse by at least δ. δ = 2.5 g and ε = 5 s (each about 1 %) were set as differences that would not matter in practice, but **after** seeing a 32-replication pilot, and the ground truth puts the runner-up only 0.71 g behind the best. The assumption thus fails for exact selection; what the procedure can be expected to control here is the probability of an *acceptable* selection. Both are reported. And for several thresholds the library's recycled procedure uses β = α/(2K); that bound is my own derivation, not a constant from the literature.
 
 ### 4.4 What one run per plan costs
 
@@ -425,7 +413,7 @@ The interval excludes zero, so the fastest path really is the lower-CO₂ route 
 | 5 | holds | 0.998 | 189 | 334 |
 | 2.5 | holds | 1.000 | 407 | 668 |
 
-**At the indifference zone this project stated in advance, the two routes are not separated.** δ = 25 g was chosen as a difference a driver would not care about, and the true difference — 13.3 g, about a fifth of a gram per second of idling — is smaller than that. Inside its own zone the procedure is entitled to return either arm, and reporting them as indistinguishable at that zone is the correct answer, not a failure. It is also the answer a fixed budget could never have justified: §3.6 did not know whether the gap was 0 g or 45 g.
+**At the indifference zone this project stated in advance, the two routes are not separated.** δ = 25 g was chosen as a difference a driver would not care about, and the true difference — 13.3 g, about six seconds of idling at HBEFA3's 2.3 g/s — is smaller than that. Inside its own zone the procedure is entitled to return either arm, and reporting them as indistinguishable at that zone is the correct answer, not a failure. It is also the answer a fixed budget could never have justified: §3.6 did not know whether the gap was 0 g or 45 g.
 
 **Tighten the zone to δ = 10 g and the guarantee applies, and the procedure separates them**: it returns `fastest` in 97.7 % of 1,000 macro-replications, against the nominal 0.95, for 83 SUMO runs — roughly twice what the entire five-arm fixed design of §3.6 spent, on a two-arm question it could not answer at all. Below that the cost climbs steeply for very little: 189 runs at δ = 5 g, 407 at δ = 2.5 g.
 
@@ -433,7 +421,7 @@ So the honest statement of the result is a sentence with a number in it: *the fa
 
 ### 5.5 Why common random numbers worked on the corridor and barely work here
 
-§4.4 measured a median variance-reduction factor of 13.7× on the synthetic corridor. §3.6 measured 0.48×–2.28× on the real network — "sometimes nothing at all". That contrast is a genuine finding, and with 320 replications it can be taken apart rather than asserted (`results/sumo_crn_gap.json`).
+§4.4 measured a median variance-reduction factor of 13.7× on the synthetic corridor. §3.6 measured 0.48×–2.28× on the real network — "sometimes less than nothing". That contrast is a genuine finding, and with 320 replications it can be taken apart rather than asserted (`results/sumo_crn_gap.json`).
 
 **First, the §3.6 range was mostly measurement noise.** A variance-reduction factor is a ratio of two estimated variances, and eight replications do not estimate either one well:
 
@@ -470,7 +458,7 @@ At eight replications four of the ten route pairs read below 1×, which is what 
 
 ![Figure 16 — Left: how much road two routes share against how correlated their CO₂ is under CRN, with the synthetic corridor's median and the background fleet's own cross-arm correlation for reference. Right: the variance-reduction factors of the two stages side by side, ten route pairs against 1,128 plan pairs.](./figs/sumo_crn_gap.png)
 
-The one pair that shares a lot of road — the two direct paths, 11.28 km in common — is also the only pair with a correlation above 0.5 and the only VRF above 2×. Across all ten pairs the linear relationship is r = 0.543, but the rank correlation is −0.176: **it is that single high-overlap pair carrying the relationship, not a smooth trend**, and among the eight pairs that share under 3 km the correlation wanders between 0.14 and 0.50 with no ordering by overlap at all. Nor is the residual a network-wide "busy draw" factor: the correlation between an arm's CO₂ and the replication's own background-fleet time loss is between −0.01 and +0.11 for all five arms.
+The one pair that shares a lot of road — the two direct paths, 11.28 km in common — is also the only pair with a correlation above 0.5 and the only VRF above 2×. Across all ten pairs the linear relationship is r = 0.543, but the rank correlation is −0.176: **it is that single high-overlap pair carrying the relationship, not a smooth trend**, and among the six pairs that share under 3 km the correlation wanders between 0.14 and 0.50 with no ordering by overlap at all. Nor is the residual a network-wide "busy draw" factor: the correlation between an arm's CO₂ and the replication's own background-fleet time loss is between −0.01 and +0.11 for all five arms.
 
 Put together, the mechanism is not mysterious. On the synthetic corridor the competing systems are signal plans, every plan faces literally the same vehicles arriving at the same instants, and the output is a fleet average over those same vehicles — the shared draw *is* the dominant input to the output, and ρ = 0.95 follows. On the real network the competing systems are routes, the output is one car's trip, that car meets a nearly disjoint set of background vehicles on each route, and SUMO's stream desynchronises as soon as the routes diverge. The demand file is shared; almost nothing that determines the answer is. **CRN is not a property of the seed; it is a property of how the systems consume the draw** — and that is a lesson the synthetic corridor, where synchronisation is easy, could not have taught on its own.
 
@@ -480,9 +468,9 @@ An earlier version of this project rebuilt the report's second stage on a **hand
 
 ## 7 Limitations & next steps
 
-- **The demand on the real network is not real and does not congest.** The simulation sits near free flow at 47–50 km/h where the report measured 23.9 km/h in traffic, so **every CO₂ figure in §3.6 and §5 is a free-flow figure.** Concentrating demand on the corridors — or obtaining the 2022 Seoul traffic-volume survey the report itself used, which needs an API key I do not have — is the single change that would matter most, and it would change the selection problem too: a congested network would give CRN something to cancel.
+- **The demand on the real network is not real and does not congest.** The simulation sits near free flow at 47–50 km/h where the report measured 23.9 km/h in traffic, so **every CO₂ figure in §3.6 and §5 is a free-flow figure.** Concentrating demand on the corridors — or obtaining the 2022 Seoul traffic-volume survey the report itself used, which needs a registered Seoul Open Data API key — is the single change that would matter most, and it would change the selection problem too: a congested network would give CRN something to cancel.
 - **The synthetic corridor of §4 is not a road.** Geometry, demand, turning shares and driver parameters are assumed; traffic is one-way with no lane changing, pedestrians, buses or spillback, and side streets are point queues. Its 20 % saving is a property of that model, and its emissions model rests on six anchor values and invented speed traces.
-- **Corridor B is not quite the report's route B.** Two of its named roads had to be dropped because the classified extract carries no direct link between them; the resulting route is 3.6 % shorter than the report's stated total but omits the 강남순환로/경부고속도로 hop.
+- **Corridor B is not quite the report's route B.** Two of its named roads had to be dropped because the classified extract carries no direct link between them; the resulting route is 3.6 % shorter than the report's stated total but omits the hop between Gangnam Sunhwan-ro (강남순환로) and the Gyeongbu Expressway (경부고속도로).
 - **Corridor A is 2.2 km longer than the report's four simulated segments.** Whether the report's segments cover the whole door-to-door trip cannot be established from the document.
 - **HBEFA3 is a fleet-average curve.** `PC_G_EU6` carries no displacement or kerb weight; the Grandeur's 1,620 kg is above the European fleet average behind that curve. The 60 km/h agreement with the rated 143 g/km is one point of contact, not a validation.
 - **Driver behaviour, lane choice and signal programs are SUMO defaults.** The signals are real intersections but their timings are guessed by `netconvert`, not measured.

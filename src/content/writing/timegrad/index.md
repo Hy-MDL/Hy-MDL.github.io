@@ -9,7 +9,7 @@ paper:
 series: "generative-finance"
 order: 2
 tags: [diffusion, time-series, probabilistic-forecasting, autoregressive, ddpm, crps, multivariate]
-date: 2021-02-01
+date: 2021-01-01
 status: draft
 summary: "An LSTM summarizes the past into a hidden state, and a DDPM conditioned on that state samples the next multivariate observation — one full reverse diffusion chain per forecast step."
 ---

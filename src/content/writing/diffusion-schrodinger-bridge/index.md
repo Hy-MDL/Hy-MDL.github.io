@@ -9,7 +9,7 @@ paper:
 series: "stochastic-modeling"
 order: 6
 tags: [schrodinger-bridge, optimal-transport, iterative-proportional-fitting, score-based-models, sde]
-date: 2021-07-01
+date: 2021-06-01
 status: draft
 summary: "Score-based diffusion is recast as the first step of an iterative proportional fitting scheme for the Schrödinger bridge, so that a short noising horizon can be repaired by alternately retraining forward and backward drifts."
 ---

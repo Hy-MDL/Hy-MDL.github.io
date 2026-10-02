@@ -1,7 +1,7 @@
 ---
 title: "IAF: Improved Variational Inference with Inverse Autoregressive Flow"
 paper:
-  title: "Improving Variational Inference with Inverse Autoregressive Flow"
+  title: "Improved Variational Inference with Inverse Autoregressive Flow"
   authors: "Diederik P. Kingma, Tim Salimans, Rafal Jozefowicz, Xi Chen, Ilya Sutskever, Max Welling"
   venue: "NeurIPS 2016"
   arxiv: "1606.04934"
@@ -9,7 +9,7 @@ paper:
 series: "normalizing-flows"
 order: 5
 tags: [normalizing-flows, variational-inference, inverse-autoregressive-flow, vae, resnet-vae, approximate-posterior, elbo]
-date: 2016-07-01
+date: 2016-06-01
 status: draft
 summary: "Sampling from an autoregressive model is sequential, but recovering the noise that produced a sample is parallel — so run that inverse as a flow layer and a diagonal Gaussian posterior becomes an arbitrarily flexible one at the cost of one forward pass per step."
 ---
@@ -172,7 +172,7 @@ flowchart LR
 
 ### 5.1 MNIST
 
-Convolutional VAE with ResNet blocks, a *single* layer of 32 Gaussian stochastic units, one IAF transformation implemented as a 2-layer MADE, ordering reversed between every other transformation. Dynamically binarised MNIST. Averages over five optimisation runs, standard deviations in brackets; the right column is an importance-sampled marginal likelihood estimate with 128 samples.
+Convolutional VAE with ResNet blocks, a *single* layer of 32 Gaussian stochastic units, each IAF transformation implemented as a 2-layer MADE and stacked to the depths in the table, with ordering reversed between every other transformation. Dynamically binarised MNIST. Averages over five optimisation runs, standard deviations in brackets; the right column is an importance-sampled marginal likelihood estimate with 128 samples.
 
 | Model | VLB | $\log p(x)\approx$ |
 |---|---|---|
@@ -194,7 +194,7 @@ Three readings, of which the paper makes two.
 
 The claim of *best published log-likelihood on dynamically binarized MNIST: $-79.10$* stands against this table. On Hugo Larochelle's *statically* binarised MNIST the same model gets $-79.88$, *slightly worse than the best reported result, $-79.2$, using the PixelCNN* — reported rather than omitted.
 
-Diminishing returns are visible: width $320\to1920$ at depth 2 buys $0.47$ nats of $\log p$; depth $2\to8$ at width 1920 buys $0.67$ across three doublings.
+Diminishing returns are visible: width $320\to1920$ at depth 2 buys $0.47$ nats of $\log p$; depth $2\to8$ at width 1920 buys only $0.20$ nats ($0.37$ of VLB) across two doublings.
 
 ### 5.2 CIFAR-10
 
@@ -229,7 +229,7 @@ Three things to keep straight about this column, two of which the caption says.
 - **No ablation on CIFAR-10**, so the flagship number confounds two contributions.
 - **The MNIST experiment uses a 32-dimensional latent** with a single stochastic layer. That is a small space in which to demonstrate a method whose selling point is scaling to high-dimensional latents; the high-dimensional demonstration is the unablated one.
 - **Depth and width are explored only on MNIST**, only on a grid of four points, and only upward — there is no point at which more depth stops helping, so the curve's shape past 8 is unknown.
-- **The importance-sampling estimator's sample count is given for MNIST (128) and not for CIFAR-10.** Marked: not stated.
+- **The importance-sampling estimator's sample count is given for MNIST (128) and not for CIFAR-10.**
 - **Nothing measures what the flow actually learned.** There is no analysis of the resulting posterior's shape, no decomposition of the KL, no check on whether the gain comes from correlation (which one linear step would give) or from genuine non-Gaussianity. Given that §3.3 identifies full-covariance Gaussian as the one-linear-step special case, the obvious control — a full-covariance Gaussian posterior — is absent from Table 1.
 - **The context $h$ is unexamined.** It is an extra encoder output fed to every step, with an unconstrained Jacobian, and it may be doing a large share of the work. No ablation.
 
@@ -256,7 +256,7 @@ Three things to keep straight about this column, two of which the caption says.
 
 ## References
 
-1. Kingma, D. P., Salimans, T., Jozefowicz, R., Chen, X., Sutskever, I., Welling, M. *Improving Variational Inference with Inverse Autoregressive Flow.* arXiv:1606.04934 (NeurIPS 2016).
+1. Kingma, D. P., Salimans, T., Jozefowicz, R., Chen, X., Sutskever, I., Welling, M. *Improved Variational Inference with Inverse Autoregressive Flow.* arXiv:1606.04934 (NeurIPS 2016).
 2. Rezende, D. J., Mohamed, S. *Variational Inference with Normalizing Flows.* ICML 2015.
 3. Germain, M., Gregor, K., Murray, I., Larochelle, H. *MADE: Masked Autoencoder for Distribution Estimation.* ICML 2015.
 4. Papamakarios, G., Pavlakou, T., Murray, I. *Masked Autoregressive Flow for Density Estimation.* NeurIPS 2017.

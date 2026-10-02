@@ -4,7 +4,7 @@ paper: { title: "Conditional Sig-Wasserstein GANs for Time Series Generation", a
 series: "generative-finance"
 order: 5
 tags: [gan, wasserstein, path-signature, rough-paths, conditional-generation, time-series, expected-signature]
-date: 2020-07-01
+date: 2020-06-01
 status: draft
 summary: "Replacing the Wasserstein critic with a closed-form distance between expected path signatures turns conditional time-series GAN training from a min-max game into ordinary regression plus gradient descent."
 ---

@@ -11,7 +11,7 @@ paper:
 series: "submodular-optimization"
 order: 2
 tags: [submodular-optimization, lazy-greedy, sensor-placement, online-bounds, outbreak-detection, budgeted-maximization, influence-maximization]
-date: 2007-09-01
+date: 2007-08-01
 status: draft
 summary: "Marginal gains only ever shrink, so a stale gain is an upper bound on the true one — keep them in a priority queue and most re-evaluations never happen. Greedy in 23 seconds instead of 4.5 hours, plus an instance-level bound tighter than 1 − 1/e."
 ---

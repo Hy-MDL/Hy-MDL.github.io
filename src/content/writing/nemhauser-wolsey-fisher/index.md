@@ -10,7 +10,7 @@ paper:
 series: "submodular-optimization"
 order: 1
 tags: [submodular-optimization, greedy-algorithm, approximation-guarantee, diminishing-returns, matroids, linear-programming-relaxation, facility-location]
-date: 1979-01-01
+date: 1978-12-01
 status: draft
 summary: "For a monotone submodular objective under a cardinality constraint, the greedy algorithm — add whatever helps most, one element at a time — is within a factor 1 − (1 − 1/K)^K ≥ 1 − 1/e of optimal, and the bound is attained."
 ---
@@ -132,7 +132,7 @@ The step from Proposition 4.3 to the real bound is the paper's methodological co
 $$
 P(b)=\begin{cases}1-(j+1)b, & b\le\alpha^{j+1}/K,\\[2pt] 1+(K-j-1)b-\alpha^{j+1}, & b\ge\alpha^{j+1}/K,\end{cases}
 \qquad
-\min_{b\ge0}P(b)=1-\left(\frac{j+1}{K}\right)^{\!j+1}\!\!,\ \text{at}\ b=\frac{\alpha^{j+1}}{K}. \tag{9}
+\min_{b\ge0}P(b)=1-\frac{j+1}{K}\,\alpha^{j+1},\ \text{at}\ b=\frac{\alpha^{j+1}}{K}. \tag{9}
 $$
 
 This is a *factor-revealing* LP: rather than guessing the extremal instance and verifying it, you characterise the worst case as the optimum of a linear program over the constraints that submodularity forces. The method reappears throughout approximation algorithms.
@@ -142,7 +142,7 @@ This is a *factor-revealing* LP: rather than guessing the extremal instance and 
 **Theorem 4.1** gives a family of $K$ bounds, each tight on its own interval of $b=\theta/(Z-z(\emptyset)+K\theta)$: if $\alpha^{k+1}/K\le b\le\alpha^k/K$ then
 
 $$
-\frac{Z-Z^G}{Z-z(\emptyset)+K\theta}\ \le\ \alpha^{k+1}+\frac{\theta(K-k-1)}{Z-z(\emptyset)+K\theta}\ \le\ \alpha^{k+1},\qquad k=0,\dots,K-1, \tag{10}
+\frac{Z-Z^G}{Z-z(\emptyset)+K\theta}\ \le\ \alpha^{k+1}-\frac{\theta(K-k-1)}{Z-z(\emptyset)+K\theta}\ \le\ \alpha^{k+1},\qquad k=0,\dots,K-1, \tag{10}
 $$
 
 with part (c) exhibiting *a family of problems* attaining the first inequality with equality, and with $K^\ast=k+1$. Part (a) bounds things by $K^\ast$ and, since the right-hand side increases with $K^\ast$, setting $K^\ast=K$ gives the headline:
@@ -259,7 +259,7 @@ Three observations about the shape of these results.
 
 ## 7 Extensions
 
-**What was built on this.** Part II (Fisher, Nemhauser and Wolsey, in the same year) extends the analysis to matroid constraints, where greedy gives $1/2$ and $1-1/e$ was open for thirty years until the [continuous greedy algorithm](/blog/continuous-greedy/). Optimality of the constant was settled twice: Nemhauser and Wolsey showed no algorithm making polynomially many value-oracle queries can beat $1-1/e$, and Feige showed the same bound is optimal for maximum coverage unless P = NP — so this paper's algorithm is not merely good but best possible *(from general knowledge; neither result is in this paper)*. The evaluation cost the paper ignores was attacked by lazy evaluation and, later, by [CELF](/blog/celf/) and by stochastic greedy. [Adaptive submodularity](/blog/adaptive-submodularity/) generalises the whole apparatus to the case where elements are selected in sequence with feedback, recovering $1-1/e$ in that setting. And the applications — sensor placement, outbreak detection, influence maximisation, document summarisation, data subset selection — are all instances of (4) whose practitioners quote this theorem.
+**What was built on this.** Part II (Fisher, Nemhauser and Wolsey, in the same year) extends the analysis to matroid constraints, where greedy gives $1/2$ and $1-1/e$ was open for thirty years until the [continuous greedy algorithm](/blog/continuous-greedy/). Optimality of the constant was settled twice, outside this paper: Nemhauser and Wolsey (1978) showed that no algorithm making polynomially many value-oracle queries can beat $1-1/e$, and Feige (1998) showed that the same bound is optimal for maximum coverage unless P = NP — so this paper's algorithm is not merely good but best possible. The evaluation cost the paper ignores was attacked by lazy evaluation and, later, by [CELF](/blog/celf/) and by stochastic greedy. [Adaptive submodularity](/blog/adaptive-submodularity/) generalises the whole apparatus to the case where elements are selected in sequence with feedback, recovering $1-1/e$ in that setting. And the applications — sensor placement, outbreak detection, influence maximisation, document summarisation, data subset selection — are all instances of (4) whose practitioners quote this theorem.
 
 **Open problems the paper leaves.** What happens under constraints other than cardinality, which is Part II and then the matroid literature. How to certify submodularity for a given objective. How to exploit instance structure, since a worst-case constant says nothing about a particular problem. And the question implicit in §6: when is the LP bound tight enough to be worth computing?
 
@@ -275,7 +275,7 @@ Three observations about the shape of these results.
 - Greedy — add whatever helps most — gets at least $1-(1-1/K)^K\ge1-1/e\approx0.632$ of the optimum for monotone submodular objectives under a cardinality constraint, on every instance, with no assumptions.
 - The proof is one inequality applied repeatedly: at every step, the optimum's remaining value is at most $K$ times the marginal gain greedy is about to take. Minimising over that system is a linear program, and its value *is* the constant.
 - The constant is essentially $1-1/e$ for any realistic $K$ — within 3% of the limit by $K=10$ — so there is no small-budget regime with a materially better guarantee.
-- The bound is tight for every $K$, and much later work showed no polynomial algorithm can do better, so this is the end of the story for this problem rather than a first attempt.
+- The bound is tight for every $K$, and later work (Nemhauser and Wolsey, 1978; Feige, 1998) showed no polynomial algorithm can do better, so this is the end of the story for this problem rather than a first attempt.
 - Greedy provably beats single-swap local search ($0.632$ vs $\approx0.5$), which is the opposite of the usual intuition that local search refines a greedy start.
 - If greedy runs out of positive marginal gains before using its budget, the solution it has is *optimal*, not merely good.
 - The most practically useful and least-quoted result is §6: greedy is within $1-1/e$ of a computable LP upper bound, so you can certify the gap on the instance you actually have instead of relying on a worst case.
@@ -290,3 +290,5 @@ Three observations about the shape of these results.
 5. Shapley, L. S. *Cores of Convex Games.* International Journal of Game Theory 1, 1971.
 6. Calinescu, G., Chekuri, C., Pál, M., Vondrák, J. *Maximizing a Monotone Submodular Function Subject to a Matroid Constraint.* SIAM Journal on Computing 40(6), 2011.
 7. Leskovec, J., Krause, A., Guestrin, C., Faloutsos, C., VanBriesen, J., Glance, N. *Cost-effective Outbreak Detection in Networks.* KDD 2007.
+8. Nemhauser, G. L., Wolsey, L. A. *Best Algorithms for Approximating the Maximum of a Submodular Set Function.* Mathematics of Operations Research 3(3):177-188, 1978.
+9. Feige, U. *A Threshold of ln n for Approximating Set Cover.* Journal of the ACM 45(4):634-652, 1998.

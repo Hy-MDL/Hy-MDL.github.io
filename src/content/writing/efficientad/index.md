@@ -9,7 +9,7 @@ paper:
 series: "industrial-vision"
 order: 4
 tags: [anomaly-detection, student-teacher, knowledge-distillation, hard-example-mining, logical-anomalies, mvtec-loco, latency]
-date: 2023-04-01
+date: 2023-03-01
 status: draft
 summary: "EfficientAD distils a deep backbone into a four-layer patch network, uses it as both teacher and student, keeps the student from generalising with a hard-feature loss and an ImageNet penalty, and adds a shared-student autoencoder branch for logical anomalies, reaching the best accuracy of its comparison at about 2 ms per image."
 ---

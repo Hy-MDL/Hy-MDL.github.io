@@ -2,14 +2,14 @@
 title: "NCSN: Generative Modeling by Estimating Gradients of the Data Distribution"
 paper:
   title: "Generative Modeling by Estimating Gradients of the Data Distribution"
-  authors: "Yang Song et al."
+  authors: "Yang Song, Stefano Ermon"
   venue: "NeurIPS 2019"
   arxiv: "1907.05600"
   license: "arxiv.org/licenses/nonexclusive-distrib/1.0/"
 series: "score-to-flow"
 order: 1
 tags: [score-matching, denoising-score-matching, langevin-dynamics, score-based-models, annealing, generative-models, ncsn]
-date: 2019-08-01
+date: 2019-07-01
 status: draft
 summary: "Two diagnosed failure modes — an undefined score on the data manifold and no training signal off it — and one fix: train a single network on a geometric ladder of Gaussian noise levels, then sample with Langevin dynamics that walks the ladder down."
 ---
@@ -26,7 +26,7 @@ In 2019 the two dominant families of generative models each carried a structural
 
 Modelling the score sidesteps normalization entirely. If $p(x)=\tilde p(x)/Z$ then $\nabla_x\log p(x)=\nabla_x\log\tilde p(x)$, so the partition function never appears and the network $s_\theta:\mathbb{R}^D\to\mathbb{R}^D$ can be anything that maps an image to an image. <mark>Training then needs no adversary, no MCMC inner loop, and no architectural constraint</mark>, and — the authors argue, though they never demonstrate it — the loss itself can compare models.
 
-The catch, and the real content of the paper, is that "fit the score, then run Langevin" does not work on images. Sections 3 and 3.2 of the paper are a two-part diagnosis, and the method is the smallest mechanism that answers both parts at once. Everything that follows in this series — [NCSNv2](/blog/ncsnv2/) computing the schedule instead of guessing it, [DDPM](/blog/ddpm/) rewriting the same loss as a variational bound, [Score-SDE](/blog/score-sde/) taking the ladder to a continuum — inherits this diagnosis rather than replacing it.
+The catch, and the real content of the paper, is that "fit the score, then run Langevin" does not work on images. Sections 3.1 and 3.2 of the paper are a two-part diagnosis, and the method is the smallest mechanism that answers both parts at once. Everything that follows in this series — [NCSNv2](/blog/ncsnv2/) computing the schedule instead of guessing it, [DDPM](/blog/ddpm/) rewriting the same loss as a variational bound, [Score-SDE](/blog/score-sde/) taking the ladder to a continuum — inherits this diagnosis rather than replacing it.
 
 ## 2 Background
 

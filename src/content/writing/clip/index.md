@@ -9,7 +9,7 @@ paper:
 series: "vision"
 order: 5
 tags: [clip, contrastive-learning, vision-language, zero-shot, prompt-engineering, distribution-shift, representation-learning]
-date: 2021-04-01
+date: 2021-03-01
 status: draft
 summary: "Training an image encoder and a text encoder to match 400 million web image-caption pairs yields a model whose classifier can be written in plain English, reaching ResNet-50-level ImageNet accuracy with no ImageNet labels and much better robustness under distribution shift."
 ---

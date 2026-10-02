@@ -9,7 +9,7 @@ paper:
 series: "score-to-flow"
 order: 4
 tags: [diffusion, sampling, ddim, non-markovian, probability-flow-ode, deterministic-sampling, generative-models]
-date: 2020-11-01
+date: 2020-10-01
 status: draft
 summary: "The DDPM loss constrains only the noisy marginals, so a whole family of non-Markovian forward processes shares it; the deterministic member of that family samples a pretrained DDPM in 20–100 steps and turns x_T into a usable latent code."
 ---
@@ -241,7 +241,7 @@ Setup: one model per dataset, trained once with $T=1000$ and $L_{\mathbf 1}$; on
 
 ## 7 Extensions
 
-**What was built on this.** The $\eta$ knob and the ODE reading both became standard. [Score-SDE](/blog/score-sde/) supplies the continuous-time framework Proposition 1 connects to; [Improved DDPM](/blog/improved-ddpm/) attacks the same few-step regime from the training side by learning the reverse variances; [EDM](/blog/edm/) pushes "sampling is ODE integration" to its conclusion, re-deriving schedule, preconditioning and solver together. Deterministic sampling is what makes [Latent Diffusion](/blog/latent-diffusion/) and [Classifier-Free Guidance](/blog/classifier-free-guidance/) practical at 20–50 steps, and DDIM inversion is the standard route to editing a real image with a pretrained model. [Consistency Models](/blog/consistency-models/) can be read as learning this ODE's solution map directly. Dedicated high-order solvers — DPM-Solver, PNDM — followed shortly after *(from general knowledge, unverified)*.
+**What was built on this.** The $\eta$ knob and the ODE reading both became standard. [Score-SDE](/blog/score-sde/) supplies the continuous-time framework Proposition 1 connects to; [Improved DDPM](/blog/improved-ddpm/) attacks the same few-step regime from the training side by learning the reverse variances; [EDM](/blog/edm/) pushes "sampling is ODE integration" to its conclusion, re-deriving schedule, preconditioning and solver together. Deterministic sampling is what makes [Latent Diffusion](/blog/latent-diffusion/) and [Classifier-Free Guidance](/blog/classifier-free-guidance/) practical at 20–50 steps, and DDIM inversion is the standard route to editing a real image with a pretrained model. [Consistency Models](/blog/consistency-models/) can be read as learning this ODE's solution map directly. Dedicated high-order solvers — DPM-Solver, PNDM — followed shortly after.
 
 **Open problems.**
 - What is the right step-size *measure*? The paper shows that stepping in $\sigma$ beats stepping in $t$ at small $S$ but offers no principle for choosing the parameterisation, and picks $\tau$ by trying two options.

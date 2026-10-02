@@ -4,7 +4,7 @@ paper: { title: "Volatility is rough", authors: "Jim Gatheral et al.", venue: "a
 series: "stochastic-modeling"
 order: 7
 tags: [rough-volatility, fractional-brownian-motion, hurst-exponent, realized-variance, long-memory, volatility-forecasting, rfsv, fractional-ornstein-uhlenbeck]
-date: 2014-11-01
+date: 2014-10-01
 status: draft
 summary: "Measuring how the moments of log-volatility increments scale with the lag gives one exponent near 0.1 for every asset and every moment order; that single measurement selects fractional Brownian motion with H < 1/2 as the driver, yields the RFSV model, explains why long-memory tests fire on data that has no long memory, and gives a one-parameter forecast of realized variance that beats HAR."
 ---

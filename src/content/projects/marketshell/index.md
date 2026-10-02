@@ -2,7 +2,7 @@
 title: "marketshell — a keyboard-driven terminal research workstation"
 slug: marketshell
 category: "Developer Tools"
-summary: "A Textual 8 terminal app for daily equity research: a watchlist with sparklines, charts drawn by a hand-written braille/half-block rasteriser, a vim-style command line and a read-only filings panel fed by the sibling callsignal project. On a busy, headless 64-core Linux server it paints cached rows 741 ms after process start, and coalescing redraws cut the median event-loop lag during a 50-ticker refresh from 622 ms to 4 ms."
+summary: "A Textual 8 terminal app for daily equity research: a watchlist with sparklines, charts drawn by a hand-written braille/half-block rasteriser, a vim-style command line and a read-only filings panel for a planned filings database, so far tested on fixtures. On a busy, headless 64-core Linux server it paints cached rows 741 ms after process start, and coalescing redraws cut the median event-loop lag during a 50-ticker refresh from 622 ms to 4 ms."
 period: "2026.09"
 status: "Reimplementation"
 stack: [Python, Textual, Rich, NumPy, SQLite, pytest, CairoSVG]
@@ -29,7 +29,7 @@ what "fresh" means for end-of-day data. All numbers were measured on a headless 
 7452), not on a laptop, while that server was heavily shared (load average 72–100): cached rows appear 741 ms after
 process start (351 ms in an earlier, less contended run), a refresh that finds 50 tickers fresh makes zero requests,
 and coalescing redraws cut the median event-loop lag during a 50-ticker download from 622 ms to 4.4 ms. The intended
-live source, Stooq's keyless CSV endpoint, refused every scripted request made today; the app reports that in its
+live source, Stooq's keyless CSV endpoint, refused every scripted request made on 2026-09-21; the app reports that in its
 status bar and keeps working from cached, imported or bundled synthetic bars.
 
 ## 1 Introduction
@@ -140,7 +140,7 @@ deleted, never merged, when real bars arrive. SQLite runs in WAL mode with one s
 
 The panel reads `../callsignal/results/callsignal.db` (or `$MARKETSHELL_CALLSIGNAL_DB`) with `mode=ro`. Expected
 schema: `filings(filing_id, ticker, filed_at, form, title, url)`, `sentences(sentence_id, filing_id, position, text)`,
-`scores(sentence_id, importance)`. That database did not exist yet today, so the adapter resolves names through
+`scores(sentence_id, importance)`. That database did not yet exist on 2026-09-21, so the adapter resolves names through
 `PRAGMA table_info` against a documented alias list and returns a status (`ok`, `missing`, `schema`, `error`) with a
 sentence for the panel instead of raising. Tests and screenshots use a fixture of fictional filings.
 
@@ -148,8 +148,8 @@ sentence for the panel instead of raising. Tests and screenshots use a fixture o
 
 **Conditions.** Everything ran on 2026-09-21 (KST) on one server: AMD EPYC 7452, 64 logical cores, 157 GB RAM,
 Linux 5.15, no display, Python 3.11.11, Textual 8.2.8, NumPy 2.4.6. Nothing ran on a laptop. The server was
-oversubscribed by other jobs all session (1-minute load 72–100 during the reported run). I polled for a quiet
-window for about 25 minutes and did not get one, so the numbers include that contention; earlier runs are kept in
+oversubscribed by other jobs all session (1-minute load 72–100 during the reported run), so the numbers include
+that contention; earlier runs are kept in
 `results/` to show how much it matters.
 
 **Start-up.** `python -m marketshell --bench` runs the real app headless at 120×36, timestamps from the first line
@@ -228,7 +228,7 @@ run. Ten times more bars costs about 15% more: cost follows cells, not history l
 
 ### 4.4 Screens
 
-![Figure 4 — Watchlist sorted by volatility with the filings panel (fixture database, fictional companies). The red markers and the status bar carry today's real answer from the live source.](./figs/screen_watchlist.png)
+![Figure 4 — Watchlist sorted by volatility with the filings panel (fixture database, fictional companies). The red markers and the status bar carry the live source's real answer on 2026-09-21.](./figs/screen_watchlist.png)
 
 ![Figure 5 — Detail screen, line mode, one year: price and two moving averages share a braille canvas; drawdown and rolling volatility below. Bundled synthetic sample, labelled as such.](./figs/screen_detail_line.png)
 
@@ -236,7 +236,7 @@ run. Ten times more bars costs about 15% more: cost follows cells, not history l
 
 ![Figure 7 — Mid-refresh against the local stand-in server (synthetic bars, 0.4 s per request): finished rows are live while others are still fetching.](./figs/screen_refresh_in_progress.png)
 
-`figs/` also holds the command line, help overlay, palette and missing-database states. Screenshots are SVGs from
+Screenshots are SVGs from
 Textual's `save_screenshot` under the headless pilot, converted to PNG on the server with CairoSVG. No monospace
 font there covers braille and cairo does no glyph fallback, so the converter redraws braille runs as vector dots from
 each code point's bit mask; the SVGs are untouched.

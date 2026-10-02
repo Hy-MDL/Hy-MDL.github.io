@@ -9,7 +9,7 @@ paper:
 series: "score-to-flow"
 order: 12
 tags: [diffusion, probability-flow-ode, distillation, one-step-generation, consistency-models, fast-sampling, ema-target-network, lpips]
-date: 2023-04-01
+date: 2023-03-01
 status: draft
 summary: "Learn the solution map of the probability-flow ODE instead of its vector field: a network that sends every point of a trajectory to that trajectory's clean endpoint, trained either by distilling a score model (CD, CIFAR-10 FID 3.55 in one step) or from data alone (CT, FID 8.70), with a multistep mode and zero-shot editing kept intact."
 ---

@@ -2,13 +2,13 @@
 title: "Light-weighting Tiny YOLOv3 — graduation thesis (졸업논문): what int8 quantization buys on five kinds of hardware"
 slug: tiny-yolo-quantization
 category: "Computer Vision"
-summary: "Undergraduate graduation project (Chung-Ang University, 2024, team of three, advisor Prof. Minhyeok Lee): fuse convolution, batch-norm and LeakyReLU, quantize Tiny YOLOv3 to int8 with symmetric scales in the body and asymmetric scales before the detection heads, clip at three sigma, and measure what it buys from a Raspberry Pi 4 to an RTX 3080. Weights 1.6 GB → 100 MB; inference 22–29 % faster on CPUs, 52 % on the Pi, 60 % on the GPU; mAP 65.3 → 62.6 on PASCAL VOC. Live detection on the Pi stays at about two seconds a frame, which is the honest limit."
+summary: "Undergraduate graduation project (Chung-Ang University, 2024, team of three, advisor Prof. Minhyeok Lee): fuse convolution, batch-norm and LeakyReLU, quantize Tiny YOLOv3 to int8 with symmetric scales in the body and asymmetric scales before the detection heads, clip at three sigma, and measure what it buys from a Raspberry Pi 4 to an RTX 3080. Total footprint 1.6 GB → 100 MB; inference 22–29 % faster on CPUs, 52 % on the Pi, 60 % on the GPU; mAP 65.3 → 62.6 on PASCAL VOC. Live detection on the Pi stays at about two seconds a frame, which is the honest limit."
 period: "2024"
 status: "Graduation thesis (졸업논문) · 2024"
 stack: [PyTorch, Tiny YOLOv3, int8 quantization, Raspberry Pi 4, PASCAL VOC]
 tags: [quantization, object-detection, edge-inference, model-compression, undergraduate-thesis]
 metrics:
-  - { label: "Weight file", value: "1.6 GB → 100 MB", note: "about 16× smaller in total footprint, 4× in the weight file itself" }
+  - { label: "Total footprint", value: "1.6 GB → 100 MB", note: "about 16× smaller in total footprint, 4× in the weight file itself" }
   - { label: "Inference time", value: "−22 to −64 %", note: "Pi 4 52 %, i5 22 %, i7 29 %, M2 Pro 24 %, RTX 3080 61–64 %" }
   - { label: "mAP, PASCAL VOC", value: "65.33 → 62.55 %", note: "a 2.78-point cost for int8" }
   - { label: "A quantized model on an i5", value: "0.65 s", note: "faster than the original model on a more expensive i7 (0.77 s)" }

@@ -9,7 +9,7 @@ paper:
 series: "vision"
 order: 10
 tags: [gaussian-splatting, radiance-fields, view-synthesis, rasterization, real-time-rendering]
-date: 2023-09-01
+date: 2023-08-01
 status: draft
 summary: "Replacing the NeRF MLP with millions of explicit anisotropic 3D Gaussians, rendered by a sorted tile-based rasteriser, reaches Mip-NeRF360 quality with well under an hour of training and rendering above 100 fps."
 ---

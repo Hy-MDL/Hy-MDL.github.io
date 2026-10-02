@@ -9,7 +9,7 @@ paper:
 series: "eswa-finance"
 order: 8
 tags: [volatility, stacking, ensemble, neural-network, garch, heston, value-at-risk, risk-management]
-date: 2020-07-01
+date: 2020-06-01
 status: draft
 summary: "A two-level ensemble — random forest, gradient boosting and SVM feeding a small feed-forward network — forecasts S&P 500 realised volatility without any GARCH component and is backtested through VaR and CVaR tests."
 ---

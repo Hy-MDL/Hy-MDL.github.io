@@ -9,7 +9,7 @@ paper:
 series: "stochastic-modeling"
 order: 2
 tags: [latent-ode, ode-rnn, neural-ode, irregular-sampling, time-series, vae, poisson-process, physionet, interpolation]
-date: 2019-08-01
+date: 2019-07-01
 status: draft
 summary: "Let an RNN's hidden state follow a learned ODE between observations, then use that ODE-RNN as the encoder of a Latent ODE so the whole sequence-to-sequence model lives in continuous time."
 ---
@@ -173,7 +173,7 @@ Three things matter for reproduction and are not obvious from the main text. Hyp
 | Latent ODE (RNN enc.) | 2.477 | 0.578 | 2.768 | 0.447 | 1.663 | 1.653 | 1.485 | 1.377 |
 | **Latent ODE (ODE enc.)** | **0.360** | **0.295** | **0.300** | **0.285** | **1.441** | **1.400** | **1.175** | **1.258** |
 
-**PhysioNet 2012.** 8,000 ICU stays (challenge train and test sets combined), first 48 hours, 37 features after dropping four time-invariant ones, timestamps rounded to the minute — 2,880 possible slots instead of the usual 48 hourly bins, which halves rather than twentieths the data. MSE $\times 10^{-3}$, mean ± std over seeds, significance assessed by a one-sided $t$-test:
+**PhysioNet 2012.** 8,000 ICU stays (challenge train and test sets combined), first 48 hours, 37 features after dropping four time-invariant ones, timestamps rounded to the minute — 2,880 possible slots instead of the usual 48 hourly bins, which reduces the number of measurements only two-fold, where hourly binning keeps one-twentieth of them. MSE $\times 10^{-3}$, mean ± std over seeds, significance assessed by a one-sided $t$-test:
 
 | Model | Interp | Extrap | Mortality AUC |
 |---|---|---|---|
@@ -184,20 +184,20 @@ Three things matter for reproduction and are not obvious from the main text. Hyp
 | RNN-VAE | 5.930 ± 0.249 | 3.055 ± 0.145 | 0.515 ± 0.040 |
 | Latent ODE (RNN enc.) | 3.907 ± 0.252 | 3.162 ± 0.052 | 0.781 ± 0.018 |
 | ODE-RNN | 2.361 ± 0.086 | – | **0.833 ± 0.009** |
-| **Latent ODE (ODE enc.)** | **2.118 ± 0.271** | **2.231 ± 0.029** | 0.829 ± 0.004 |
-| Latent ODE + Poisson | 2.789 ± 0.771 | 2.208 ± 0.050 | 0.826 ± 0.007 |
+| **Latent ODE (ODE enc.)** | **2.118 ± 0.271** | 2.231 ± 0.029 | 0.829 ± 0.004 |
+| Latent ODE + Poisson | 2.789 ± 0.771 | **2.208 ± 0.050** | 0.826 ± 0.007 |
 
-**Toy sinusoids (supplementary).** The same comparison on easy data, MSE:
+**Toy sinusoids (supplementary).** The same comparison on easy data, MSE (bold: lowest in each column):
 
 | Model | Interp 10% | 20% | 30% | 50% | Extrap 10% | 20% | 30% | 50% |
 |---|---|---|---|---|---|---|---|---|
 | RNN $\Delta t$ | 0.06081 | 0.04680 | 0.05822 | 0.04116 | 0.06172 | 0.06115 | 0.06891 | 0.05617 |
 | RNN-exp | 1.65891 | 0.05344 | 0.04974 | 0.03275 | 0.06172 | 0.06115 | 0.06891 | 0.05617 |
 | RNN GRU-D | 2.35628 | 0.05997 | 0.04832 | 0.04116 | 0.06095 | 0.07212 | 0.06541 | 0.05049 |
-| **ODE-RNN** | **0.05150** | **0.03211** | **0.02643** | **0.01666** | 0.06592 | 0.04774 | 0.10940 | 0.08000 |
-| RNN-VAE | 0.07352 | 0.07346 | 0.07323 | 0.07304 | 0.20107 | 0.03710 | 0.07281 | 0.02871 |
-| Latent ODE (RNN enc.) | 0.06860 | 0.06764 | 0.02754 | 0.05721 | 0.04920 | 0.04807 | 0.01788 | 0.02703 |
-| Latent ODE (ODE enc.) | 0.07133 | 0.03144 | 0.05354 | 0.01717 | **0.05313** | 0.04427 | 0.03572 | **0.01388** |
+| ODE-RNN | **0.05150** | 0.03211 | **0.02643** | **0.01666** | 0.06592 | 0.04774 | 0.10940 | 0.08000 |
+| RNN-VAE | 0.07352 | 0.07346 | 0.07323 | 0.07304 | 0.20107 | **0.03710** | 0.07281 | 0.02871 |
+| Latent ODE (RNN enc.) | 0.06860 | 0.06764 | 0.02754 | 0.05721 | **0.04920** | 0.04807 | **0.01788** | 0.02703 |
+| Latent ODE (ODE enc.) | 0.07133 | **0.03144** | 0.05354 | 0.01717 | 0.05313 | 0.04427 | 0.03572 | **0.01388** |
 
 **Human Activity.** 6,554 sequences of 211 union time points (overlapping 50-point windows from 25 original recordings of five people, four tags, 12 features, 11 activity classes merged into 7), per-time-point accuracy: Latent ODE (ODE enc.) 0.846 ± 0.013, Latent ODE (RNN enc.) 0.835 ± 0.010, ODE-RNN 0.829 ± 0.016, GRU-D 0.806 ± 0.007, RNN-VAE 0.343 ± 0.040.
 
@@ -208,7 +208,7 @@ Three things matter for reproduction and are not obvious from the main text. Hyp
 - *An ODE encoder beats an RNN encoder.* 0.360 vs 2.477 at 10% on MuJoCo, 2.118 ± 0.271 vs 3.907 ± 0.252 on PhysioNet. The direct comparison is the right one — it is the same model with one component swapped. But the RNN-encoder row reads 2.477, 0.578, 2.768, 0.447 across densities, which is optimisation instability, not a trend, so "more stable to train" may be as much of the story as "more accurate".
 - *Latent-variable models beat autoregressive ones at extrapolation.* True in every column, and partly true by construction: the autoregressive models were trained for one-step-ahead prediction and extrapolate by re-feeding predictions, so this compares training objectives as much as architectures. Note also that plain RNNs extrapolate *better* than ODE-RNNs here.
 - *ODE models win at classification.* Only half-supported. On PhysioNet, ODE-RNN 0.833 ± 0.009 against GRU-D 0.818 ± 0.008 — <mark>a 1.5-point AUC gap that the authors themselves describe as "similar", with their own explanation that between-observation dynamics barely matter for one label per sequence.</mark> Human Activity, where labels are per time point, is the honest win: 0.846 against 0.806.
-- *Poisson likelihood on observation times.* <mark>Not supported by any of the paper's own numbers.</mark> Interpolation is worse (2.789 ± 0.771 against 2.118 ± 0.271, with triple the variance), extrapolation is unchanged within noise, AUC is unchanged, and the supplementary posterior visualisation shows the true posterior becomes *wider* with the Poisson term. It fits the observed rates (Fig. 3) and pays for nothing else.
+- *Poisson likelihood on observation times.* <mark>Not supported by any of the paper's own numbers.</mark> Interpolation is worse (2.789 ± 0.771 against 2.118 ± 0.271, with nearly three times the standard deviation), extrapolation is unchanged within noise, AUC is unchanged, and the supplementary posterior visualisation shows the true posterior becomes *wider* with the Poisson term. It fits the observed rates (Fig. 3) and pays for nothing else.
 - *Claim with weak evidence.* The advantage does not survive on easy data: on the toy set at 10% observed, the full Latent ODE scores 0.07133 against 0.06081 for a plain RNN-$\Delta t$. Sparsity alone is not the trigger — the dynamics also have to be worth learning.
 - *Interpretability.* Qualitative only: the norm of $f_\theta(z)$ spikes when the hopper hits the ground, posterior entropy falls monotonically as points are added, and a UMAP of $z_0$ organises by initial height, vertical velocity and hip position. Suggestive figures, no metric.
 
@@ -220,7 +220,7 @@ Three things matter for reproduction and are not obvious from the main text. Hyp
 
 ## 7 Extensions
 
-**What was built on this.** [Neural JSDE](/blog/neural-jump-sde/) is the closest relative: it keeps the flow-between-events structure but makes the jumps themselves part of a stochastic model rather than a GRU update, which is the natural next step from the Poisson head here. [Stochastic Adjoint](/blog/scalable-sde-gradients/) supplies the latent SDE that replaces the deterministic path, and [SDE-GAN](/blog/neural-sde-gan/) trains such continuous-time generators without a likelihood. For the same irregular-data problem from the diffusion side, [CSDI](/blog/csdi/) conditions a score model on the observed entries and imputes the rest, and [TSDiff](/blog/tsdiff/) and [TimeGrad](/blog/timegrad/) handle forecasting; those trade the continuous-time state for a learned distribution over whole windows. GRU-ODE-Bayes and Neural CDEs — the latter driven by the data path itself rather than only by its initial condition, which removes the "one initial state determines everything" restriction — are the direct successors in this line (from general knowledge, unverified).
+**What was built on this.** [Neural JSDE](/blog/neural-jump-sde/), concurrent work posted a few weeks earlier rather than a descendant, is the closest relative: it keeps the flow-between-events structure but makes the jumps themselves part of a stochastic model rather than a GRU update, which is the natural next step from the Poisson head here. [Stochastic Adjoint](/blog/scalable-sde-gradients/) supplies the latent SDE that replaces the deterministic path, and [SDE-GAN](/blog/neural-sde-gan/) trains such continuous-time generators without a likelihood. For the same irregular-data problem from the diffusion side, [CSDI](/blog/csdi/) conditions a score model on the observed entries and imputes the rest, and [TSDiff](/blog/tsdiff/) and [TimeGrad](/blog/timegrad/) handle forecasting; those trade the continuous-time state for a learned distribution over whole windows. GRU-ODE-Bayes (De Brouwer et al., NeurIPS 2019) is concurrent work on the same problem, and Neural CDEs (Kidger et al., NeurIPS 2020), driven by the data path itself rather than only by its initial condition, remove the "one initial state determines everything" restriction.
 
 **Open problems.** How to make an ODE encoder cheap on sparse data, where it currently integrates through emptiness. How to score the uncertainty the latent-variable framing advertises. How to model observations that *change* the state instead of only revealing it. And how to let noise enter a latent path continuously without giving up the tractable encoder.
 

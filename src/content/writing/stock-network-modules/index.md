@@ -9,7 +9,7 @@ paper:
 series: "eswa-finance"
 order: 9
 tags: [stock-networks, correlation, structural-balance, signed-graphs, random-graphs, chinese-market]
-date: 2025-09-01
+date: 2025-08-01
 status: draft
 summary: "Replaces thresholded stock networks with t-test-filtered signed correlation networks, then searches for the largest group of stocks that is both strongly correlated and structurally balanced, with random-graph theory and a twelve-year study of Chinese equities."
 ---

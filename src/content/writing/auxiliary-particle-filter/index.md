@@ -11,7 +11,7 @@ paper:
 series: "sequential-monte-carlo"
 order: 3
 tags: [sequential-monte-carlo, auxiliary-particle-filter, proposal-distribution, stochastic-volatility, outliers, adaption, online-bayesian-estimation]
-date: 1997-11-01
+date: 1997-10-01
 status: draft
 summary: "The bootstrap filter proposes blind to the new observation, so an outlier wastes almost every particle. Introduce the mixture index as an auxiliary variable, pre-select particles by how well a point summary of their prediction explains the observation, and the weights become an order of magnitude less variable."
 ---

@@ -2,7 +2,7 @@
 title: "Artist-Style Generative Engine — the lab's TIPS project with Urban Complex: from an artist's images to a style the machine can name, generate and print"
 slug: artist-style-engine
 category: "Generative AI"
-summary: "A two-year TIPS R&D project (2024.04 – 2026.08) in which the lab builds the model engine and the partner company builds the service, data and artist relations: take a handful of an artist's works, describe the style in words a diffusion model can use, classify which of seven style families it belongs to, generate new objects in that style on the right base checkpoint, and turn the result into a 3D asset that can be printed. Over 2026 I built the captioning line (three vision-language models compared), the classifier (a QLoRA-tuned Qwen2-VL reaching 91.4 % on seen artists and 76.0 % on unseen ones, 96.0 % when fused with DINOv2), the generation line (StyleCrafter moved from VideoCrafter to SDXL, with domain checkpoints routed by the classifier), an evaluation dashboard, the service API and a crop tool, and the 3D output path — and lost the whole project directory once in April, which is its own section."
+summary: "A two-year TIPS R&D project (2024.04 – 2026.08) in which the lab builds the model engine and the partner company builds the service, data and artist relations: take a handful of an artist's works, describe the style in words a diffusion model can use, classify which of seven style families it belongs to, generate new objects in that style on the right base checkpoint, and turn the result into a 3D asset that can be printed. Since joining in March 2025 I built the chain-of-thought prompting on Qwen, the model training (a QLoRA-tuned Qwen2-VL classifier reaching 91.4 % on seen artists and 76.0 % on unseen ones, and the SDXL generation line) and the per-artist memory module; a DINOv2 prior checked by Qwen3-VL reaches 96.0 %. The project directory was lost once, in April 2026."
 period: "2024.04 – 2026.08"
 status: "Year 2 delivered"
 stack: [PyTorch, Qwen2-VL / Qwen3-VL, QLoRA, DINOv2, SDXL, StyleCrafter, InstantStyle / IP-Adapter, VARCO-VISION, GalleryGPT, Next.js, Flask, Gemini API]
@@ -20,7 +20,7 @@ scope: lab
 thumb: "/projects/artist-style-engine/media/thumb.jpg"
 ---
 
-An artist has a way of drawing that is theirs: the line, the palette, how perspective is bent, what the characters are for. The project's question is whether that can be captured from a few works and used — to describe it, to generate new objects in it, and to make those objects into goods an artist could sell. It is a TIPS-funded R&D project of Urban Complex with Yonsei as the research partner; the lab develops the model engine, the company builds the service, collects the data and works with the artists. On the lab side the project is three of us — Jiyoung Jeon, Daehyuk You and me — and the engine work described here is mine unless it says otherwise. This page is what was built, month by month, including the month the work vanished.
+An artist has a way of drawing that is theirs: the line, the palette, how perspective is bent, what the characters are for. The project's question is whether that can be captured from a few works and used — to describe it, to generate new objects in it, and to make those objects into goods an artist could sell. It is a TIPS-funded R&D project of Urban Complex with Yonsei as the research partner; the lab develops the model engine, the company builds the service, collects the data and works with the artists. On the lab side the project is three of us — Jiyoung Jeon, Daehyuk You and me. I joined in March 2025; my parts are listed under "What I built". This page is what was built, month by month, including the month the work vanished.
 
 ![The pipeline agreed in August 2025: A — learn an artist's style from their images; B — generate new objects in that style; C — model the 2D result in 3D and produce a physical object.](./figs/pipeline_abc.png)
 
@@ -39,7 +39,7 @@ The project started in April 2024. The first months were study — two textbooks
 | vector / stroke priors | VectorPainter, SuTI (subject-driven) | surveyed |
 | base checkpoints | SD1.5, SDXL, later **Toon Sphere 3D** | SDXL replaced VideoCrafter in 2026; the toy checkpoint for toy-art artists |
 
-The notebook also records why some things were not tried: the IP-Adapter and VSP paths were blocked for a while by a CUDA driver version the server could not update, and the limit of the whole family was written down plainly in March 2026 — a style-transfer model has no stage that <i>learns</i> the artist, so there is a ceiling on how far quality can be pushed. That is what the August 2025 reset (below) responded to.
+The notebook also records why some things were not tried: the IP-Adapter and VSP paths were blocked for a while by a CUDA driver version the server could not update, and the limit of the whole family is written down plainly — a style-transfer model has no stage that <i>learns</i> the artist, so there is a ceiling on how far quality can be pushed. That limit, recorded in March 2026, is the one the August 2025 reset (below) had already responded to.
 
 Alongside the generation experiments, the lab's reading in September 2025 — before the artist interviews — went to the literature on what "style" even is: formal decomposition of artworks into palette, brushstroke, composition, line and light; the datasets that label it (WikiArt, ArtBench-10, AI-ArtBench, MultiTaskPainting100k, Art500K, and StyleBabel's expert tags and captions); style-similarity measurement in diffusion models; and the HCI work arguing that style transfer copies colour and texture but not an artist's emergent style, and that "creative ownership" has person, process and system dimensions. That reading is why the memory bank is built from language and the artist's own account, not from a style embedding alone.
 
@@ -74,13 +74,13 @@ The page below is organised by stage; this table is the inventory of models, so 
 | generate | **DreamBooth / LoRA personalisation** | the direction set in August 2025 | surveyed; the per-artist engine is specified as fine-tuning on the artist's originals |
 | 3D | **Gemini API** mesh interpretation → watertight STL → **Bambu Lab** slicer | image to printable object | defined and demonstrated in August |
 
-![The evaluation dashboard after a benchmark run: Qwen LoRA, DINOv2 and base Qwen side by side, fidelity on seen artists and generalisation on unseen ones, with the run log; numbers carry a "recovered" badge when the assets are not present.](./figs/dashboard_benchmark.png)
+![The evaluation dashboard after a benchmark run: Qwen LoRA, DINOv2 and base Qwen side by side, fidelity on seen artists and generalisation on unseen ones; numbers carry a "recovered" badge when the assets are not present.](./figs/dashboard_benchmark.png)
 
 ![DINOv2 embeddings of the 100-image gold set projected by t-SNE — ground-truth labels on the left, k-means clusters on the right. Retro cartoon, pen-and-ink and abstract expressionism separate on their own; digital illustration and pop/street overlap, which is where every classifier struggled.](./figs/clustering_tsne.png)
 
 ## Results
 
-**What the generators produced.** The sheet below is a sample of the 2025 generation runs — StyleCrafter on VideoCrafter and then on SDXL, one or all of an artist's works as the style reference, prompts such as "a puppy", "a bouquet of flowers in a vase", "a teddy bear". Each tile is a different artist's style; the artists are not named here. Where it worked, palette, line weight and the way objects are simplified transfer to a subject the artist never drew; where it did not (the two monochrome tiles, the cluttered sketch) the model kept the medium but lost the artist.
+**What the generators produced.** The sheet below is a sample of the 2025 generation runs — StyleCrafter on VideoCrafter, one or all of an artist's works as the style reference, prompts such as "a puppy", "a bouquet of flowers in a vase", "a teddy bear". Each tile is a different artist's style; the artists are not named here. Where it worked, palette, line weight and the way objects are simplified transfer to a subject the artist never drew; where it did not (the two monochrome tiles, the cluttered sketch) the model kept the medium but lost the artist.
 
 ![Fourteen generated images from the 2025 runs, one per artist style, from the team's Notion record.](./figs/generation_samples.jpg)
 

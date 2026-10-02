@@ -1,10 +1,10 @@
 ---
 title: "Deep calibration: Deep calibration of rough stochastic volatility models"
-paper: { title: "Deep calibration of rough stochastic volatility models", authors: "Christian Bayer et al.", venue: "arXiv 2018 (q-fin.PR)", arxiv: "1810.03399", license: "arxiv.org/licenses/nonexclusive-distrib/1.0/" }
+paper: { title: "Deep calibration of rough stochastic volatility models", authors: "Christian Bayer, Benjamin Stemper", venue: "arXiv 2018 (q-fin.PR)", arxiv: "1810.03399", license: "arxiv.org/licenses/nonexclusive-distrib/1.0/" }
 series: "stochastic-modeling"
 order: 9
 tags: [rough-volatility, rough-bergomi, calibration, implied-volatility, neural-network-surrogate, levenberg-marquardt, heston, bayesian-inference, identifiability]
-date: 2018-11-01
+date: 2018-10-01
 status: draft
 summary: "A 4x4096 ReLU network is trained offline on a liquidity-weighted sample of the parameter-to-implied-volatility map, so that rough Bergomi can be calibrated by Levenberg-Marquardt with autodiff Jacobians and no Monte Carlo in the loop; the accompanying Bayesian study shows why point estimates of the parameters are the wrong thing to report."
 ---
@@ -105,7 +105,7 @@ $$
 
 for a scaling exponent $\beta$ in the range where the expansion is valid and $C(H)$ a constant depending on $H$. Read the terms: $\sqrt{v_0}$ fixes the level of the smile, the product $\rho\eta$ fixes the slope, and $H$ enters only through $C(H)$ and the rate at which the moneyness window shrinks. <mark>At leading order $\rho$ and $\eta$ appear only as their product, so a decrease in $|\rho|$ offset by an increase in $\eta$ gives the same surface.</mark> Computing a distance between true and calibrated parameter vectors is therefore meaningless, and the authors say so.
 
-The paper's own posteriors confirm it numerically. On synthetic data generated at $\rho = -0.9$, $\eta = 1.9$, the posterior medians are $-0.855$ and $2.041$ — individually 5% and 7% off — yet $\rho\eta = -1.745$ against a true $-1.71$, a 2% gap. The combination the surface pins down is recovered an order of magnitude better than either factor.
+The paper's own posteriors confirm it numerically. On synthetic data generated at $\rho = -0.9$, $\eta = 1.9$, the posterior medians are $-0.855$ and $2.041$ — individually 5% and 7% off — yet $\rho\eta = -1.745$ against a true $-1.71$, a 2% gap. The combination the surface pins down is recovered about three times more accurately than either factor.
 
 ### 3.5 Algorithm
 
@@ -216,7 +216,7 @@ For the SPX run, quotes with relative spread $s_i/m_i \ge 5\%$ are discarded and
 
 ## 7 Extensions
 
-**What was built on this.** [Deep Learning Volatility](/blog/deep-learning-volatility/) takes the same offline-surrogate idea and changes two things that matter: the network outputs a whole IV grid at once, which couples neighbouring contracts, and the parameter set includes a piecewise-constant forward variance curve. A direct successor by an overlapping author group, Bayer, Horvath, Muguruza, Stemper and Tomas, *On deep calibration of (rough) stochastic volatility models* (2019), appears in the bibliography of arXiv:2007.04154. That paper, [Neural SDEs](/blog/neural-sde-pricing-hedging/), cites this one and inverts the premise: instead of learning a surrogate for a fixed parametric model, it makes the model's own coefficients networks and calibrates them directly. [Sig-SDE](/blog/sig-sdes/) removes the Monte Carlo step algebraically rather than statistically, and [Deep Hedging](/blog/deep-hedging/) shows what one does with a fast, differentiable simulator once one has it.
+**What was built on this.** [Deep Learning Volatility](/blog/deep-learning-volatility/) takes the same offline-surrogate idea and changes two things that matter: the network outputs a whole IV grid at once, which couples neighbouring contracts, and the parameter set includes a piecewise-constant forward variance curve. A direct successor by an overlapping author group is Bayer, Horvath, Muguruza, Stemper and Tomas, *On deep calibration of (rough) stochastic volatility models* (arXiv:1908.08806, 2019). [Neural SDEs](/blog/neural-sde-pricing-hedging/) (arXiv:2007.04154) cites this paper and inverts the premise: instead of learning a surrogate for a fixed parametric model, it makes the model's own coefficients networks and calibrates them directly. [Sig-SDE](/blog/sig-sdes/) removes the Monte Carlo step algebraically rather than statistically, and [Deep Hedging](/blog/deep-hedging/) shows what one does with a fast, differentiable simulator once one has it.
 
 **Open problems.**
 - The two-stage error budget is never closed: the error against the reference pricer is measured, the reference pricer's own error is not, and no result relates surrogate error to calibrated-parameter error.

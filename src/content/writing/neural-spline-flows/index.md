@@ -9,7 +9,7 @@ paper:
 series: "normalizing-flows"
 order: 6
 tags: [normalizing-flows, rational-quadratic-splines, coupling-layers, autoregressive-flows, uci-benchmarks, parameter-efficiency, analytic-invertibility]
-date: 2019-07-01
+date: 2019-06-01
 status: draft
 summary: "Replace the affine scale-and-shift inside a coupling or autoregressive layer with a monotone rational-quadratic spline — analytically invertible, closed-form Jacobian, K bins and 3K−1 parameters per coordinate — and coupling flows match autoregressive ones on density estimation while keeping one-pass sampling."
 ---
@@ -176,16 +176,16 @@ flowchart LR
 
 ### 5.1 Tabular density estimation
 
-Test log-likelihood in nats, error bars two standard deviations. Rows above the rule have a one-pass inverse; rows below are autoregressive. $\dagger$ marks models whose error bars are *across repeated runs* rather than across the test set; $\star$ marks numbers taken from the literature.
+Test log-likelihood in nats, error bars two standard deviations. The first four rows have a one-pass inverse and the last six are autoregressive; bold marks the best entry within each group. $\dagger$ marks models whose error bars are *across repeated runs* rather than across the test set; $\star$ marks numbers taken from the literature.
 
 | Model | POWER | GAS | HEPMASS | MINIBOONE | BSDS300 |
 |---|---|---|---|---|---|
 | [FFJORD](/blog/ffjord/)$^{\star\dagger}$ | $0.46\pm0.01$ | $8.59\pm0.12$ | $-14.92\pm0.08$ | $-10.43\pm0.04$ | $157.40\pm0.19$ |
 | [Glow](/blog/glow/) | $0.42\pm0.01$ | $12.24\pm0.03$ | $-16.99\pm0.02$ | $-10.55\pm0.45$ | $156.95\pm0.28$ |
-| Q-NSF (C) | $0.64\pm0.01$ | $12.80\pm0.02$ | $-15.35\pm0.02$ | $\mathbf{-9.35\pm0.44}$ | $\mathbf{157.65\pm0.28}$ |
-| **RQ-NSF (C)** | $0.64\pm0.01$ | $13.09\pm0.02$ | $-14.75\pm0.03$ | $-9.67\pm0.47$ | $157.54\pm0.28$ |
+| Q-NSF (C) | $\mathbf{0.64\pm0.01}$ | $12.80\pm0.02$ | $-15.35\pm0.02$ | $\mathbf{-9.35\pm0.44}$ | $\mathbf{157.65\pm0.28}$ |
+| **RQ-NSF (C)** | $\mathbf{0.64\pm0.01}$ | $\mathbf{13.09\pm0.02}$ | $\mathbf{-14.75\pm0.03}$ | $-9.67\pm0.47$ | $157.54\pm0.28$ |
 | [MAF](/blog/maf/) | $0.45\pm0.01$ | $12.35\pm0.02$ | $-17.03\pm0.02$ | $-10.92\pm0.46$ | $156.95\pm0.28$ |
-| Q-NSF (AR) | $0.66\pm0.01$ | $12.91\pm0.02$ | $-14.67\pm0.03$ | $-9.72\pm0.47$ | $157.42\pm0.28$ |
+| Q-NSF (AR) | $\mathbf{0.66\pm0.01}$ | $12.91\pm0.02$ | $-14.67\pm0.03$ | $-9.72\pm0.47$ | $157.42\pm0.28$ |
 | NAF$^{\star\dagger}$ | $0.62\pm0.01$ | $11.96\pm0.33$ | $-15.09\pm0.40$ | $\mathbf{-8.86\pm0.15}$ | $\mathbf{157.73\pm0.04}$ |
 | Block-NAF$^{\star\dagger}$ | $0.61\pm0.01$ | $12.06\pm0.09$ | $-14.71\pm0.38$ | $-8.95\pm0.07$ | $157.36\pm0.03$ |
 | SOS$^{\star\dagger}$ | $0.60\pm0.01$ | $11.99\pm0.41$ | $-15.15\pm0.10$ | $-8.90\pm0.11$ | $157.48\pm0.41$ |
@@ -198,7 +198,7 @@ Test log-likelihood in nats, error bars two standard deviations. Rows above the 
 1. **The error bars are not comparable.** NAF's $\pm0.15$ on MINIBOONE is across runs; RQ-NSF (AR)'s $\pm0.48$ is across the test set. These measure different variabilities and the footnote says so, but the table invites the eye to compare them. On MINIBOONE, where the gap between the best ($-8.86$) and RQ-NSF (AR) ($-9.22$) is smaller than one test-set standard error, nothing can be concluded either way.
 2. **Rational buys very little over quadratic.** Q-NSF versus RQ-NSF is the clean ablation of the paper's title, and it is nearly a tie: identical on POWER, RQ ahead by 0.29 on GAS and 0.60 on HEPMASS in the coupling column, but **Q-NSF (C) beats RQ-NSF (C) on both MINIBOONE and BSDS300**, and Q-NSF (AR) is within 0.11 of RQ-NSF (AR) on BSDS300. The case for rational-quadratic over quadratic is primarily numerical (the inverse is a quadratic root, the tails match cleanly) rather than statistical, and the paper never says this out loud.
 3. **RQ-NSF loses MINIBOONE to all three monotone-network flows.** MINIBOONE is the smallest dataset of the five, which is the paper's own explanation (below).
-4. **FFJORD wins nothing here but is close on MINIBOONE and BSDS300** at a fraction of the parameter story — the continuous-time branch is competitive on exactly the low-data columns.
+4. **FFJORD wins nothing here but is close on MINIBOONE and BSDS300** — the continuous-time branch is competitive on exactly the low-data columns.
 
 **The paper's own generalisation thesis** is the most interesting sentence in the discussion: RQ-NSF excels on *Power, Gas, and Hepmass, the datasets with the highest ratio of data points to dimensionality from the five considered*, and on ImageNet rather than CIFAR-10 because ImageNet has *over an order of magnitude more data points*. *When the dimension is increased without a corresponding increase in dataset size, RQ-NSF still performs competitively with other approaches, but does not outperform them.* Extra transformer flexibility is a capacity increase and pays only when there is data to spend it on. This is directly actionable: for a financial factor panel — tens of dimensions, hundreds to low thousands of monthly observations — this paper predicts its own method will not help.
 
@@ -218,13 +218,13 @@ The paper's reading is the correct one and it is a negative result stated as suc
 
 ### 5.3 Images
 
-Bits/dim and parameter count. $\star$ = from the literature.
+Bits/dim and parameter count; bold marks the lowest bits/dim in each column. $\star$ = from the literature.
 
 | Model | CIFAR-10 5-bit | params | CIFAR-10 8-bit | params | ImageNet64 5-bit | params | ImageNet64 8-bit | params |
 |---|---|---|---|---|---|---|---|---|
 | Baseline (affine) | 1.70 | 5.2M | 3.41 | 11.1M | 1.81 | 14.3M | 3.91 | 14.3M |
-| **RQ-NSF (C)** | 1.70 | 5.3M | **3.38** | 11.8M | **1.77** | 15.6M | **3.82** | 15.6M |
-| Glow$^\star$ | **1.67** | 44.0M | **3.35** | 44.0M | 1.76 | 110.9M | **3.81** | 110.9M |
+| **RQ-NSF (C)** | 1.70 | 5.3M | 3.38 | 11.8M | 1.77 | 15.6M | 3.82 | 15.6M |
+| Glow$^\star$ | **1.67** | 44.0M | **3.35** | 44.0M | **1.76** | 110.9M | **3.81** | 110.9M |
 
 *RQ-NSF (C) improves upon the affine baseline in three out of four tasks* — a tie on 5-bit CIFAR-10 — *and the improvement is most significant on the 8-bit version of ImageNet64.* Against Glow, the numbers are essentially matched (3.82 vs 3.81, 1.77 vs 1.76) at **15.6M parameters against 110.9M**, a factor of seven. The parameter-efficiency claim is the strongest image result, with the caveat that the Glow row is a literature number trained under someone else's budget and schedule, so it is a parameter comparison and not a compute-matched one.
 
@@ -256,7 +256,7 @@ Bits/dim and parameter count. $\star$ = from the literature.
 
 ## 8 Takeaways
 
-- A coupling or autoregressive flow is a conditioner plus an elementwise transformer, and for fifteen years of this literature the transformer was affine. Replacing it is a larger gain, per unit of engineering, than most changes to the conditioner.
+- A coupling or autoregressive flow is a conditioner plus an elementwise transformer, and for the five years since NICE the transformer was affine. Replacing it is a larger gain, per unit of engineering, than most changes to the conditioner.
 - A monotone rational-quadratic spline is the family that has everything: closed-form derivative, closed-form inverse via a quadratic root, unconstrained parameterisation through softmax and softplus, and monotonicity by construction rather than by penalty.
 - The design is driven by numerics as much as by statistics. The cubic predecessor failed because $[0,1]$ splines need a sigmoid sandwich that saturates in fp32 and because cubic roots are unstable; linear tails on $[-B,B]$ and a quadratic root fix both.
 - Matching the boundary derivatives to the tails is not cosmetic. A jump in $g'$ is a jump in $\log\lvert g'\rvert$ and therefore in the training loss.

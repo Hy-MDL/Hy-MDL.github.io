@@ -9,7 +9,7 @@ paper:
 series: "normalizing-flows"
 order: 4
 tags: [normalizing-flows, autoregressive-models, made, density-estimation, uci-benchmarks, conditional-density-estimation, exact-likelihood]
-date: 2017-06-01
+date: 2017-05-01
 status: draft
 summary: "An autoregressive model with Gaussian conditionals is already a normalizing flow — it maps the random numbers it calls randn() for into data — so stack five of them, each modelling the next one's random numbers, and you get a flow that evaluates any density in one masked forward pass."
 ---

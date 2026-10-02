@@ -9,7 +9,7 @@ paper:
 series: "eswa-finance"
 order: 5
 tags: [reinforcement-learning, dqn, algorithmic-trading, sharpe-ratio, transaction-costs, evaluation]
-date: 2020-05-01
+date: 2020-04-01
 status: draft
 summary: "A double-DQN agent that flips between fully long and fully short on a single stock averages a Sharpe ratio of 0.404 across 30 stocks in 2018-2019, against 0.369 for buy and hold, and the paper is unusually candid about variance and overfitting."
 ---
@@ -96,7 +96,7 @@ with $y_i=r_i$ at terminal states. The remaining changes are a catalogue of stab
 
 ## 4 Experiments
 
-**Testbench.** 30 instruments: five index trackers and 25 stocks from US, European and Asian markets across technology, finance, energy, automotive and food. Training covers 2012-01-01 to 2017-12-31 and testing 2018-01-01 to 2019-12-31, One agent is trained per stock, hyperparameters are shared by all 30, and weights are frozen during the test. Benchmarks are buy and hold (B&H), sell and hold (S&H), trend following with moving averages (TF) and mean reversion with moving averages (MR), all using the same inputs and actions. Starting capital is $100,000, and costs are 0.1%.
+**Testbench.** 30 instruments: five index trackers and 25 stocks from US, European and Asian markets across technology, finance, energy, automotive and food. Training covers 2012-01-01 to 2017-12-31 and testing 2018-01-01 to 2019-12-31. One agent is trained per stock, hyperparameters are shared by all 30, and weights are frozen during the test. Benchmarks are buy and hold (B&H), sell and hold (S&H), trend following with moving averages (TF) and mean reversion with moving averages (MR), all using the same inputs and actions. Starting capital is \$100,000, and costs are 0.1%.
 
 Sharpe ratios from Table 6 of the paper, where TDQN values are expected performance averaged over 50 training runs:
 
@@ -110,9 +110,9 @@ Sharpe ratios from Table 6 of the paper, where TDQN values are expected performa
 
 <mark>TDQN averages 0.404 against 0.369 for buy and hold, while both active benchmarks average below zero.</mark> Going through the 30 rows of that table myself, TDQN is above B&H on 15 instruments, below on 12 and identical on 3 (the Dow Jones, S&P 500 and NASDAQ trackers, where the numbers match to three decimals). The authors read the ties as the agent learning to go passive when active trading looks too uncertain.
 
-**Apple, a favourable case.** In one typical run (Table 4 of the paper) TDQN reaches a Sharpe of 1.484 with a profit of $100,288, against 1.239 and $79,823 for B&H; its maximum drawdown is 17.31% against 38.51%. See [Fig. 7](https://arxiv.org/pdf/2004.06627#page=13).
+**Apple, a favourable case.** In one typical run (Table 4 of the paper) TDQN reaches a Sharpe of 1.484 with a profit of \$100,288, against 1.239 and \$79,823 for B&H; its maximum drawdown is 17.31% against 38.51%. See [Fig. 7](https://arxiv.org/pdf/2004.06627#page=13).
 
-**Tesla, a deliberately unfavourable case.** The typical run (Table 5) has a Sharpe of 0.261, a profit of just $98 and a maximum drawdown lasting 331 days, below B&H at 0.508. Yet the 50-run expectation in Table 6 is 0.621. <mark>The authors use this gap to show that a single trained agent can land far from the expected performance</mark>, and the training curve sits well above the test curve, which they read as overfitting ([Fig. 10](https://arxiv.org/pdf/2004.06627#page=14)).
+**Tesla, a deliberately unfavourable case.** The typical run (Table 5) has a Sharpe of 0.261, a profit of just \$98 and a maximum drawdown lasting 331 days, below B&H at 0.508. Yet the 50-run expectation in Table 6 is 0.621. <mark>The authors use this gap to show that a single trained agent can land far from the expected performance</mark>, and the training curve sits well above the test curve, which they read as overfitting ([Fig. 10](https://arxiv.org/pdf/2004.06627#page=14)).
 
 **Trading costs.** With costs of 0%, 0.1% and 0.2% on Apple, the agent trades less and less, and ends up passive when costs become too high ([Fig. 11](https://arxiv.org/pdf/2004.06627#page=17)). The authors treat this as the main argument for RL over a forecast-then-trade pipeline.
 

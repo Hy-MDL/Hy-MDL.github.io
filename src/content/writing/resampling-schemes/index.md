@@ -9,7 +9,7 @@ paper:
 series: "sequential-monte-carlo"
 order: 2
 tags: [sequential-monte-carlo, resampling, multinomial-resampling, stratified-resampling, systematic-resampling, central-limit-theorem, variance-reduction]
-date: 2005-08-01
+date: 2005-07-01
 status: draft
 summary: "Residual and stratified resampling provably beat multinomial on conditional variance, by two applications of Jensen's inequality; systematic resampling does not, and a two-point counter-example makes its variance fail to vanish as the particle count grows."
 ---

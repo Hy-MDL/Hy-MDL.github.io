@@ -9,7 +9,7 @@ paper:
 series: "score-to-flow"
 order: 3
 tags: [diffusion-models, variational-inference, denoising-score-matching, noise-prediction, loss-weighting, ddpm]
-date: 2020-07-01
+date: 2020-06-01
 status: draft
 summary: "A fixed Gaussian noising chain plus a learned Gaussian reverse chain, trained by regressing the added noise with an unweighted squared error, reaches FID 3.17 on CIFAR-10 and shows that the variational bound of a diffusion model is a weighted denoising score matching loss."
 ---

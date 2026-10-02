@@ -9,7 +9,7 @@ paper:
 series: "generative-finance"
 order: 1
 tags: [diffusion, time-series, imputation, conditional-generation, self-supervised, attention, crps, missing-data]
-date: 2021-08-01
+date: 2021-07-01
 status: draft
 summary: "Train a diffusion model directly on the conditional distribution of missing entries given observed ones, using masked-modeling-style self-supervision and a denoiser that attends along both the time and the feature axis."
 ---

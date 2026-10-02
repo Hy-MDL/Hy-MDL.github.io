@@ -9,7 +9,7 @@ paper:
 series: "score-to-flow"
 order: 6
 tags: [diffusion, ddpm, log-likelihood, noise-schedule, learned-variance, importance-sampling, strided-sampling, scaling]
-date: 2021-03-01
+date: 2021-02-01
 status: draft
 summary: "Three small changes to DDPM — a reverse variance learned as a log-space interpolation between its two analytic bounds, a cosine noise schedule, and a hybrid or importance-sampled variational loss — close most of the likelihood gap, and the learned variance is also what makes sampling on a strided subset of about 100 timesteps work without fine-tuning."
 ---

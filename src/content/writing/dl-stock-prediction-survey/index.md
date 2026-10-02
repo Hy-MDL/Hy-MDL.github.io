@@ -9,7 +9,7 @@ paper:
 series: "eswa-finance"
 order: 6
 tags: [survey, deep-learning, stock-prediction, reproducibility, lstm, evaluation, data-sources]
-date: 2020-04-01
+date: 2020-03-01
 status: draft
 summary: "A census of 124 deep-learning stock-prediction papers, mostly from 2017-2019, organised as a four-step workflow and unusually attentive to what data, code and evaluation practices the field actually uses."
 ---

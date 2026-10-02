@@ -4,7 +4,7 @@ paper: { title: "Quant GANs: Deep Generation of Financial Time Series", authors:
 series: "generative-finance"
 order: 4
 tags: [gan, temporal-convolutional-network, stochastic-volatility, lambert-w, stylized-facts, risk-neutral, s-and-p-500]
-date: 2019-08-01
+date: 2019-07-01
 status: draft
 summary: "A GAN with dilated causal convolutions in both players, a generator shaped like a stochastic volatility model, and a Lambert W preprocessing step that works around the fact that a Lipschitz network fed Gaussian noise cannot produce heavy tails."
 ---

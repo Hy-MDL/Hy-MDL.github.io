@@ -9,7 +9,7 @@ paper:
 series: "industrial-vision"
 order: 2
 tags: [anomaly-detection, anomaly-localization, mvtec-ad, memory-bank, coreset, k-center, nearest-neighbour, pretrained-features]
-date: 2021-07-01
+date: 2021-06-01
 status: draft
 summary: "A position-free memory bank of locally pooled mid-level CNN patch features, shrunk by greedy minimax coreset selection and queried by nearest-neighbour distance, pushes MVTec AD image-level AUROC above 99% without training anything."
 ---
@@ -106,7 +106,7 @@ m_i = \arg\max_{m \in \mathcal{M} \setminus \mathcal{M}_C} \;\min_{n \in \mathca
 \tag{6}
 $$
 
-Each step adds the feature that is currently worst covered. The second approximation is $\psi : \mathbb{R}^d \to \mathbb{R}^{d^*}$ with $d^* < d$, a random linear projection used only during selection; by the Johnson–Lindenstrauss lemma it roughly preserves pairwise distances. The classical factor-two guarantee for farthest-point selection is general knowledge; the paper does not state it.
+Each step adds the feature that is currently worst covered. The second approximation is $\psi : \mathbb{R}^d \to \mathbb{R}^{d^*}$ with $d^* < d$, a random linear projection used only during selection; by the Johnson–Lindenstrauss lemma it roughly preserves pairwise distances. Farthest-point selection carries the classical factor-two guarantee for k-center (Gonzalez, 1985), which the paper does not state.
 
 Why (5)? The paper argues with [Fig. 3](https://arxiv.org/pdf/2106.08265#page=4), a 2-D toy in which random subsampling loses clusters that the coreset keeps. A short argument of my own makes it precise. Let $r = \max_{m \in \mathcal{M}} \min_{n \in \mathcal{M}_C} \lVert m - n\rVert_2$ be the radius achieved in (5), and $D(q, \mathcal{S}) = \min_{n \in \mathcal{S}} \lVert q - n \rVert_2$. For any query $q$, let $m^*$ be its nearest neighbour in the full bank and $n$ the survivor closest to $m^*$. Since $\mathcal{M}_C \subset \mathcal{M}$ the reduced distance cannot be smaller, and by the triangle inequality $\lVert q - n \rVert \le \lVert q - m^* \rVert + \lVert m^* - n \rVert$ it cannot be much larger:
 
@@ -313,7 +313,7 @@ Small inconsistencies: "a third" of the classes solved perfectly in the main tex
 - [EfficientAD](/blog/efficientad/) uses PatchCore as its accuracy reference and distils the same kind of WideResNet-101 features into a small network.
 - [WinCLIP](/blog/winclip/) and [AnomalyGPT](/blog/anomalygpt/) use it as the full-data and few-shot baseline while moving to vision-language models.
 - [DRAEM](/blog/draem/) is a contemporaneous alternative trained on synthetic defects, not a descendant.
-- Noise-robust banks (SoftPatch), learned adaptors on frozen features (SimpleNet, CFA), the anomalib implementation, and benchmarks aimed at patch matching's blind spots (MVTec LOCO, VisA) — from general knowledge, unverified.
+- Noise-robust memory banks such as SoftPatch (Jiang et al., NeurIPS 2022), and benchmarks aimed at patch matching's blind spots: MVTec LOCO AD for logical anomalies (Bergmann et al., IJCV 2022) and VisA (Zou et al., ECCV 2022).
 
 **Open problems**
 
@@ -343,3 +343,4 @@ Small inconsistencies: "a third" of the classes solved perfectly in the main tex
 3. N. Cohen, Y. Hoshen. *Sub-Image Anomaly Detection with Deep Pyramid Correspondences (SPADE).* arXiv:2005.02357, 2020.
 4. P. Bergmann, M. Fauser, D. Sattlegger, C. Steger. *MVTec AD — A Comprehensive Real-World Dataset for Unsupervised Anomaly Detection.* CVPR 2019.
 5. O. Sener, S. Savarese. *Active Learning for Convolutional Neural Networks: A Core-Set Approach.* ICLR 2018.
+6. T. F. Gonzalez. *Clustering to Minimize the Maximum Intercluster Distance.* Theoretical Computer Science 38:293-306, 1985.

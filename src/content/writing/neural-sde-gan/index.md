@@ -4,7 +4,7 @@ paper: { title: "Neural SDEs as Infinite-Dimensional GANs", authors: "Patrick Ki
 series: "stochastic-modeling"
 order: 4
 tags: [neural-sde, neural-cde, wasserstein-gan, path-space, time-series-generation, limit-order-book, torchsde]
-date: 2021-03-01
+date: 2021-02-01
 status: draft
 summary: "Reads classical SDE calibration as moment matching, replaces the fixed payoff statistics with a learned neural CDE critic, and so trains a neural SDE as a Wasserstein GAN whose noise is Brownian motion and whose samples are whole paths."
 ---

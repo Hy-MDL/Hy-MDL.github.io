@@ -9,7 +9,7 @@ paper:
 series: "eswa-finance"
 order: 4
 tags: [statistical-arbitrage, pairs-trading, preference-relations, potential-method, graph, portfolio-construction]
-date: 2023-11-01
+date: 2023-10-01
 status: draft
 summary: "Pairwise spread signals over hundreds of stocks contradict each other; projecting them onto a single utility vector by least squares gives a consistent ranking, and the resulting long-short portfolio earns 14.03% a year on 553 US stocks at 0.1% costs."
 ---
