@@ -258,6 +258,11 @@ density route instead averages a smooth density over a shrinking ball on which i
 relative variance improves with $T$. This is a statement about estimator conditioning, and it is checkable
 against an exactly computable answer.
 
+<figure class="vid">
+  <video src="/projects/model-uncertainty-priors/media/prior_minimal.mp4" autoplay loop muted playsinline preload="metadata" poster="/projects/model-uncertainty-priors/media/prior_minimal.jpg"></video>
+  <figcaption>Why the sampling route fails: the prior (teal) stays put while the likelihood (ochre) narrows as T grows; below, prior draws sized by their importance weight collapse onto one.</figcaption>
+</figure>
+
 ### 2.5 The learned priors
 
 All three are trained against the same target — the truncated hyper-g/n mixture of section 2.3 — one model per
@@ -284,6 +289,11 @@ normalised density and so yields no Bayes factor. What it leaves available is th
 the result is not a marginal likelihood. It is computed anyway, because it is what the construction leaves.
 
 ### 2.6 Control — Bayesian optimisation over the prior
+
+<figure class="vid">
+  <video src="/projects/model-uncertainty-priors/media/bo_anim.mp4" autoplay loop muted playsinline preload="metadata" poster="/projects/model-uncertainty-priors/media/bo_anim.jpg"></video>
+  <figcaption>Bayesian optimisation over the prior's scale, on the real objective (dashed): nine evaluations.</figcaption>
+</figure>
 
 <figure class="vid">
   <video src="/projects/model-uncertainty-priors/media/control_entropy.mp4" autoplay loop muted playsinline preload="metadata" poster="/projects/model-uncertainty-priors/media/control_entropy.jpg"></video>
