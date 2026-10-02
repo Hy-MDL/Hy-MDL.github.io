@@ -41,6 +41,21 @@ const nav = [['home', '/', 'Home'], ['about', '/about/', 'About'], ['research', 
           ax.querySelectorAll('.line,.span,.lb').forEach(x => x.remove());
           const evs = [...ax.querySelectorAll('.ev')]; if (!evs.length) return;
           const n = evs.length, W = ax.clientWidth, x0 = 4, step = n > 1 ? Math.min(150, (W - x0 - 120) / (n - 1)) : 0;
+          // narrow screens: labels no longer fit side by side, so stack the stages vertically
+          const vert = n > 1 && step < 135; ax.classList.toggle('v', vert);
+          if (vert) {
+            const R = 40; ax.style.height = (R * (n - 1) + 34) + 'px';
+            const line = document.createElement('div'); line.className = 'line'; line.style.cssText = `left:${x0}px;top:7px;width:1px;height:${R * (n - 1)}px`; ax.prepend(line);
+            const ci = evs.findIndex(e => e.classList.contains('cur'));
+            if (ci > 0 && !evs[ci].classList.contains('bad')) { const sp = document.createElement('div'); sp.className = 'span'; sp.style.cssText = `left:${x0}px;top:7px;width:2px;height:${R * ci}px;transform:translateX(-50%)`; ax.appendChild(sp); }
+            evs.forEach((e, i) => {
+              e.style.left = x0 + 'px'; e.style.top = (7 + i * R) + 'px';
+              const lb = document.createElement('div'); lb.className = 'lb ' + e.className.replace('ev', '').trim(); lb.style.cssText = `left:${x0 + 16}px;top:${i * R - 1}px;transform:none`;
+              lb.innerHTML = '<b>' + e.dataset.s + (e.dataset.k ? ' · ' + e.dataset.k : '') + '</b>' + e.dataset.date.replace(/-/g, '.') + (i && e.dataset.gap ? ' · ' + e.dataset.gap + ' later' : ''); ax.appendChild(lb);
+            });
+            return;
+          }
+          ax.style.height = ''; evs.forEach(e => { e.style.top = ''; });
           const line = document.createElement('div'); line.className = 'line'; line.style.left = x0 + 'px'; line.style.width = (step * (n - 1)) + 'px'; ax.prepend(line);
           const ci = evs.findIndex(e => e.classList.contains('cur'));
           if (ci > 0 && !evs[ci].classList.contains('bad')) { const sp = document.createElement('div'); sp.className = 'span'; sp.style.left = x0 + 'px'; sp.style.width = (step * ci) + 'px'; ax.appendChild(sp); }
