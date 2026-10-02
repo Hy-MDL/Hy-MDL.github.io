@@ -28,15 +28,15 @@ import Base from '../layouts/Base.astro';
         <li><a class="card" href="/research/diffusion-scenarios/"><img src="/projects/diffusion-scenarios/media/architecture.png" alt="CASE architecture: representation, embeddings, denoiser and sampling" loading="lazy"></a>
           <div class="kick"><span class="status s-rev">Submitted paper · ESWA</span><span>under review</span></div>
           <a class="t" href="/research/diffusion-scenarios/">CASE — conditional diffusion transformers for portfolio risk</a>
-          <p class="k">Multi-asset scenario generation whose risk statements are audited against nine books over 139 decision dates: 7.5 % less reserve for the same shortfall.</p></li>
+          <p class="k">Generating joint multi-asset return scenarios with a conditional diffusion transformer, judged by the VaR/ES reserves set on them rather than by how realistic they look.</p></li>
         <li><a class="card" href="/research/finphasor/"><img src="/projects/finphasor/media/architecture.png" alt="FinPhasor architecture: scale-conditioned cross-attention read-out and Grad-CAM attribution" loading="lazy"></a>
           <div class="kick"><span class="status s-rev">Submitted paper · ESWA</span><span>reviews completed</span></div>
           <a class="t" href="/research/finphasor/">FinPhasor — phase-preserving timing measurement</a>
-          <p class="k">Predicts each stock's complex wavelet scalogram; phase, not magnitude, orders future returns. Out-of-sample rank IC +0.074.</p></li>
+          <p class="k">Measuring when stocks reprice: forecasting complex wavelet scalograms and keeping the phase that magnitude-only forecasts discard, to rank the cross-section by timing.</p></li>
         <li><a class="card" href="/research/model-uncertainty-priors/"><img src="/projects/model-uncertainty-priors/media/bo_thumb.jpg" alt="Bayesian optimisation over the learned prior: Gaussian-process surrogate, its uncertainty band and the acquisition curve" loading="lazy"></a>
           <div class="kick"><span class="status s-wip">Working paper</span><span>experimenting</span></div>
           <a class="t" href="/research/model-uncertainty-priors/">Learned surrogate priors for Bayesian model selection</a>
-          <p class="k">A normalizing flow as a surrogate prior reproduces the exact factor-selection posterior (TV 0.016) where the sampling route a GAN is limited to does not (0.597 even with the exact prior; 0.796 for the GAN); its density lets Bayesian optimisation control and adapt it, which barely moves the decision but collapses the uncertainty measure.</p></li>
+          <p class="k">Replacing the fixed prior in Bayesian factor selection with a normalizing flow that keeps an explicit density, checked against the exact posterior over models and tuned by Bayesian optimisation; compared with a density-free GAN prior.</p></li>
         <li><a class="card" href="/research/tailflow/"><img src="/projects/tailflow/media/reverse_minimal.jpg" alt="TailFlow: ten-day scenario paths after the observed history; true 1 % and 99 % quantiles dashed" loading="lazy"></a>
           <div class="kick"><span class="status s-done">Experiment</span><span>code + results</span></div>
           <a class="t" href="/research/tailflow/">TailFlow — a diffusion model as a risk engine</a>
@@ -44,11 +44,11 @@ import Base from '../layouts/Base.astro';
         <li><a class="card" href="/projects/eco-route-rl/"><img src="/projects/eco-route-rl/media/sumo_race.jpg" alt="Eco-Route RL: five routes on the real Seoul network (SUMO, OpenStreetMap) with cumulative CO₂ per route" loading="lazy"></a>
           <div class="kick"><span class="status s-done">Project</span><span>code + results</span></div>
           <a class="t" href="/projects/eco-route-rl/">Eco-Route RL</a>
-          <p class="k">A low-CO₂ route on a real Seoul network chosen with a statistical guarantee: P(correct) = 0.956 where a fixed budget reaches 0.742.</p></li>
+          <p class="k">Choosing a low-CO₂ route on a real Seoul road network in a traffic simulator (SUMO), with a ranking-and-selection procedure that guarantees the choice statistically.</p></li>
         <li><a class="card" href="/projects/artist-style-engine/"><img src="/projects/artist-style-engine/media/thumb.jpg" alt="Collage of README figures from the repositories the project built on: StyleCrafter, InstantStyle, StyleAligned and Qwen3-VL" loading="lazy"></a>
           <div class="kick"><span class="status s-done">Lab project · TIPS</span><span>year 2 delivered</span></div>
           <a class="t" href="/projects/artist-style-engine/">Artist-Style Generative Engine</a>
-          <p class="k">From an artist's images to a style the machine can name, generate and print: a QLoRA style classifier (96 % fused with DINOv2), SDXL generation routed by style family, and 3D asset output.</p></li>
+          <p class="k">From an artist's images to a style the machine can name, generate and print: chain-of-thought style captioning, a QLoRA style classifier, SDXL generation routed by style family, and a style memory module.</p></li>
       </ul>
     </div>
 

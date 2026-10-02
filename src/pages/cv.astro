@@ -29,15 +29,15 @@ const venue = (p: (typeof PUBS)[number]) => p.venueHtml.replace(/ · earlier tit
       <li><u>Relevant coursework</u> (all A or A+): Linear Algebra, Mathematics for Electrical Engineering, Numerical Analysis, Random Variables, Signals &amp; Systems, Machine Learning, Artificial Intelligence, Algorithms</li></ul></div>
 
     <h2>Research Interests</h2>
-    <p class="rcv-p">Simulation optimisation and ranking &amp; selection under stochastic constraints and input uncertainty; generative models (diffusion, normalizing flows) as simulation input models; sequential decision policies with statistical guarantees in finance and operations.</p>
+    <p class="rcv-p">Bayesian learning and simulation optimization under input uncertainty; learned and multi-fidelity surrogate models; generative models (diffusion, normalizing flows) as simulation input models; sequential decision-making with statistical guarantees.</p>
 
     <h2>Research Experience</h2>
     <div class="e"><div class="h"><span><b>Financial Investment AI Lab, Yonsei University</b></span><span>Seoul, Korea</span></div>
       <div class="h"><span><i>Graduate Research Assistant</i></span><span>Mar 2025 – Present</span></div>
-      <ul><li>Designed a conditional diffusion transformer for multi-asset scenario generation and audited its risk statements against nine portfolio books over 139 decision dates (first-author manuscript, under review at <i>Expert Systems with Applications</i>).</li>
-      <li>Built a phase-preserving measurement of cross-sectional repricing timing from predicted wavelet scalograms; out-of-sample rank IC +0.074 where magnitude read-outs are flat (first-author manuscript, reviews completed at <i>ESWA</i>).</li>
-      <li>Treated the prior in Bayesian factor selection as a learned surrogate: a normalizing flow fit to the mixture-of-g reference reproduces the exact posterior over models (TV 0.016), and the cost of a density-free (GAN) surrogate is measured in posterior error and understated model uncertainty (working paper).</li>
-      <li>Implemented and verified ranking-and-selection procedures (KN, feasibility determination, recycled observations, CRN) and measured how a fitted input model erodes the probability-of-correct-selection guarantee.</li>
+      <ul><li>Generative scenario models for portfolio risk: a conditional diffusion transformer that generates joint multi-asset return scenarios, evaluated by the risk decisions (VaR/ES reserves) made on its scenarios rather than by sample realism (first-author manuscript, under review at <i>Expert Systems with Applications</i>).</li>
+      <li>Timing in the equity cross-section: predicting complex wavelet scalograms so that the phase of price moves, and hence when each stock reprices, is preserved and used for cross-sectional ranking (first-author manuscript, under review at <i>Expert Systems with Applications</i>).</li>
+      <li>Learned priors for Bayesian factor selection: replacing the mixture-of-g prior with a normalizing flow that keeps an explicit density, checked against the exact posterior over models (TV distance 0.016), then tuned by Bayesian optimization; compared with a density-free GAN prior (working paper).</li>
+      <li>Ranking and selection under input uncertainty: implemented and verified procedures (KN, feasibility determination, recycled observations, CRN) and studied how a fitted input model affects the probability-of-correct-selection guarantee.</li>
       <li>Co-authored lab manuscripts on deep convolutional factor models with explainable AI (2nd author) and RL-based enhanced indexing (3rd author).</li></ul></div>
     <div class="e"><div class="h"><span><b>TIPS R&amp;D Project with Urban Complex</b> (lab project)</span><span>Seoul, Korea</span></div>
       <div class="h"><span><i>Researcher — artist-style generative engine</i></span><span>Mar 2025 – Aug 2026</span></div>
@@ -53,7 +53,7 @@ const venue = (p: (typeof PUBS)[number]) => p.venueHtml.replace(/ · earlier tit
     <h2>Publications &amp; Presentations</h2>
     <p class="rcv-sub">Submitted to journals</p>
     <ol class="rcv-list">
-      {first.map((p) => (<li><Fragment set:html={authorsShort(p.authorsHtml)} />. {p.title}. <i><Fragment set:html={venue(p)} /></i>. {p.stage}, {fmt(last(p).date)}.</li>))}
+      {first.map((p) => (<li><Fragment set:html={authorsShort(p.authorsHtml)} />. {p.title}. <i><Fragment set:html={venue(p)} /></i>. {p.stageClass === 's-rev' ? `Under review, ${p.year}` : `${p.stage}, ${fmt(last(p).date)}`}.</li>))}
       {co.map((p) => (<li><Fragment set:html={authorsShort(p.authorsHtml)} />. {p.title}. <i><Fragment set:html={venue(p)} /></i>. {p.stage}, {fmt(last(p).date)}.</li>))}
     </ol>
     <p class="rcv-sub">Conference presentations and competition submissions</p>

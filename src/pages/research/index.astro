@@ -24,43 +24,43 @@ const m = (id: string, i = 0) => ex[id]?.data.metrics[i];
         <a class="card" href="/research/diffusion-scenarios/"><img src="/projects/diffusion-scenarios/media/architecture.png" alt="CASE architecture: representation, embeddings, denoiser and sampling" loading="lazy"></a>
         <div class="kick"><span>Thread 1 · generative scenario engines</span><span class={`status ${pub('case').stageClass}`}>{pub('case').stage} · ESWA</span></div>
         <a class="t" href="/research/diffusion-scenarios/">Conditional diffusion as a portfolio-risk scenario engine</a>
-        <p class="k">One diffusion transformer over multi-asset return panels, re-conditioned each morning, whose risk statements are audited against nine books over 139 decision dates: 7.5 % less reserve for the same shortfall. The experiment side tests the same idea as a risk engine and a simulation input model.</p>
-        <div class="links"><a href="/research/diffusion-scenarios/">paper · CASE <small>1st author · {last(pub('case'))}</small></a><a href="/research/tailflow/">experiments · TailFlow <small>{m('tailflow')?.value} {m('tailflow')?.label}</small></a></div>
+        <p class="k">Topic: generating joint return scenarios for many assets at once, and judging the generator by the risk decision made on it. Method: a conditional diffusion transformer re-conditioned each day; its VaR/ES reserves are scored against realised losses across several portfolio books. TailFlow repeats the question on a synthetic market where the true risk is known.</p>
+        <div class="links"><a href="/research/diffusion-scenarios/">paper · CASE <small>1st author · {last(pub('case'))}</small></a><a href="/research/tailflow/">experiments · TailFlow</a></div>
       </li>
       <li>
         <a class="card" href="/research/finphasor/"><img src="/projects/finphasor/media/architecture.png" alt="FinPhasor architecture: scale-conditioned cross-attention read-out and Grad-CAM attribution" loading="lazy"></a>
         <div class="kick"><span>Thread 2 · timing in the cross-section</span><span class={`status ${pub('finphasor').stageClass}`}>{pub('finphasor').stageShort ?? pub('finphasor').stage} · ESWA</span></div>
         <a class="t" href="/research/finphasor/">Phase-preserving measurement of when stocks reprice</a>
-        <p class="k">Information arrives on one day and stocks reprice weeks apart. Predicting the future complex wavelet scalogram keeps that phase, and only phase orders the cross-section: out-of-sample rank IC +0.074 where every magnitude read-out of the same prediction is flat.</p>
+        <p class="k">Topic: when stocks reprice after the same news, which can be weeks apart. Method: predict each stock's future complex wavelet scalogram, keep the phase that a magnitude-only forecast throws away, and use it to rank the cross-section; Grad-CAM shows which scales the ranking relies on.</p>
         <div class="links"><a href="/research/finphasor/">paper · FinPhasor <small>1st author · {last(pub('finphasor'))}</small></a></div>
       </li>
       <li>
         <a class="card" href="/research/model-uncertainty-priors/"><img src="/projects/model-uncertainty-priors/media/bo_thumb.jpg" alt="Bayesian optimisation over the learned prior: Gaussian-process surrogate, its uncertainty band and the acquisition curve" loading="lazy"></a>
         <div class="kick"><span>Thread 3 · learned surrogates for Bayesian model selection</span><span class="status s-wip">Working paper · experimenting</span></div>
         <a class="t" href="/research/model-uncertainty-priors/">A learned prior as a surrogate — what its density buys, and what a sampler costs</a>
-        <p class="k">A normalizing flow stands in for the mixture-of-g prior and is first checked against the exact posterior over models (TV 0.016), where the sampling route a GAN is limited to is not (0.597 even with the exact prior; 0.796 for the GAN). Because it has a density it can be controlled and adapted: Bayesian optimisation tunes its shape about 40 times more cheaply than sampling allows, and the measured answer is that the decision barely moves while the entropy-based uncertainty measure collapses, so the prior has to be controlled against calibration, not pricing error.</p>
-        <div class="links"><a href="/research/model-uncertainty-priors/">experiments &amp; write-up <small>{m('model-uncertainty-priors')?.value} {m('model-uncertainty-priors')?.label}</small></a></div>
+        <p class="k">Topic: the prior in Bayesian factor selection, and what changes when it is learned instead of fixed. Method: replace the mixture-of-g prior with a normalizing flow that keeps an explicit density, check it against the exact posterior over models, compare it with a density-free GAN prior, then tune and re-tune the flow with Bayesian optimisation and track both the selected model and its model-uncertainty measure.</p>
+        <div class="links"><a href="/research/model-uncertainty-priors/">experiments &amp; write-up</a></div>
       </li>
       <li>
         <a class="card" href="/research/rs-lab/"><img src="/projects/rs-lab/media/thumb.jpg" alt="rs-lab: attained probability of correct selection against the nominal level" loading="lazy"></a>
         <div class="kick"><span>Thread 4 · selection with guarantees</span><span class="status s-wip">Experiments · toward a paper</span></div>
         <a class="t" href="/research/rs-lab/">Ranking &amp; selection when the simulation's input model is itself fitted</a>
-        <p class="k">Procedures with empirically verified guarantees first (KN, feasibility checks, recycled observations), then the question that matters for practice: how much of a P(correct selection) guarantee survives when the input distribution was estimated from data.</p>
-        <div class="links"><a href="/research/rs-lab/">rs-lab <small>{m('rs-lab')?.value} {m('rs-lab')?.label}</small></a><a href="/research/input-uncertainty-select/">Input-Uncertainty Select <small>{m('input-uncertainty-select')?.value} {m('input-uncertainty-select')?.label}</small></a></div>
+        <p class="k">Topic: choosing the best of several simulated systems when the simulation's input distribution was itself estimated from data. Method: implement and verify standard procedures (KN, feasibility determination, recycled observations), then swap fitted and generative input models underneath them and measure what happens to the probability-of-correct-selection guarantee.</p>
+        <div class="links"><a href="/research/rs-lab/">rs-lab</a><a href="/research/input-uncertainty-select/">Input-Uncertainty Select</a></div>
       </li>
       <li>
         <a class="card" href="/projects/exchange-queueing/"><img src="/projects/exchange-queueing/media/queue.jpg" alt="Exchange queue: arrivals, servers and the queueing delay against the 100 ms SLA" loading="lazy"></a>
         <div class="kick"><span>Thread 5 · capacity under learned arrival uncertainty</span><span class="status s-wip">Working paper · experimenting</span></div>
         <a class="t" href="/projects/exchange-queueing/">Sizing an exchange matching queue when the arrival process is learned</a>
-        <p class="k">Trade arrivals are over-dispersed at every scale, and grouping same-millisecond trades shows where most of that uncertainty lives: in the batch sizes. A Bayesian arrival model that carries the batch law, plus a learned surrogate of the queue's SLA probability, turns the posterior into a capacity rule cheap enough to re-solve every minute; the write-up states where its promised coverage still falls short.</p>
+        <p class="k">Topic: how many servers an exchange's matching engine needs when order arrivals are bursty and uncertain. Method: a Bayesian batch-arrival model fitted to real BTC/USDT tick data, a simulated queue with a latency SLA, and a learned surrogate of the SLA probability so the capacity decision can be re-solved every minute.</p>
         <div class="links"><a href="/projects/exchange-queueing/">experiments &amp; write-up</a><a href="/publications/">working paper</a></div>
       </li>
       <li>
         <a class="card" href="/research/battery-protocol-select/"><img src="/projects/battery-protocol-select/media/thumb.jpg" alt="Battery capacity fade to end of life: 124 cells, three highlighted" loading="lazy"></a>
         <div class="kick"><span>Thread 6 · an expensive test and a learned surrogate</span><span class="status s-wip">Experiment · new domain</span></div>
         <a class="t" href="/research/battery-protocol-select/">Choosing a fast-charging protocol when the early-life prediction is uncertain</a>
-        <p class="k">A first battery study, back toward electrical engineering: an early-life cycle-life predictor that reports its own uncertainty stands in for months of cycling and decides which charging protocols to keep testing. Sequential elimination keeps the same probability of choosing the best cell at 65 % of the testing cost, and an overconfident version of the same predictor drops the true best in 36 % of draws.</p>
-        <div class="links"><a href="/research/battery-protocol-select/">experiments &amp; write-up <small>{m('battery-protocol-select')?.value} {m('battery-protocol-select')?.label}</small></a><a href="/research/battery-degradation-sim/">battery degradation, simulated <small>where a cell collapses</small></a></div>
+        <p class="k">Topic: choosing a fast-charging protocol when testing each one takes months of cycling. Method: an early-life cycle-life predictor that reports its own uncertainty serves as a surrogate, and a sequential ranking-and-selection procedure decides which protocols to keep testing; a physics-based degradation simulation checks where cells collapse.</p>
+        <div class="links"><a href="/research/battery-protocol-select/">experiments &amp; write-up</a><a href="/research/battery-degradation-sim/">battery degradation, simulated <small>where a cell collapses</small></a></div>
       </li>
     </ul>
 
@@ -69,38 +69,34 @@ const m = (id: string, i = 0) => ex[id]?.data.metrics[i];
       <li><a href="/research/diffusion-scenarios/">
         <span class="d">{pub('case').year}</span>
         <div><div class="t">{pub('case').title}</div>
-          <div class="k">CASE: one diffusion transformer over multi-asset return panels, re-conditioned each morning, judged by the decision it feeds rather than by how realistic its samples look: reserves set on its scenarios across nine portfolio books and 139 decision dates.</div>
-          <div class="pm"><span><b>7.5 %</b> less reserve for the same shortfall</span><span><b>9</b> books · <b>139</b> decision dates</span></div></div>
+          <div class="k">Diffusion-based scenario generation for portfolio risk: a conditional diffusion transformer generates joint multi-asset returns, and is evaluated by the VaR/ES reserves set on its scenarios rather than by sample realism.</div></div>
         <div class="r"><span class={`status ${pub('case').stageClass}`}>{pub('case').stage} · ESWA</span><span>1st author · {last(pub('case'))}</span></div></a></li>
       <li><a href="/research/finphasor/">
         <span class="d">{pub('finphasor').year}</span>
         <div><div class="t">{pub('finphasor').title}</div>
-          <div class="k">Predicting the future complex wavelet scalogram keeps the phase of a price move, and only phase orders the cross-section by when each stock reprices; every magnitude read-out of the same prediction is flat.</div>
-          <div class="pm"><span><b>+0.074</b> out-of-sample rank IC from phase</span></div></div>
+          <div class="k">Measuring when stocks reprice: forecasting complex wavelet scalograms keeps the phase of price moves, which a magnitude-only forecast discards, and the phase is used to rank the cross-section by repricing timing.</div></div>
         <div class="r"><span class={`status ${pub('finphasor').stageClass}`}>{pub('finphasor').stageShort ?? pub('finphasor').stage} · ESWA</span><span>1st author · {last(pub('finphasor'))}</span></div></a></li>
       <li><a href="/research/model-uncertainty-priors/">
         <span class="d">now</span>
         <div><div class="t">Learned Surrogate Priors for Bayesian Model Selection: Density, Uncertainty, and the Cost of a Sampler</div>
-          <div class="k">Checked against the exact posterior over models (TV 0.016), then controlled by Bayesian optimisation through its density; the decision barely moves while the entropy-based uncertainty measure collapses.</div>
+          <div class="k">Learned priors for Bayesian factor selection: a normalizing flow with an explicit density replaces the mixture-of-g prior, is checked against the exact posterior over models and tuned by Bayesian optimisation.</div>
           <ol class="stages"><li class="done">Idea</li><li class="cur">Experiments</li><li>Drafting</li><li>Internal review</li><li>Submission</li></ol></div>
         <div class="r"><span class="status s-wip">Working paper</span><span>1st author · not yet submitted</span></div></a></li>
       <li><a href="/projects/exchange-queueing/">
         <span class="d">now</span>
         <div><div class="t">Bayesian Capacity Sizing for an Exchange Matching Queue under Over-Dispersed Arrivals</div>
-          <div class="k">Order arrivals are over-dispersed and most of the uncertainty lives in the batch sizes; a batch-arrival posterior plus a learned SLA surrogate sizes servers every minute, and the write-up states where its coverage falls short.</div>
+          <div class="k">Capacity sizing for an exchange matching queue: a Bayesian batch-arrival model of real tick data and a learned surrogate of the queue's latency SLA, used to choose the number of servers.</div>
           <ol class="stages"><li class="done">Idea</li><li class="cur">Experiments</li><li>Drafting</li><li>Internal review</li><li>Submission</li></ol></div>
         <div class="r"><span class="status s-wip">Working paper</span><span>1st author · not yet submitted</span></div></a></li>
       <li><div class="row3">
         <span class="d">{pub('convfactornet').year}</span>
         <div><div class="t">ConvFactorNet — deep convolutional factor prediction with explainable AI</div>
-          <div class="k">A CNN reads the whole cross-section at one date and emits latent factors instead of returns; betas come from OLS on those factors. Grad-CAM then says which of the 110 inputs the factors were built from, and re-training on only those inputs improves the strategy. Korean equities, 2015–2023.</div>
-          <div class="pm"><span><b>21.67 %/yr</b> long–short CAGR, gross</span><span><b>3.78</b> Sharpe vs 0.474 without the factor layer</span></div></div>
+          <div class="k">A CNN reads the whole cross-section at one date and emits latent factors instead of returns; betas come from OLS on those factors. Grad-CAM then says which of the 110 inputs the factors were built from, and re-training on only those inputs improves the strategy. Korean equities, 2015–2023.</div></div>
         <div class="r"><span class={`status ${pub('convfactornet').stageClass}`}>{pub('convfactornet').stage}</span><span>2nd author · {last(pub('convfactornet'))}</span></div></div></li>
       <li><div class="row3">
         <span class="d">{pub('neif').year}</span>
         <div><div class="t">N-EIF — enhanced index fund via genetic algorithm, volume–price index and LSTM dueling DQN</div>
-          <div class="k">Two-phase enhanced indexing: a genetic algorithm builds the tracking basket, then a volume–price regime indicator and a recurrent dueling DQN must agree before a trade happens. The contribution worth reading is the decomposition of how much each layer is worth — done twice, by two methods that agree.</div>
-          <div class="pm"><span><b>199 %</b> cumulative vs 84 % for KOSPI 200, gross</span><span><b>+20 / +20 / +6.7 pp</b> from GA, VPI and the agent</span></div></div>
+          <div class="k">Two-phase enhanced indexing: a genetic algorithm builds the tracking basket, then a volume–price regime indicator and a recurrent dueling DQN must agree before a trade happens. The contribution worth reading is the decomposition of how much each layer is worth — done twice, by two methods that agree.</div></div>
         <div class="r"><span class={`status ${pub('neif').stageClass}`}>{pub('neif').stage}</span><span>3rd author · {last(pub('neif'))}</span></div></div></li>
     </ul>
 
