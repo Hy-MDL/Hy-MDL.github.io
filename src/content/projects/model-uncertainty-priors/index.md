@@ -258,11 +258,6 @@ density route instead averages a smooth density over a shrinking ball on which i
 relative variance improves with $T$. This is a statement about estimator conditioning, and it is checkable
 against an exactly computable answer.
 
-<figure class="vid">
-  <video src="/projects/model-uncertainty-priors/media/prior_minimal.mp4" autoplay loop muted playsinline preload="metadata" poster="/projects/model-uncertainty-priors/media/prior_minimal.jpg"></video>
-  <figcaption>Why the sampling route fails: the prior (teal) stays put while the likelihood (ochre) narrows as T grows; below, prior draws sized by their importance weight collapse onto one.</figcaption>
-</figure>
-
 ### 2.5 The learned priors
 
 All three are trained against the same target — the truncated hyper-g/n mixture of section 2.3 — one model per
