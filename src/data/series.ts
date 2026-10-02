@@ -5,6 +5,7 @@ export const SERIES: Record<string, { label: string; blurb: string }> = {
   'sequential-monte-carlo': { label: 'Sequential Monte Carlo', blurb: 'Particle filters, resampling, particle MCMC' },
   'submodular-optimization': { label: 'Submodular optimization', blurb: 'Diminishing returns, greedy guarantees, subset selection' },
   'surrogates-bo': { label: 'Surrogates, priors & Bayesian optimisation', blurb: 'Learned priors and surrogates, and optimising expensive objectives through them' },
+  'simulation-selection': { label: 'Simulation, uncertainty & selection', blurb: 'Feasibility and ranking & selection, model calibration, and the uncertainty that learned submodels bring into a simulation' },
   'generative-finance': { label: 'Generative finance', blurb: 'GANs and diffusion for market scenarios' },
   'eswa-finance': { label: 'ESWA finance', blurb: 'Finance papers from Expert Systems with Applications' },
   'ee-timeseries': { label: 'Signals & device health', blurb: 'Time series and physics-informed ML on electronic devices — degradation, lifetime, prognostics' },

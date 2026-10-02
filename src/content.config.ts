@@ -14,7 +14,7 @@ const writing = defineCollection({
       pdf: z.string().optional(),
       license: z.string(),
     }),
-    series: z.enum(['score-to-flow', 'normalizing-flows', 'generative-finance', 'eswa-finance', 'stochastic-modeling', 'sequential-monte-carlo', 'submodular-optimization', 'surrogates-bo', 'vision', 'industrial-vision', 'ee-timeseries']),
+    series: z.enum(['score-to-flow', 'normalizing-flows', 'generative-finance', 'eswa-finance', 'stochastic-modeling', 'sequential-monte-carlo', 'submodular-optimization', 'surrogates-bo', 'simulation-selection', 'vision', 'industrial-vision', 'ee-timeseries']),
     order: z.number(),
     tags: z.array(z.string()).default([]),
     date: z.coerce.date(),
