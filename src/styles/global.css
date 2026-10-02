@@ -466,13 +466,14 @@ pre .k{color:var(--accent)}pre .c{color:var(--mute)}pre .s{color:var(--warn)}
 
 /* about page */
 .wrap.about{padding-top:48px}
+.about .profile .bio{max-width:none}
 .about .profile{margin-bottom:10px}
 .about .prose-lite p b{color:var(--ink);font-weight:600}
 .about h1{margin:0 0 6px}
-.about .prose-lite p{font-size:16px;line-height:1.75;color:var(--ink2);max-width:860px;margin:0 0 14px}
+.about .prose-lite p{font-size:16px;line-height:1.75;color:var(--ink2);margin:0 0 14px}
 .about .prose-lite a,.about .how a{color:var(--ink);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--accent) 45%,transparent);text-underline-offset:3px}
 .about .prose-lite a:hover,.about .how a:hover{color:var(--accent)}
-.about .how{list-style:none;margin:0;padding:0;display:grid;gap:12px;max-width:860px}
+.about .how{list-style:none;margin:0;padding:0;display:grid;gap:12px}
 .about .how li{font-size:15px;line-height:1.65;color:var(--ink2);padding-left:18px;position:relative}
 .about .how li::before{content:"";position:absolute;left:0;top:11px;width:7px;height:7px;border-radius:50%;background:var(--accent)}
 .about .how li b{color:var(--ink);font-weight:500}
