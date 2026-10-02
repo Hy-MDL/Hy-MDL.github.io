@@ -1,0 +1,217 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base title="ConvFactorNet — jhm.log" active="projects">
+
+  <div class="wrap det">
+    <div>
+      <header class="det-head">
+        <div class="crumb"><a href="/projects/">Projects</a> / Research · 2nd author of seven</div>
+        <h1>ConvFactorNet — Deep Convolutional Factor Prediction with Explainable AI for Enhanced Investment Strategy</h1>
+        <div class="sub">A CNN reads the whole cross-section at one date and emits latent factors instead of returns; betas come from OLS on those factors. Grad-CAM then says which inputs the factors were built from — and re-training on only those inputs improves the strategy.</div>
+        <div class="acts">
+          <span class="status s-plan">Paper · Pending resubmission</span>
+          <a class="btn" href="/publications/">Submission history</a><span class="lkoff">manuscript not public · declined at Applied Soft Computing 2026.09.01, next venue pending</span>
+        </div>
+        <div class="tags"><span class="tag">factor models</span><span class="tag">convolutional networks</span><span class="tag">Grad-CAM</span><span class="tag">explainable AI</span><span class="tag">KOSPI / KOSDAQ</span><span class="tag">long–short</span></div>
+      </header>
+
+      <div class="info"><dl>
+        <dt>Authors</dt><dd>Sang Hoe Kim, <b>Hyeon Min Jeon</b>, Dae Hyuk You, Jiyoung Jeon, Seungho Baek, Hee Soo Lee*, Kyong Joo Oh*</dd><dt>Venue</dt><dd>Last submitted to Applied Soft Computing; previously Expert Systems with Applications</dd>
+        <dt>Manuscript</dt><dd>ASOC-D-26-13102 (earlier: ESWA-D-25-29858)</dd><dt>Updated</dt><dd>2026.09.01 — declined, next venue pending</dd>
+        <dt>Data</dt><dd>KOSPI and KOSDAQ daily, 2010-01 to 2023-12; 110 features; evaluation 2015-01 to 2023-05</dd><dt>My part</dt><dd>Second author: software, validation and visualisation. The conceptualisation, methodology and the original draft are Sang Hoe Kim's; supervision is Hee Soo Lee's and Kyong Joo Oh's.</dd>
+      </dl></div>
+
+      <div class="prose">
+        <div class="abstract"><h2>Abstract</h2>
+          <p>This is a collaboration from the lab, led by Sang Hoe Kim, in which I am second of seven authors. ConvFactorNet keeps the arithmetic of a linear factor model — returns are factor values times stock-specific betas — but replaces the hand-chosen factors with latent ones learned by a convolutional network that reads the entire cross-section of stocks × features at a single date. Because the factors are never observed, the network is trained through the return identity: predict factors, solve for betas by ridge-regularised least squares inside the batch, reconstruct returns, and backpropagate the return error. Grad-CAM on the last convolutional layer then attributes each factor back to the 110 input features, which turns out to say something specific and stable — macroeconomic variables dominate, technical indicators are last — and that attribution is used as a feature-selection rule that improves the strategy rather than merely explaining it.</p>
+          <div class="kw"><b>Keywords</b> deep learning · convolutional neural networks · factor modeling · stock return prediction · explainable AI</div>
+        </div>
+
+        <div class="stats" style="margin-top:32px">
+          <div class="stat"><div class="v">21.67<small>%/yr</small></div><div class="l">CAGR, long–short, best Sharpe config</div><div class="d">101 monthly rebalances, gross</div></div>
+          <div class="stat"><div class="v">3.78</div><div class="l">Sharpe ratio</div><div class="d">vs 0.474 CNN-Direct, 0.167 KOSPI</div></div>
+          <div class="stat"><div class="v">54.7<small>%</small></div><div class="l">Best directional accuracy</div><div class="d">macro F1 0.5002 — modest</div></div>
+          <div class="stat"><div class="v">1.05</div><div class="l">Mean Grad-CAM, macro features</div><div class="d">vs 0.32 for technical</div></div>
+        </div>
+
+        <h2 id="b1"><span class="num">1</span>Introduction</h2>
+        <h3 id="b1-1"><span class="num">1.1</span>The idea</h3>
+        <p>A linear factor model says returns are a small set of common factor values combined through stock-specific loadings. Its two weaknesses are well known: the factors are chosen by a human from theory and precedent, and the mapping from inputs to returns is assumed linear. The usual deep-learning response is to drop the structure and predict returns directly. This paper does the opposite — it keeps the structure and learns only the part that was arbitrary.</p>
+        <p>The specific move is where the network is inserted. ConvFactorNet does not take one stock's history and emit that stock's return. It takes the <em>whole cross-section at one date</em> — an <i>n</i> × <i>m</i> matrix of <i>n</i> stocks by <i>m</i> = 110 features — as if it were an image, and emits <i>m</i>′ factor values for that date. Betas remain what they always were: an ordinary least-squares fit of realised returns on factor values over a preceding window. The forecast is then the classical product.</p>
+        <h3 id="b1-2"><span class="num">1.2</span>The hypothesis</h3>
+        <p>Two claims, and both are tested against an explicit counterfactual rather than against nothing.</p>
+        <ul>
+          <li><b>The factor bottleneck helps.</b> Routing the prediction through a low-dimensional factor layer beats a network of the same architecture whose final layer predicts returns directly. The paper builds that counterfactual — <i>CNN-Direct</i> — precisely so the claim can fail.</li>
+          <li><b>The explanation is actionable, not decorative.</b> If Grad-CAM genuinely identifies the inputs the factors are built from, then re-training on only the high-attribution inputs should <em>improve</em> performance, not merely leave it unchanged. A flat or worse result would say the attribution is cosmetic.</li>
+        </ul>
+
+        <h2 id="b2"><span class="num">2</span>Method</h2>
+        <figure>
+          <div class="fig">
+            <svg viewBox="0 0 640 180" role="img" aria-label="ConvFactorNet: cross-section to factors to returns, with Grad-CAM attribution">
+              <defs><marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--mute)"/></marker></defs>
+              <g font-family="IBM Plex Mono,monospace" font-size="10.5" fill="var(--mute)">
+                <rect x="8" y="46" width="118" height="54" rx="6" fill="var(--code-bg)" stroke="var(--rule2)"/>
+                <text x="67" y="68" text-anchor="middle" fill="var(--ink)">X : n &#215; 110</text><text x="67" y="86" text-anchor="middle">one date</text>
+                <rect x="166" y="40" width="126" height="66" rx="6" fill="var(--code-bg)" stroke="var(--rule2)"/>
+                <text x="229" y="63" text-anchor="middle" fill="var(--ink)" font-size="11.5">3 conv blocks</text><text x="229" y="80" text-anchor="middle">&#8594; m&#8242; channels</text><text x="229" y="96" text-anchor="middle">&#8594; global avg pool</text>
+                <rect x="332" y="46" width="104" height="54" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+                <text x="384" y="68" text-anchor="middle" fill="var(--ink)">factors F&#770;</text><text x="384" y="86" text-anchor="middle">m&#8242; values</text>
+                <rect x="480" y="16" width="152" height="40" rx="6" fill="var(--code-bg)" stroke="var(--rule2)"/>
+                <text x="556" y="33" text-anchor="middle" fill="var(--ink)">betas B&#770; by OLS</text><text x="556" y="49" text-anchor="middle">on the past window</text>
+                <rect x="480" y="90" width="152" height="40" rx="6" fill="var(--code-bg)" stroke="var(--rule2)"/>
+                <text x="556" y="107" text-anchor="middle" fill="var(--ink)">R&#770; = F&#770; &#183; B&#770;</text><text x="556" y="123" text-anchor="middle">RMSE &#8594; backprop</text>
+                <rect x="166" y="130" width="270" height="34" rx="6" fill="var(--bg2)" stroke="var(--rule2)" stroke-dasharray="3 3"/>
+                <text x="301" y="151" text-anchor="middle" fill="var(--accent)">Grad-CAM on the last conv layer &#8594; feature importance</text>
+                <g fill="none" stroke="var(--mute)" stroke-width="1.2" marker-end="url(#fa)"><path d="M126 73 L166 73"/><path d="M292 73 L332 73"/><path d="M436 66 C458 62,458 40,480 38"/><path d="M436 80 C458 84,458 106,480 108"/></g>
+                <g fill="none" stroke="var(--accent)" stroke-width="1.1" stroke-dasharray="3 3" marker-end="url(#fa)"><path d="M384 100 C384 118,340 130,320 132"/></g>
+              </g>
+            </svg>
+          </div>
+          <figcaption><b>Figure 1.</b> The pipeline, drawn for this page. The network never sees a return; it only ever sees the cross-section. The return identity is what carries gradient back into it, and the same last convolutional layer that produces the factors is the one Grad-CAM reads.</figcaption>
+        </figure>
+
+        <h3 id="b2-1"><span class="num">2.1</span>Definitions</h3>
+        <p>The classical model is <b>R</b> = <b>F</b> · <b>B</b> + <b>ϵ</b>, with returns <b>R</b> ∈ ℝ<sup><i>t</i>×<i>n</i></sup> for <i>n</i> stocks over <i>t</i> periods, factor values <b>F</b> ∈ ℝ<sup><i>t</i>×<i>m</i>′</sup> and loadings <b>B</b> ∈ ℝ<sup><i>m</i>′×<i>n</i></sup>. ConvFactorNet keeps that product and replaces only <b>F</b>:</p>
+        <div class="math"><b>F̂</b><sub><i>t</i></sub> = <i>f</i>(<b>X</b><sub><i>t</i></sub>; θ) ∈ ℝ<sup><i>m</i>′</sup>,&nbsp;&nbsp; <b>R̂</b> = <b>F̂</b> · <b>B̂</b><span class="eq">(1)</span></div>
+        <p>where <b>X</b><sub><i>t</i></sub> ∈ ℝ<sup><i>n</i>×<i>m</i></sup> is the feature matrix of every stock on day <i>t</i>. Loadings are the ridge-regularised least-squares solution on the window, with a small λ = 10<sup>−4</sup> for numerical stability only:</p>
+        <div class="math"><b>B̂</b> = (<b>F̂</b><sup>⊤</sup><b>F̂</b> + λ<b>I</b>)<sup>−1</sup> <b>F̂</b><sup>⊤</sup><b>R</b><span class="eq">(2)</span></div>
+        <p>The quantity Grad-CAM defines is an importance weight for feature map <i>k</i> with respect to predicted factor <i>c</i>, obtained by averaging the gradient of that factor's value over the spatial extent of the map, then a heat map that is the ReLU of the weighted sum of the maps. Because there are <i>m</i>′ factors and no single "class", the paper aggregates them into one map weighted by the absolute predicted factor values:</p>
+        <div class="math"><i>L</i><sup>total</sup> = Σ<sub><i>c</i>=1..<i>m</i>′</sub> |<i>F̂</i><sup><i>c</i></sup>| · ReLU( Σ<sub><i>k</i></sub> <i>a</i><sup><i>c</i></sup><sub><i>k</i></sub> <i>A</i><sup><i>k</i></sup> )<span class="eq">(3)</span></div>
+        <p>That map is then resized by linear interpolation back to the shape of the input matrix, so every cell of it corresponds to a (stock, feature) pair and the columns can be grouped into the four feature categories.</p>
+
+        <h3 id="b2-2"><span class="num">2.2</span>Architecture</h3>
+        <p>Three blocks of Conv2d → BatchNorm2d → ReLU → MaxPool2d, with channel counts rising 16 → 32 → 64 as the stock and feature axes are halved each time. A final convolution reduces the channel dimension to <i>m</i>′, and global average pooling over the remaining spatial extent produces the <i>m</i>′ factor values for that date. The whole network is small — on the order of 30,000 parameters — which is appropriate for the data available and is part of why the factor count matters so much in the results.</p>
+
+        <h3 id="b2-3"><span class="num">2.3</span>Training: the factors are never supervised directly</h3>
+        <p>There is no factor label anywhere in the data, so training closes the loop through returns in four steps per batch, where a batch is a set of dates: predict factor values for each date; solve equation (2) for betas inside the batch; reconstruct returns by the product; and backpropagate the RMSE between reconstructed and realised returns. Adam, learning rate 0.001, 300 epochs, batch size 64, on an RTX 3090. The consequence worth noticing is that the network is only ever rewarded for producing factor values that <em>explain the cross-section of returns</em> — the compactness is imposed by the width <i>m</i>′, and nothing else pushes the factors toward interpretability.</p>
+        <figure>
+          <img src="/projects/deep-factor-xai/media/training-loop.png" alt="ConvFactorNet training loop: batch of cross-sections to predicted factors, OLS betas inside the batch, reconstructed returns, RMSE and backpropagation" loading="lazy" decoding="async" />
+          <figcaption><b>Figure 2.</b> The training loop, from the manuscript. A batch is a set of <i>dates</i>, not of stocks: the <i>b</i> × <i>n</i> × <i>m</i> tensor goes in, the network emits <i>m</i>′ factor values per date, the betas are solved by least squares <em>inside the batch</em> against that batch's realised returns, the product reconstructs returns, and the RMSE of that reconstruction is the only loss. What to look for is the arrow that is missing: nothing supervises the factor block, because no factor label exists in the data. Gradient reaches the network only through the return identity, which is why the beta solve has to sit inside the graph rather than after it.</figcaption>
+        </figure>
+
+        <h3 id="b2-4"><span class="num">2.4</span>Prediction at a target date</h3>
+        <p>For each target date the trained network first produces factor values across the preceding beta-estimation window, and betas are fitted on those against the returns actually realised in that window. Then the network is run once on the most recent feature matrix to give the target date's factor vector, and the product of the two gives a predicted cumulative return per stock over the forecast horizon. Horizons of 20, 60 and 120 trading days are compared.</p>
+        <figure>
+          <img src="/projects/deep-factor-xai/media/prediction-path.png" alt="Prediction at a target date: betas fitted on past-window factors and returns, factors predicted for the target date, product gives predicted returns" loading="lazy" decoding="async" />
+          <figcaption><b>Figure 3.</b> What happens at one target date. The upper half is the beta fit: the same network is run over every date of the preceding window to give a <i>t</i> × <i>m</i>′ factor history, which is regressed on the returns realised in that window to give one beta vector per stock. The lower half is a single forward pass on the most recent feature matrix, giving the target date's <i>m</i>′ factor values. The product of the two is the forecast. The point of the picture is the asymmetry in time: the loadings are estimated from the past and held, and the only thing the network is asked to do at the target date is produce the factor values — the same split a classical factor model makes.</figcaption>
+        </figure>
+
+        <h2 id="b3"><span class="num">3</span>Experiments</h2>
+        <h3 id="b3-1"><span class="num">3.1</span>Data</h3>
+        <p>Daily data on KOSPI and KOSDAQ listings from 2010-01 to 2023-12, sourced from a commercial Korean database. SPACs and financial firms are excluded and only companies above KRW 100bn market capitalisation are kept. The 110 features fall in four groups: <b>technical</b> indicators from price and volume, scaled by closing price or by volume as appropriate; <b>financial</b> statement items, admitted only after a four-month reporting lag so that nothing enters before it was public; <b>macro</b> variables, monthly series forward-filled to daily; and <b>market</b> indicators, returns of KOSPI, KOSDAQ, NASDAQ and S&amp;P 500 over horizons from one day to twelve months. All 110 are then min–max scaled together.</p>
+        <p>Evaluation runs 2015-01 to 2023-05, with the last trading day of each month as a target date: 101 evaluation points. Thirty-six hyperparameter combinations are swept — lookback &#123;1, 2, 3&#125; years × horizon &#123;20, 60, 120&#125; days × factor count &#123;5, 10, 20, 40&#125;.</p>
+
+        <h3 id="b3-2"><span class="num">3.2</span>What is measured</h3>
+        <p>Two families. <b>Predictive</b>: the continuous return forecast is reduced to a direction and scored by accuracy and macro F1, the latter chosen because up/down classes are imbalanced in financial data. <b>Investment</b>: predictions are sorted into terciles and a long–short portfolio is formed monthly, scored by tercile accuracy, cumulative return, CAGR, annualised volatility of monthly returns, Sharpe ratio (risk-free rate assumed 2%) and maximum drawdown. Three benchmarks: the KOSPI index; <i>CNN-Direct</i>, the same architecture with the final layer predicting returns instead of factors; and a conventional small-cap/high-book-to-market long–short.</p>
+
+        <h2 id="b4"><span class="num">4</span>Results</h2>
+        <h3 id="b4-1"><span class="num">4.1</span>Prediction is modest; ranking is where the value is</h3>
+        <p>Directional accuracy peaks at 54.72% with a macro F1 of 0.5002, at a two-year lookback, a 120-day horizon and 20 factors. That F1 is the number to hold onto: near 0.50 on a two-class macro average means the binary skill is slim. The sweep is nevertheless informative about the factor count — 40 factors overfits and 5 has too little capacity — and about the horizon: 60- and 120-day forecasts beat 20-day ones, while the lookback length barely matters.</p>
+        <p>The investment numbers come from ranking, not from calling direction. The best-Sharpe configuration is a one-year lookback, a 120-day horizon and 10 factors, and its mechanism is visible in the tercile returns: the predicted-high tercile averages +1.31% per month against −0.33% for the predicted-low, a spread of 1.64 points per month. The worst configuration produces a spread of 0.19 points, and its strategy is correspondingly useless — which is a reassuring rather than an embarrassing result, since it ties the profitability to exactly one measurable thing.</p>
+
+        <h3 id="b4-2"><span class="num">4.2</span>Against the benchmarks</h3>
+        <div class="twrap"><table>
+          <thead><tr><th>Strategy</th><th class="n">Tertile acc.</th><th class="n">Cumulative</th><th class="n">CAGR</th><th class="n">Sharpe</th><th class="n">MDD</th></tr></thead>
+          <tbody>
+            <tr class="hl"><td>ConvFactorNet</td><td class="n">38.52%</td><td class="n">412.44%</td><td class="n">21.67%</td><td class="n">3.78</td><td class="n">−2.90%</td></tr>
+            <tr><td>CNN-Direct (no factor layer)</td><td class="n">33.78%</td><td class="n">28.84%</td><td class="n">3.09%</td><td class="n">0.474</td><td class="n">−2.74%</td></tr>
+            <tr><td>KOSPI index</td><td class="n">—</td><td class="n">29.16%</td><td class="n">3.12%</td><td class="n">0.167</td><td class="n">−25.14%</td></tr>
+            <tr><td>Small / high book-to-market</td><td class="n">—</td><td class="n">0.33%</td><td class="n">0.04%</td><td class="n">−18.98</td><td class="n">−0.56%</td></tr>
+          </tbody></table></div>
+        <p class="cap"><b>Table 1.</b> Gross of costs, over the 101 monthly rebalances. The comparison that carries the paper's first claim is the second row: same architecture, same data, no factor bottleneck.</p>
+        <figure>
+          <img src="/projects/deep-factor-xai/media/cumulative-return.png" alt="Cumulative return of ConvFactorNet against CNN-Direct, a small-cap value benchmark and the KOSPI index, 2015 to mid-2023" loading="lazy" decoding="async" />
+          <figcaption><b>Figure 4.</b> The 101 monthly rebalances as a path, indexed to 100 at the start — the table above is this picture's last point. Two things a table cannot show. The strategy's climb is steady rather than driven by one episode, and it does not visibly give back during the 2018 and 2022 index drawdowns, which is where the −2.90% maximum drawdown comes from. And the flat green line is the small-cap / high-book-to-market benchmark: essentially no variation at all over eight years, which is why the Sharpe ratio computed from it is meaningless and that row should be ignored. Gross of costs throughout.</figcaption>
+        </figure>
+        <p>CNN-Direct is the informative line. It shares the architecture and the inputs and differs only in whether the prediction is routed through the factor layer, and it loses on both ranking (33.78% vs 38.52% tercile accuracy) and risk-adjusted return. The Small/High benchmark's numbers are degenerate — a 0.10% annualised volatility producing a Sharpe of −18.98 — and the paper does not explain how that construction ended up with essentially no return variation; a reader should treat that row as uninformative.</p>
+
+        <h3 id="b4-3"><span class="num">4.3</span>What Grad-CAM says</h3>
+        <p>Averaged over the whole evaluation period, the four feature categories rank Macro (1.05) &gt; Market (0.67) &gt; Financial (0.43) &gt; Technical (0.32). At the level of individual variables the top of the list is the Korean and US industrial production indices, gold and WTI futures, and the US 10-year Treasury yield. The reading the paper takes from this is that the learned factors are business-cycle objects, not short-horizon price-pattern objects.</p>
+        <figure>
+          <img src="/projects/deep-factor-xai/media/gradcam-average.png" alt="Grad-CAM activation map averaged over the evaluation period: firms by size on the vertical axis, 110 features grouped into four categories on the horizontal" loading="lazy" decoding="async" />
+          <figcaption><b>Figure 5.</b> The attribution map averaged over every rebalancing date from 2015-01 to 2023-05. Rows are firms ordered from large to small capitalisation, columns are the 110 inputs with dashed lines separating technical, financial, macro and market; warmer is higher activation. Two readings, and the second is the more interesting. The macro block is a solid red stripe and the technical block is uniformly cold — the category ordering quoted above, seen at once. But look along the rows: the stripe runs the full height of the panel unbroken, meaning the attribution barely varies with firm size. The network is reading one common, largely cross-sectional signal rather than anything firm-specific, which is consistent with what the factor layer was built to do and is also a limit on how much the explanation can tell you about any individual name.</figcaption>
+        </figure>
+        <p>Two robustness cuts support that. Splitting the 101 months into 46 bull, 32 bear and 23 flat by a smoothed-return rule, the category ordering is identical in all three regimes; only the top individual variables rotate, with bull markets leaning on short- and medium-maturity Treasury yields and bear and flat markets on production, commodity and exchange-rate variables. Splitting instead by ten industry sectors, the category averages are identical to two decimal places in every sector — which is a strong statement about stability, and also a hint that the model is reading a common cross-sectional signal rather than anything firm-specific. The paper draws the same conclusion from a separate observation: Grad-CAM importance barely varies across market-capitalisation quartiles.</p>
+
+        <h3 id="b4-4"><span class="num">4.4</span>The attribution used as a rule</h3>
+        <p>This is the experiment that makes the explainability more than a figure. At each target date, feature importances are averaged across stocks, a percentile threshold is applied, and a fresh model of the same architecture is trained on only the surviving features. Thresholds from the top 10% to the top 90% are swept in 5-point steps.</p>
+        <div class="twrap"><table>
+          <thead><tr><th>Feature set</th><th class="n">Tertile acc.</th><th class="n">Cumulative</th><th class="n">CAGR</th><th class="n">Sharpe</th><th class="n">MDD</th></tr></thead>
+          <tbody>
+            <tr><td>All features (baseline)</td><td class="n">38.52%</td><td class="n">412.44%</td><td class="n">21.67%</td><td class="n">3.78</td><td class="n">−2.90%</td></tr>
+            <tr class="hl"><td>Top 45% by Grad-CAM</td><td class="n">38.91%</td><td class="n">477.51%</td><td class="n">23.43%</td><td class="n">4.10</td><td class="n">−1.22%</td></tr>
+            <tr><td>Top 10% by Grad-CAM</td><td class="n">37.99%</td><td class="n">267.90%</td><td class="n">16.93%</td><td class="n">2.93</td><td class="n">−3.68%</td></tr>
+          </tbody></table></div>
+        <p class="cap"><b>Table 2.</b> Dynamic feature selection driven by the attribution. The sweep's good region is roughly the top 40–70%; cutting to the top 10% destroys information and performance falls below the baseline.</p>
+        <figure>
+          <img src="/projects/deep-factor-xai/media/percentile-sweep.png" alt="Cumulative return and Sharpe ratio of the retrained strategy against the share of features kept, with the all-features baselines as dashed lines" loading="lazy" decoding="async" />
+          <figcaption><b>Figure 6.</b> The sweep itself: on the horizontal axis the share of features kept after ranking them by attribution, on the two vertical axes the cumulative return (blue) and the Sharpe ratio (red) of a model retrained from scratch on only that subset. The dashed lines are the all-features baselines, and the right-hand end of each curve <em>is</em> that baseline by construction. This is the figure that carries §4.4's claim: both curves rise above their baseline across a broad middle band and fall below it only when the subset gets very small. What a reader should also see is how jagged the curves are — the run-to-run scatter is a visible fraction of the margin being claimed, and with one path and no repeated seeds the exact location of the peak at 0.45 should not be taken too literally.</figcaption>
+        </figure>
+        <figure>
+          <img src="/projects/deep-factor-xai/media/percentile-curves.png" alt="Cumulative return paths for the best feature subset, all features, and the smallest subset" loading="lazy" decoding="async" />
+          <figcaption><b>Figure 7.</b> Three points of Figure 6 as paths: the best subset, all 110 features, and the smallest subset. The best-subset and all-features lines are nearly indistinguishable until about 2021 and separate only over the last two years, so the improvement is not a uniform lift — it comes from a particular stretch of the sample. The smallest subset trails from 2017 onward, which is the concrete form of "cutting to the top 10% destroys information".</figcaption>
+        </figure>
+        <p>The shape of the curve is the argument: there is an interior optimum. If attribution were noise, trimming features would not help at any threshold; if fewer were always better, the result would be about regularisation rather than about the explanation. One caution on the reported margin — the manuscript describes the top-45% model as achieving "approximately 65% higher cumulative returns" than the baseline, but 477.51% against 412.44% is 65 <em>percentage points</em>, about 16% higher in relative terms. The tables are consistent; the sentence describing them is not.</p>
+
+        <h2 id="b5"><span class="num">5</span>Conclusion &amp; future work</h2>
+        <h3 id="b5-1"><span class="num">5.1</span>What the paper does not establish</h3>
+        <p>Being a co-author on this one, I would rather state the gaps than let a reader find them:</p>
+        <ul>
+          <li><b>All returns are gross.</b> No transaction costs, no slippage, no borrow cost for the short leg, and no turnover figure appears anywhere. For a monthly-rebalanced long–short over Korean mid- and small-caps that is a material omission, and the Sharpe of 3.78 should be read with it in mind.</li>
+          <li><b>No statistical test on the return differences.</b> The performance comparisons are point estimates over one 101-month path. There is no bootstrap, no test of the Sharpe difference against CNN-Direct, and no standard error on the tercile spread.</li>
+          <li><b>Market-neutrality is asserted, not measured.</b> The long–short construction is described as market-neutral but no portfolio beta or factor-exposure regression is reported, so it is not shown that the returns are independent of the market.</li>
+          <li><b>Selection happens on the evaluation period.</b> The 36-configuration sweep and the Grad-CAM percentile sweep are both read over the same 2015–2023 window that the headline numbers come from. There is no held-out period on which the chosen configuration and the chosen threshold were never looked at, so the best-cell numbers are optimistic by an unmeasured amount.</li>
+          <li><b>The attribution is a sensitivity, not a cause.</b> Grad-CAM reports what the network's output moves with; nothing in the paper establishes that macro variables <em>drive</em> the returns, only that this network's factors are most sensitive to them.</li>
+          <li><b>An internal inconsistency.</b> The explainability section describes the 1-year / 120-day / 10-factor configuration as the one with the highest predictive performance, but in the accuracy table that configuration ranks fourth; it is first on <em>investment</em> performance. The Grad-CAM analysis is run on the best investment configuration, and the text mislabels it.</li>
+        </ul>
+
+        <h3 id="b5-2"><span class="num">5.2</span>Next</h3>
+        <div class="take">
+          <div><h4>What held up</h4><ul><li>Routing the prediction through a learned factor layer beat the same network predicting returns directly, on both ranking and risk-adjusted return.</li><li>The attribution is stable across market regimes, sectors and size quartiles — an unusual degree of consistency for a post-hoc explanation.</li><li>Using the attribution as a selection rule improved the strategy, with an interior optimum rather than a monotone trend.</li></ul></div>
+          <div><h4>Next</h4><ul><li>Choose the next venue after the Applied Soft Computing decline</li><li>Net-of-cost returns and a turnover accounting</li><li>A held-out period that no hyperparameter or threshold ever touched</li><li>Extension beyond Korea to US, European and emerging markets</li></ul></div>
+        </div>
+
+        <h2 id="bA"><span class="num">A</span>Progress log</h2>
+        <ul class="tl">
+          <li><div class="d">2025.10.29</div><h4>Submitted to Expert Systems with Applications</h4><p>ESWA-D-25-29858, six authors.</p></li>
+          <li><div class="d">2026.06.09</div><h4>Declined</h4><p>Expert Systems with Applications.</p></li>
+          <li><div class="d">2026.07.16</div><h4>Resubmitted to Applied Soft Computing</h4><p>ASOC-D-26-13102. Seungho Baek (Brooklyn College, CUNY) joins as an author; references converted to numeric style, figure captions written out, and funding, CRediT and data-availability statements added. The model, the data, the experiments and every reported number are unchanged from the ESWA version.</p><div class="dec"><span class="eyebrow">Note</span>the two versions differ in packaging and authorship, not in results</div></li>
+          <li class="now"><div class="d">2026.09.01</div><h4>Declined</h4><p>Applied Soft Computing.</p><div class="dec"><span class="eyebrow">Ongoing</span>next venue pending</div></li>
+        </ul>
+      </div>
+    </div>
+
+    <aside class="tocw">
+      <div class="eyebrow">Contents</div>
+      <ul class="toc">
+        <li><a href="#b1"><span class="n">1</span>Introduction</a></li>
+        <li class="sub"><a href="#b1-1"><span class="n">1.1</span>The idea</a></li>
+        <li class="sub"><a href="#b1-2"><span class="n">1.2</span>The hypothesis</a></li>
+        <li><a href="#b2"><span class="n">2</span>Method</a></li>
+        <li class="sub"><a href="#b2-1"><span class="n">2.1</span>Definitions</a></li>
+        <li class="sub"><a href="#b2-2"><span class="n">2.2</span>Architecture</a></li>
+        <li class="sub"><a href="#b2-3"><span class="n">2.3</span>Training</a></li>
+        <li class="sub"><a href="#b2-4"><span class="n">2.4</span>Prediction</a></li>
+        <li><a href="#b3"><span class="n">3</span>Experiments</a></li>
+        <li class="sub"><a href="#b3-1"><span class="n">3.1</span>Data</a></li>
+        <li class="sub"><a href="#b3-2"><span class="n">3.2</span>What is measured</a></li>
+        <li><a href="#b4"><span class="n">4</span>Results</a></li>
+        <li class="sub"><a href="#b4-1"><span class="n">4.1</span>Prediction vs ranking</a></li>
+        <li class="sub"><a href="#b4-2"><span class="n">4.2</span>Benchmarks</a></li>
+        <li class="sub"><a href="#b4-3"><span class="n">4.3</span>What Grad-CAM says</a></li>
+        <li class="sub"><a href="#b4-4"><span class="n">4.4</span>Attribution as a rule</a></li>
+        <li><a href="#b5"><span class="n">5</span>Conclusion</a></li>
+        <li class="sub"><a href="#b5-1"><span class="n">5.1</span>Not established</a></li>
+        <li><a href="#bA"><span class="n">A</span>Progress log</a></li>
+      </ul>
+      <div class="rel"><div class="eyebrow">Related</div>
+        <a href="/projects/index-fund-hybrid/">N-EIF — enhanced index fund<span>paper · co-author</span></a>
+        <a href="/publications/">Submission history<span>publications · pending</span></a>
+        <a href="/research/finphasor/">FinPhasor — cross-sectional timing<span>paper · 1st author</span></a>
+      </div>
+    </aside>
+  </div>
+
+</Base>

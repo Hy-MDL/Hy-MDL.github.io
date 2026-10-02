@@ -1,0 +1,75 @@
+---
+import '../styles/global.css';
+import 'katex/dist/katex.min.css';
+const { title = 'Hyeonmin Jeon', description = 'Research notes by Hyeon Min Jeon', active = '' } = Astro.props;
+const nav = [['home', '/', 'Home'], ['about', '/about/', 'About'], ['research', '/research/', 'Research'], ['projects', '/projects/', 'Projects'], ['blog', '/blog/', 'Blog'], ['pubs', '/publications/', 'Publications'], ['cv', '/cv/', 'CV']];
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" />
+  <script is:inline>
+    try { const t = localStorage.getItem('theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+  </script>
+</head>
+<body>
+  <nav class="nav">
+    <a class="brand" href="/">hyeonmin<i>.</i>jeon</a>
+    <div class="links">
+      {nav.map(([k, href, label]) => <a href={href} aria-current={active === k ? 'page' : undefined}>{label}</a>)}
+      <button class="theme" id="themeBtn" aria-label="Toggle theme" title="Toggle theme"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.5 0-1-.1-1.4A5.5 5.5 0 0 1 12 3z"/></svg></button>
+    </div>
+  </nav>
+  <main><slot /></main>
+  <footer class="foot"><span>© 2026 Hyeon Min Jeon · Built with Astro, hosted on GitHub Pages</span><span class="mono"><a href="mailto:hyeonmin16@yonsei.ac.kr">Email</a> · <a href="/cv/Hyeonmin_Jeon_CV.pdf">CV (PDF)</a></span></footer>
+  <script is:inline>
+    (function () {
+      const root = document.documentElement;
+      document.getElementById('themeBtn').addEventListener('click', () => {
+        const dark = root.getAttribute('data-theme') === 'dark' || (!root.getAttribute('data-theme') && matchMedia('(prefers-color-scheme:dark)').matches);
+        const next = dark ? 'light' : 'dark'; root.setAttribute('data-theme', next);
+        try { localStorage.setItem('theme', next); } catch (e) {}
+        document.dispatchEvent(new CustomEvent('themechange'));
+      });
+      function layoutAxes() {
+        document.querySelectorAll('.axis').forEach(ax => {
+          ax.querySelectorAll('.line,.span,.lb').forEach(x => x.remove());
+          const evs = [...ax.querySelectorAll('.ev')]; if (!evs.length) return;
+          const n = evs.length, W = ax.clientWidth, x0 = 4, step = n > 1 ? Math.min(150, (W - x0 - 120) / (n - 1)) : 0;
+          const line = document.createElement('div'); line.className = 'line'; line.style.left = x0 + 'px'; line.style.width = (step * (n - 1)) + 'px'; ax.prepend(line);
+          const ci = evs.findIndex(e => e.classList.contains('cur'));
+          if (ci > 0 && !evs[ci].classList.contains('bad')) { const sp = document.createElement('div'); sp.className = 'span'; sp.style.left = x0 + 'px'; sp.style.width = (step * ci) + 'px'; ax.appendChild(sp); }
+          evs.forEach((e, i) => {
+            const x = x0 + i * step; e.style.left = x + 'px';
+            const lb = document.createElement('div'); lb.className = 'lb ' + e.className.replace('ev', '').trim(); lb.style.left = x + 'px';
+            lb.innerHTML = '<b>' + e.dataset.s + (e.dataset.k ? ' · ' + e.dataset.k : '') + '</b>' + e.dataset.date.replace(/-/g, '.'); ax.appendChild(lb);
+            // how long the paper sat at the previous stage, centred on the segment
+            if (i && e.dataset.gap) {
+              const g = document.createElement('div'); g.className = 'gap';
+              g.style.left = (x - step / 2) + 'px'; g.textContent = e.dataset.gap; ax.appendChild(g);
+            }
+          });
+        });
+      }
+      layoutAxes(); addEventListener('resize', layoutAxes);
+      function onScroll() {
+        const toc = document.querySelector('.toc'); if (!toc) return;
+        const links = [...toc.querySelectorAll('a')]; const y = scrollY + 120; let i = 0;
+        links.forEach((a, k) => { const h = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))); if (h && h.getBoundingClientRect().top + scrollY <= y) i = k; });
+        links.forEach((a, k) => a.classList.toggle('act', k === i));
+        const bar = document.getElementById('bar'), el = document.querySelector('.prose'); if (!bar || !el) return;
+        const top = el.getBoundingClientRect().top + scrollY, start = top - innerHeight * 0.6, end = top + el.offsetHeight - innerHeight * 0.6;
+        const p = Math.max(0, Math.min(1, (scrollY - start) / (end - start)));
+        bar.style.width = (p * 100) + '%'; document.getElementById('pct').textContent = Math.round(p * 100) + '%';
+      }
+      addEventListener('scroll', onScroll, { passive: true }); onScroll();
+      document.querySelectorAll('.filters button').forEach(b => b.addEventListener('click', () => { b.parentElement.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', 'false')); b.setAttribute('aria-pressed', 'true'); }));
+    })();
+  </script>
+</body>
+</html>

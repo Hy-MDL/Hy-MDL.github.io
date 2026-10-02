@@ -1,0 +1,66 @@
+---
+import Base from '../../layouts/Base.astro';
+const slides = Array.from({ length: 15 }, (_, i) => String(i + 1).padStart(2, '0'));
+const notes: Record<string, string> = {
+  '01': 'Title — authors from the University of Seoul, Yonsei and SAS Institute.',
+  '04': 'Why: Korea imports most of its energy inputs; solar PV is the fastest-growing renewable.',
+  '05': 'Motivation — accurate generation forecasts let other sources be scheduled efficiently.',
+  '07': 'Data — hourly, Seoul: KEPCO time-series solar data and KMA ASOS weather.',
+  '09': 'Method — hybrid CNN–LSTM–Transformer: causal 1D convolutions, sequential memory, attention over the window.',
+  '10': 'Input windows of shape (N, L, F), min–max scaled.',
+  '12': 'Experiment 1 — one year of hourly input, one day ahead: RMSE against ARIMA, TimesFM and CNN–LSTM over 100 simulations.',
+  '13': 'When history is short — a time-series diffusion model generates synthetic series to stack on the real data.',
+  '14': 'Experiment 2 — two weeks of history: real only vs real + synthetic.',
+};
+---
+<Base title="ISF 2025 — Forecasting Solar Energy Power Generation — Hyeonmin Jeon" active="research">
+  <div class="wrap det">
+    <div>
+      <header class="det-head">
+        <div class="crumb"><a href="/research/">Research</a> / Completed · talk</div>
+        <h1>A Study for Forecasting Solar Energy Power Generation</h1>
+        <div class="sub">Hourly solar generation in Seoul forecast one day ahead with a hybrid CNN–LSTM–Transformer, and — when only two weeks of history exist — with diffusion-generated synthetic series stacked on the real data.</div>
+        <div class="acts">
+          <span class="status s-acc">Presented · ISF 2025, Beijing · 2025.07.01</span>
+          <a class="btn" href="/talks/isf2025-solar-forecasting.pdf">Slides (PDF)</a>
+          <a class="btn" href="/publications/">Publications</a>
+        </div>
+        <div class="tags"><span class="tag">solar forecasting</span><span class="tag">CNN–LSTM–Transformer</span><span class="tag">time-series diffusion</span><span class="tag">synthetic data</span><span class="tag">SAS</span></div>
+      </header>
+
+      <div class="info"><dl>
+        <dt>Authors</dt><dd>YoungDoo Jeong*, HaeRim Kim, Dae Hyuk You, <b>Hyeon Min Jeon</b>, Arnie de Castro, TaeYoon Lee</dd>
+        <dt>Venue</dt><dd>45th International Symposium on Forecasting (ISF 2025), Beijing — talk</dd>
+        <dt>Affiliations</dt><dd>University of Seoul · Yonsei University · SAS Institute (Cary, NC)</dd>
+        <dt>Data</dt><dd>KEPCO time-series solar &amp; wind generation (Seoul, hourly) · KMA ASOS weather</dd>
+      </dl></div>
+
+      <div class="stats" style="margin:26px 0 8px">
+        <div class="stat"><div class="v">0.304</div><div class="l">one-day-ahead RMSE, hybrid model</div><div class="d" style="color:var(--mute)">vs 0.392 CNN–LSTM · 3.19 TimesFM · 4.2 ARIMA, 100 simulations</div></div>
+        <div class="stat"><div class="v">2.91 → 1.97</div><div class="l">RMSE with two weeks of history</div><div class="d" style="color:var(--mute)">real data only → real + diffusion-generated synthetic series</div></div>
+        <div class="stat"><div class="v">8,760 h</div><div class="l">input window, experiment 1</div><div class="d" style="color:var(--mute)">one year of hourly data, 24 h ahead</div></div>
+        <div class="stat"><div class="v">360 h</div><div class="l">input window, experiment 2</div><div class="d" style="color:var(--mute)">the data-shortage setting</div></div>
+      </div>
+
+      <div class="prose">
+        <h2>What the talk argued</h2>
+        <p>Two claims. First, for one-day-ahead hourly solar generation in Seoul, a hybrid that stacks causal 1D convolutions (local, cross-variable patterns), an LSTM (sequential dependence) and a Transformer block (attention across the window) beats the standard baselines — an RMSE of 0.304 against 0.392 for CNN–LSTM, 3.19 for the TimesFM foundation model and 4.2 for ARIMA, averaged over 100 simulations. Second, when the training history is short — two weeks rather than a year — a time-series diffusion model can generate synthetic series that, stacked on the real data, bring the RMSE from 2.91 down to 1.97. The second claim is the one I care about: it is the same idea as the diffusion-oversampling and scenario-generation work elsewhere on this site, applied to an energy series.</p>
+        <p><b>My part.</b> Co-author; the joint work with SAS Institute covered the modelling and the synthetic-data experiment. The full slide deck is below and as a <a href="/talks/isf2025-solar-forecasting.pdf">PDF</a>.</p>
+        <h2>Slides</h2>
+      </div>
+      <ol class="slides">
+        {slides.map((n) => (
+          <li><a href="/talks/isf2025-solar-forecasting.pdf#page={Number(n)}"><img src={`/talks/isf2025/slide-${n}.png`} alt={`Slide ${Number(n)}`} loading="lazy" width="756" height="567"></a><span class="cap"><b>{Number(n)}</b> {notes[n] ?? ''}</span></li>
+        ))}
+      </ol>
+    </div>
+    <aside class="tocw">
+      <div class="eyebrow">Contents</div>
+      <ul class="toc"><li><a href="#what-the-talk-argued">What the talk argued</a></li><li><a href="#slides">Slides</a></li></ul>
+      <div class="rel"><div class="eyebrow">Related</div>
+        <a href="/research/diffusion-scenarios/">CASE — conditional diffusion scenarios<span>research · under review</span></a>
+        <a href="/blog/csdi/">CSDI — conditional score-based diffusion for time series<span>paper review</span></a>
+      </div>
+    </aside>
+  </div>
+</Base>

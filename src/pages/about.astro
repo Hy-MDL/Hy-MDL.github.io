@@ -1,0 +1,80 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+const notes = (await getCollection('writing')).length;
+const projects = await getCollection('projects');
+const nRes = projects.filter((p) => p.data.kind === 'research').length, nProj = projects.filter((p) => p.data.kind === 'project').length;
+---
+<Base title="About — Hyeonmin Jeon" active="about">
+  <div class="wrap about">
+    <div class="profile">
+      <img class="photo" src="/etc/profile.jpg" alt="Hyeonmin Jeon" width="240" height="240">
+      <div>
+        <h1>About me</h1>
+        <p class="role">Hyeonmin Jeon · 전현민 · M.S. student, Financial Investment AI Lab, Yonsei University · <b>applying to PhD programs in IE / OR for Fall 2027</b></p>
+        <div class="bio">
+          <p class="thesis">I study decision-making under uncertainty when the uncertainty itself must first be learned from data.</p>
+          <p class="kw">Generative models as simulation inputs · Ranking &amp; selection · Input uncertainty · Simulation optimisation</p>
+          <p>As a child I loved mathematics, and I assumed its natural home was economics or business, where it is put to work explaining social phenomena. Later I wanted deeper theory, and a training I could carry into many industries and domains, so I chose electrical engineering instead. Then I joined an AI lab as an undergraduate researcher, and found that what I enjoyed most was taking a theory out of one course and applying it somewhere it was not meant for. That became the engine: connect fields, extend them, test the result against something real. AI models — generative models above all — are how I change the axis from which a decision problem is seen; a simulation-based guarantee and a check against the real thing decide whether the new axis was worth it. What I find exciting is fusing theories from different fields to solve a central problem, then carrying the result through experiments into full research; the papers I am writing now are built on exactly that.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="hsec"><h2>How I got here</h2>
+      <div class="prose-lite">
+        <p>As an undergraduate researcher at GAIL, Chung-Ang University, I started on AI by connecting it to what I already had — signals and systems, the mathematics of electrical engineering — and I learned by implementing papers rather than reading them. When I moved to finance, the same habit found its material: the mathematics under Black–Scholes and Monte Carlo has counterparts in generative and sequential models, and I liked the research that links the two. That is what carried me into industrial engineering and the Financial Investment AI Lab at Yonsei.</p>
+        <p>My strength is not theory in isolation but connecting mathematical ideas across domains — a model from one, a problem from another, a validation from a third — and pushing them far enough to survive empirical validation, until the result either holds or breaks in a way I can explain.</p>
+        <p>The other habit is turning my own inconveniences into tools and experiments. A 2025 course project on exchange traffic kept bothering me after the course ended — its headline numbers did not come out of its own files — so I re-ran it on the real tick data with what I had since learned in stochastic modelling, and it became the <a href="/projects/exchange-queueing/">queueing study</a> and a working paper. Reviewing my own drafts for two journals without a referee to argue with became <a href="/projects/lucubra/">Lucubra</a>, a research-agent platform I now use daily and keep strengthening round by round. A reading list became a <a href="/blog/">blog</a> that checks each paper's numbers; a lost codebase became a rebuild written up as exactly that. When something in my work is awkward, I would rather extend it into a tool I keep using than work around it.</p>
+      </div>
+    </div>
+
+    <div class="hsec"><h2>What I ran into, and what I did about it</h2>
+      <div class="prose-lite">
+        <p><b>A scenario generator that looked right and could not be trusted.</b> Building <a href="/research/diffusion-scenarios/">CASE</a>, a diffusion transformer that generates multi-asset return scenarios, I kept hitting the same wall: the samples looked realistic, and realism told me nothing about whether a reserve set on them would hold. So I stopped judging the generator by its samples and scored it by the decision made on it — nine portfolio books, 139 decision dates, reserve held against shortfall — and then built <a href="/research/tailflow/">TailFlow</a>, a smaller diffusion model on a synthetic market with known VaR and ES, so that the same question had an answer I could check. The habit that came out of it is the one line on top of this page: a learned model of uncertainty is only as good as the decision it feeds.</p>
+        <p><b>Two layers of the same uncertainty.</b> The learned-prior work asked how uncertain the <em>model</em> is — replace the mixture-of-g prior in Bayesian factor selection with a normalizing flow and watch what happens to the posterior over models and its entropy (<a href="/research/model-uncertainty-priors/">learned priors</a>). The input-uncertainty work asked how far that uncertainty <em>propagates</em> — swap the input distribution behind a selection procedure and measure how much of its probability-of-correct-selection guarantee survives (<a href="/research/input-uncertainty-select/">Input-Uncertainty Select</a>, <a href="/research/rs-lab/">rs-lab</a>). I only saw late that they are one question at two layers: quantify the uncertainty a learned distribution carries, then follow it into the guarantee on the decision. That is the research programme I want to spend a doctorate on, and it is why simulation optimisation and ranking &amp; selection are where I am applying.</p>
+        <p><b>A hospital desk that no simulator matched.</b> Nune Eye Hospital asked for a policy that assigns patients to nine imaging devices. The first simulator put policies in the wrong order because its case mix was wrong; the recalibrated one was still beaten by the hospital until three distortions were removed one at a time; and when I asked myself whether any setting favoured the simulation, I found two that did. The <a href="/projects/nune-retina-rl/">scheduler</a> now runs on real days, and what I took from it is a rule for all of my work: keep the real operation as a row in the table, and go looking for the settings that flatter you.</p>
+        <p><b>Reading drafts the way a referee would.</b> Two manuscripts under review taught me what I wanted and did not have: something that checks a draft's numbers instead of admiring its prose, knows what the target journal's recent papers look like, and leaves the decision to me — and I wanted to know whether I could build an LLM agent system end to end. So I built <a href="/projects/lucubra/">Lucubra</a>, a research-agent platform: tool loops, referee personas assembled into venue committees, a review ledger that forbids re-raising closed points, an MCP server, three ways to run a model. Four days, three rebuilt structures, and the standing rule that agents verify and people decide.</p>
+        <p><b>The same method, five domains.</b> Taking a learned model of uncertainty, a decision on simulated outcomes and a check against a known answer into asset returns, a hospital, a city's traffic, a solar farm (<a href="/research/isf2025-solar-forecasting/">ISF 2025</a>, with SAS) and an artist's style (<a href="/projects/artist-style-engine/">TIPS</a>) is what turned breadth into a method. Each move became an experiment, and each experiment something I could write up. I expect the next domains to be new ones, and the method to be the same.</p>
+      </div>
+    </div>
+
+    <div class="hsec"><h2>How I work</h2>
+      <ul class="how">
+        <li><b>Every number has a file.</b> Every experiment on this site is written up like a short paper, and every result figure and metric in it is produced by a script in the repository from a result file. Figures taken from a manuscript or a slide deck say so. If I cannot reproduce it, it is not on the page.</li>
+        <li><b>Negative results stay on the page.</b> When a method does not do what was hoped — a queue model that still under-delivers on the busiest days, a tuned prior that buys little and shrinks the uncertainty measure — the write-up says so, with the numbers, instead of dropping the experiment.</li>
+        <li><b>Truth first, then the real thing.</b> Methods are built and measured where the answer is computable — a synthetic corridor, a market with known tail risk, an exact posterior — before they meet the problem that motivated them.</li>
+        <li><b>Data comes in the front door.</b> Nothing on this site uses data obtained by working around an access control; when a source refused scripted access, the write-up says so and the experiment is synthetic.</li>
+        <li><b>Reading is written down.</b> The <a href="/blog/">blog</a> holds {notes} paper reviews and study notes; each review records the paper's claim, its method and what its own numbers actually show.</li>
+      </ul>
+    </div>
+
+    <div class="hsec"><h2>Now</h2>
+      <ul class="how">
+        <li><b>Two manuscripts under review</b> at Expert Systems with Applications, two working papers (learned surrogate priors; capacity sizing for an exchange queue), two co-authored lab papers being resubmitted — status kept live on <a href="/publications/">Publications</a>.</li>
+        <li><b>Applying to Ph.D. programs in IE / OR for Fall 2027</b> — simulation optimisation, ranking &amp; selection, generative models as simulation inputs. The portfolio here ({nRes} research experiments, {nProj} built projects) was rebuilt with that in mind; English for it too.</li>
+        <li><b>A new domain.</b> A first battery study, back toward electrical engineering: <a href="/research/battery-protocol-select/">choosing a fast-charging protocol when the early-life prediction is uncertain</a>, with the same question as the rest of this site, how far a learned model's uncertainty can be trusted to drive a decision.</li>
+        <li><b>Teaching.</b> Teaching assistant for Yonsei's Graduate Program in AI Investment Engineering since autumn 2025, and for the undergraduate Financial Engineering course in spring 2026.</li>
+      </ul>
+    </div>
+
+    <div class="hsec"><h2>Path so far</h2>
+      <ul class="cv">
+        <li><span class="d">2025.03 –</span><div>M.S., Industrial Engineering — Financial Investment AI Lab, Yonsei University<div class="k">Diffusion transformers for scenario generation, phase-preserving timing measurement, learned priors for factor selection; talk at ISF 2025, Beijing, with SAS Institute</div></div></li>
+        <li><span class="d">2022.12 – 2024.12</span><div>Undergraduate researcher, GAIL, Chung-Ang University<div class="k">Computer vision and generative models — diffusion oversampling (KICS 2023), a lifelog sleep-score model (ETRI challenge), a latent-diffusion portfolio study, 3D point clouds</div></div></li>
+        <li><span class="d">2023.04 – 12</span><div>Team lead, Green-Navi — Carbon-Neutral ESG Practical-Problem Research Group, Chung-Ang University<div class="k">Reinforcement learning for fuel-optimal urban routing; presented at the research fair 2023.11.02 — later rebuilt as <a href="/projects/eco-route-rl/">Eco-Route RL</a></div></div></li>
+        <li><span class="d">– 2025.02</span><div>B.S., School of Electrical and Electronics Engineering, Chung-Ang University</div></li>
+      </ul>
+    </div>
+
+    <div class="hsec"><h2>Looking ahead</h2>
+      <div class="prose-lite">
+        <p>I am ready to learn whatever the next problem asks for: a new body of theory, a new kind of data, a new field's own way of checking its answers. What I look forward to most is carrying this way of working into domains I have not touched yet, and finding out which parts of it survive the move and which have to be rebuilt.</p>
+        <p>Everything on this site is the ground I will build on: the papers under review, the experiments that held up, and the ones that did not. I intend to give the next stage my best.</p>
+      </div>
+    </div>
+
+    <div class="hsec"><h2>Contact</h2>
+      <p class="contact-line"><a href="mailto:hyeonmin16@yonsei.ac.kr">hyeonmin16@yonsei.ac.kr</a> · <a href="/cv/">CV</a> · <a href="/research/">Research</a> · <a href="/projects/">Projects</a></p>
+    </div>
+  </div>
+</Base>

@@ -1,0 +1,76 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+import { SERIES, fmt } from '../../data/series';
+export async function getStaticPaths() {
+  const posts = await getCollection('writing');
+  return posts.map((post) => ({ params: { id: post.id }, props: { post, posts } }));
+}
+const { post, posts } = Astro.props;
+const { Content, headings } = await render(post);
+const d = post.data;
+const sib = posts.filter((p) => p.data.series === d.series).sort((a, b) => a.data.order - b.data.order);
+const i = sib.findIndex((p) => p.id === post.id);
+const prev = sib[i - 1], next = sib[i + 1];
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3).map((h) => {
+  const m = h.text.match(/^(\d+(?:\.\d+)*)\s+(.*)$/);
+  return { ...h, num: m ? m[1] : '', label: m ? m[2] : h.text };
+});
+const words = (post.body ?? '').split(/\s+/).length;
+const L = d.paper.license;
+const ccm = L.match(/creativecommons\.org\/(?:licenses|publicdomain)\/([a-z-]+)\/([0-9.]+)/i);
+const lic = ccm ? (ccm[1] === 'zero' ? 'CC0 ' : 'CC ' + ccm[1].toUpperCase() + ' ') + ccm[2] : /\bCC[ -]?(BY|0)/i.test(L) ? L : /arxiv\.org\/licenses/i.test(L) ? 'arXiv non-exclusive' : L;
+const isArxiv = /^(\d{4}\.\d{4,5}(v\d+)?|[a-z-]+(\.[A-Z]{2})?\/\d{7})$/.test(d.paper.arxiv);
+---
+<Base title={`${d.title} — Hyeonmin Jeon`} description={d.summary} active="blog">
+  <div class="wrap det">
+    <div>
+      <header class="det-head">
+        <div class="crumb"><a href="/blog/">Blog</a> / {SERIES[d.series].label} · {i + 1} of {sib.length} / Paper review</div>
+        <h1>{d.title}</h1>
+        <div class="sub">{d.paper.authors} — {d.paper.venue}. {d.summary}</div>
+        <div class="meta"><span>Written <b>{fmt(d.date)}</b></span><span>{Math.max(1, Math.round(words / 230))} min read</span><span>Paper license: {lic}</span></div>
+        <div class="acts">
+          {isArxiv ? (
+            <>
+              <a class="btn pri" href={`https://arxiv.org/abs/${d.paper.arxiv}`}>arXiv {d.paper.arxiv}</a>
+              <a class="btn" href={`https://arxiv.org/pdf/${d.paper.arxiv}`}>PDF</a>
+            </>
+          ) : (
+            <>
+              <a class="btn pri" href={d.paper.url ?? `https://doi.org/${d.paper.arxiv}`}>Paper</a>
+              {d.paper.pdf && <a class="btn" href={d.paper.pdf}>PDF</a>}
+            </>
+          )}
+        </div>
+        <div class="tags">{d.tags.map((t) => <span class="tag">{t}</span>)}</div>
+      </header>
+      <div class="prose blog-body"><Content /></div>
+    </div>
+    <aside class="tocw">
+      <div class="eyebrow">Contents</div>
+      <ul class="toc" id="toc">
+        {toc.map((h) => <li class={h.depth === 3 ? 'sub' : ''}><a href={`#${h.slug}`}><span class="n">{h.num}</span>{h.label}</a></li>)}
+      </ul>
+      <div class="prog"><span id="pct">0%</span> read<div class="bar"><i id="bar"></i></div></div>
+      <div class="rel"><div class="eyebrow">{SERIES[d.series].label}</div>
+        {prev && <a href={`/blog/${prev.id}/`}>← {prev.data.title.split(':')[0]}<span>previous in series</span></a>}
+        {next && <a href={`/blog/${next.id}/`}>{next.data.title.split(':')[0]} →<span>next in series</span></a>}
+      </div>
+    </aside>
+  </div>
+  <div class="foot-nav">
+    {prev ? <a href={`/blog/${prev.id}/`}><div class="eyebrow">← Previous in series</div>{prev.data.title}</a> : <span></span>}
+    {next ? <a href={`/blog/${next.id}/`} class="nx"><div class="eyebrow">Next in series →</div>{next.data.title}</a> : <span></span>}
+  </div>
+  <script>
+    import mermaid from 'mermaid';
+    const blocks = document.querySelectorAll('pre > code.language-mermaid');
+    if (blocks.length) {
+      const dark = () => document.documentElement.getAttribute('data-theme') === 'dark' || (!document.documentElement.getAttribute('data-theme') && matchMedia('(prefers-color-scheme:dark)').matches);
+      blocks.forEach((c) => { const pre = c.parentElement!; pre.classList.add('mermaid'); pre.dataset.src = c.textContent ?? ''; pre.textContent = pre.dataset.src; });
+      const run = async () => { mermaid.initialize({ startOnLoad: false, theme: dark() ? 'dark' : 'neutral', fontFamily: 'IBM Plex Sans, sans-serif', flowchart: { useMaxWidth: false, htmlLabels: true }, sequence: { useMaxWidth: false }, themeVariables: { fontSize: '14px' } }); document.querySelectorAll<HTMLElement>('pre.mermaid').forEach((p) => { p.removeAttribute('data-processed'); p.textContent = p.dataset.src ?? ''; }); await mermaid.run({ querySelector: 'pre.mermaid' }); };
+      (document.fonts?.ready ?? Promise.resolve()).then(run); document.addEventListener('themechange', run);
+    }
+  </script>
+</Base>

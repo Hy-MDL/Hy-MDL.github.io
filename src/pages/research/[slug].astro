@@ -1,0 +1,58 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+export async function getStaticPaths() {
+  const ps = (await getCollection('projects')).filter((p) => p.data.kind === 'research');
+  return ps.map((p) => ({ params: { slug: p.id }, props: { p, ps } }));
+}
+const { p, ps } = Astro.props;
+const { Content, headings } = await render(p);
+const d = p.data;
+const sorted = ps.sort((a, b) => a.data.order - b.data.order);
+const i = sorted.findIndex((x) => x.id === p.id);
+const prev = sorted[i - 1], next = sorted[i + 1];
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3).map((h) => {
+  const m = h.text.match(/^([0-9A-Z](?:\.[0-9]+)*)\s+(.*)$/);
+  return { ...h, num: m ? m[1] : '', label: m ? m[2] : h.text };
+});
+const words = (p.body ?? '').split(/\s+/).length;
+---
+<Base title={`${d.title.split(' — ')[0]} — Hyeonmin Jeon`} description={d.summary} active="research">
+  <div class="wrap det">
+    <div>
+      <header class="det-head">
+        <div class="crumb"><a href="/research/">Research</a> / Experiments · {d.category}</div>
+        <h1>{d.title.split(' — ')[0]}</h1>
+        <div class="sub">{d.title.includes(' — ') ? d.title.split(' — ').slice(1).join(' — ') : d.summary}</div>
+        <div class="meta"><span>{d.period}</span><span>{d.status}</span><span>{Math.max(1, Math.round(words / 230))} min read</span></div>
+        <div class="tags">{d.stack.map((t) => <span class="tag">{t}</span>)}</div>
+      </header>
+
+      {d.metrics.length > 0 && (
+        <div class="stats" style="margin-bottom:34px">
+          {d.metrics.map((m) => (
+            <div class="stat"><div class={`v ${m.value.length > 22 ? "sm" : m.value.length > 13 ? "md" : ""}`}>{m.value}</div><div class="l">{m.label}</div>{m.note && <div class="d" style="color:var(--mute);white-space:normal;line-height:1.45">{m.note}</div>}</div>
+          ))}
+        </div>
+      )}
+
+      <div class="prose"><Content /></div>
+    </div>
+
+    <aside class="tocw">
+      <div class="eyebrow">Contents</div>
+      <ul class="toc" id="toc">
+        {toc.map((h) => <li class={h.depth === 3 ? 'sub' : ''}><a href={`#${h.slug}`}><span class="n">{h.num}</span>{h.label}</a></li>)}
+      </ul>
+      <div class="prog"><span id="pct">0%</span> read<div class="bar"><i id="bar"></i></div></div>
+      <div class="rel"><div class="eyebrow">Other experiments</div>
+        {prev && <a href={`/research/${prev.id}/`}>← {prev.data.title.split(' — ')[0]}<span>{prev.data.category}</span></a>}
+        {next && <a href={`/research/${next.id}/`}>{next.data.title.split(' — ')[0]} →<span>{next.data.category}</span></a>}
+      </div>
+    </aside>
+  </div>
+  <div class="foot-nav">
+    {prev ? <a href={`/research/${prev.id}/`}><div class="eyebrow">← Previous</div>{prev.data.title.split(' — ')[0]}</a> : <span></span>}
+    {next ? <a href={`/research/${next.id}/`} class="nx"><div class="eyebrow">Next →</div>{next.data.title.split(' — ')[0]}</a> : <span></span>}
+  </div>
+</Base>

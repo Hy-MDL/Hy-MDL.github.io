@@ -1,0 +1,34 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+const built = (await getCollection('projects')).filter((p) => p.data.kind === 'project').sort((a, b) => a.data.order - b.data.order);
+const groups = [
+  { key: 'personal', title: 'Personal projects', note: 'tools, platforms, a hospital scheduler, reimplementations' },
+  { key: 'lab', title: 'Lab projects', note: "연구실 과제 — the lab's projects with outside partners, and its website" },
+].map((g) => ({ ...g, items: built.filter((p) => p.data.scope === g.key) })).filter((g) => g.items.length);
+const one = (p) => (p.data.title.includes(' — ') ? p.data.title.split(' — ').slice(1).join(' — ') : p.data.summary);
+---
+<Base title="Projects — Hyeonmin Jeon" active="projects">
+  <div class="wrap">
+    <div class="list-head">
+      <div><h1>Projects</h1><p>Things I built: projects of my own, and the lab's website. Each page tells what it is, how it was built and how it went. Research threads and their experiments live under <a href="/research/">Research</a>.</p></div>
+    </div>
+
+    {groups.map((g) => (
+      <>
+        <div class="sec-h" style="margin-top:34px"><h2>{g.title}</h2><span class="hnote">{g.note}</span></div>
+        <ul class="feat pgrid">
+          {g.items.map((p) => (
+            <li>
+              <a class="card" href={`/projects/${p.id}/`}><img src={p.data.thumb} alt={p.data.title.split(' — ')[0]} loading="lazy"></a>
+              <div class="kick"><span>{p.data.category}</span><span class="status s-done">{p.data.status.length > 26 ? 'Code + results' : p.data.status}</span></div>
+              <a class="t" href={`/projects/${p.id}/`}>{p.data.title.split(' — ')[0]}</a>
+              <p class="k">{one(p)}{p.data.metrics[0] ? ` — ${p.data.metrics[0].value} ${p.data.metrics[0].label.toLowerCase()}.` : ''}</p>
+              <div class="tg">{p.data.stack.slice(0, 5).map((t) => <span>{t}</span>)}</div>
+            </li>
+          ))}
+        </ul>
+      </>
+    ))}
+  </div>
+</Base>

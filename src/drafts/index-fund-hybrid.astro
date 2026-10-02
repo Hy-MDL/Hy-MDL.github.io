@@ -1,0 +1,213 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base title="N-EIF — jhm.log" active="projects">
+
+  <div class="wrap det">
+    <div>
+      <header class="det-head">
+        <div class="crumb"><a href="/projects/">Projects</a> / Research · 4th author of eight</div>
+        <h1>N-EIF — Hybrid Expert System for an Enhanced Index Fund via Genetic Algorithm, Volume-Price Index, and LSTM Dueling DQN</h1>
+        <div class="sub">An enhanced index fund in two phases: a genetic algorithm builds the tracking basket, then a volume–price regime indicator and a recurrent dueling DQN must agree before a trade happens. The paper's real contribution is decomposing how much each of the three layers is worth.</div>
+        <div class="acts">
+          <span class="status s-plan">Paper · Pending resubmission</span>
+          <a class="btn" href="/publications/">Submission history</a><span class="lkoff">manuscript not public · declined at ESWA 2025.12.03, next venue pending</span>
+        </div>
+        <div class="tags"><span class="tag">genetic algorithm</span><span class="tag">reinforcement learning</span><span class="tag">dueling DQN</span><span class="tag">LSTM</span><span class="tag">enhanced indexing</span><span class="tag">KOSPI 200</span></div>
+      </header>
+
+      <div class="info"><dl>
+        <dt>Authors</dt><dd>Kyong Joo Oh*, Dae Hyuk You, Jiyoung Jeon, <b>Hyeon Min Jeon</b>, Sang Hoe Kim, Sang Hyuk Yoo, Tae Yoon Kim, Hee Soo Lee</dd><dt>Venue</dt><dd>Expert Systems with Applications</dd>
+        <dt>Manuscript</dt><dd>ESWA-D-25-33272</dd><dt>Updated</dt><dd>2025.12.03 — declined, next venue pending</dd>
+        <dt>Data</dt><dd>KOSPI 200 constituents and index, 2014-01 to 2025-09, from the Korea Exchange</dd><dt>My part</dt><dd>Fourth author of eight; a lab collaboration led by Kyong Joo Oh. The manuscript carries no CRediT breakdown, so no per-author split is claimed here.</dd>
+      </dl></div>
+
+      <div class="prose">
+        <div class="abstract"><h2>Abstract</h2>
+          <p>A lab collaboration in which I am fourth of eight authors. A passive index fund must hold everything in the benchmark; a conventional enhanced index fund is allowed small tilts but is held back by its own tracking-error mandate. N-EIF splits the problem in two. Phase 1 uses a genetic algorithm to pick and weight a basket of KOSPI 200 names that tracks the index. Phase 2 sits on top of that basket and decides when to be invested, using two signals that must agree: a <b>Volume-Price Index</b> (VPI), which measures whether the volume–price relationship has entered a stable, predictable regime, and an <b>LSTM dueling DQN</b> agent. Disagreement means hold. What distinguishes the paper from a single reported backtest is that it decomposes the result into the contribution of each of the three layers, twice — once through non-parametric rank tests and once through a panel fixed-effects regression — and the two decompositions agree.</p>
+          <div class="kw"><b>Keywords</b> deep reinforcement learning · Volume-Price Index · genetic algorithm · enhanced indexing · portfolio optimization</div>
+        </div>
+
+        <div class="stats" style="margin-top:32px">
+          <div class="stat"><div class="v">199<small>%</small></div><div class="l">Cumulative return, 2014–2025</div><div class="d">vs 84% for KOSPI 200, gross</div></div>
+          <div class="stat"><div class="v">0.813</div><div class="l">Annualised Sharpe ratio</div><div class="d">vs 0.395 for the benchmark</div></div>
+          <div class="stat"><div class="v">−20.7<small>%</small></div><div class="l">Maximum drawdown</div><div class="d">vs −41.2% for the benchmark</div></div>
+          <div class="stat"><div class="v">+62<small>pp</small></div><div class="l">What VPI gating is worth to the DQN</div><div class="d">the paper's largest single effect</div></div>
+        </div>
+
+        <h2 id="b1"><span class="num">1</span>Introduction</h2>
+        <h3 id="b1-1"><span class="num">1.1</span>The idea</h3>
+        <p>The paper sits on a specific gap in three literatures that rarely meet. Portfolio-construction work picks assets well but rebalances on a fixed calendar and says nothing about timing. Volume–price indicators give timing signals but are decoupled from selection. Deep reinforcement learning adapts, but almost always on a universe someone else fixed. N-EIF is an attempt to put all three in one pipeline where each layer's job is separable — and, crucially, <em>measurable</em> on its own.</p>
+        <p>The genuinely new component is the VPI. Conventional indicators such as RSI or MACD read patterns in price. The VPI reads a pattern one level up: it asks whether the <em>relationship</em> between volume and price is currently stable or unstable. The motivation is an old observation in market microstructure that linear volume–price models leave autocorrelated residuals — evidence of misspecification. Rather than treat that as a nuisance, the paper turns it into the signal.</p>
+        <h3 id="b1-2"><span class="num">1.2</span>The hypothesis</h3>
+        <p>The framework is a stack of three layers, so the claim is stated as a hierarchy, and each step is falsifiable on its own:</p>
+        <ul>
+          <li><b>GA selection beats the index.</b> A genetic-algorithm basket, held passively, should outperform simply holding the KOSPI 200.</li>
+          <li><b>VPI gating beats the GA basket held passively.</b> Adding rule-based VPI timing on the same basket should add return.</li>
+          <li><b>The learned agent adds something on top of the rule.</b> Replacing the pure rule with the VPI-and-DQN consensus should add further — and if it does not, the reinforcement-learning layer is decoration.</li>
+        </ul>
+        <p>There is a fourth, implicit claim which turns out to be the most interesting one: that the DQN is not independently useful. The paper tests standalone LSTM-DQN as its own strategy specifically so that this can be seen.</p>
+
+        <h2 id="b2"><span class="num">2</span>Method</h2>
+        <figure>
+          <div class="fig">
+            <svg viewBox="0 0 640 200" role="img" aria-label="N-EIF two-phase pipeline with dual-signal consensus">
+              <defs><marker id="na" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--mute)"/></marker></defs>
+              <g font-family="IBM Plex Mono,monospace" font-size="10.5" fill="var(--mute)">
+                <rect x="8" y="66" width="120" height="54" rx="6" fill="var(--code-bg)" stroke="var(--rule2)"/>
+                <text x="68" y="88" text-anchor="middle" fill="var(--ink)">KOSPI 200</text><text x="68" y="106" text-anchor="middle">26 WICS sectors</text>
+                <rect x="166" y="60" width="128" height="66" rx="6" fill="var(--code-bg)" stroke="var(--rule2)"/>
+                <text x="230" y="82" text-anchor="middle" fill="var(--ink)" font-size="11.5">Phase 1 · GA</text><text x="230" y="99" text-anchor="middle">sector rotation</text><text x="230" y="115" text-anchor="middle">min tracking error</text>
+                <rect x="336" y="18" width="128" height="50" rx="6" fill="var(--code-bg)" stroke="var(--rule2)"/>
+                <text x="400" y="39" text-anchor="middle" fill="var(--ink)">VPI</text><text x="400" y="56" text-anchor="middle">buy / sell / hold</text>
+                <rect x="336" y="118" width="128" height="50" rx="6" fill="var(--code-bg)" stroke="var(--rule2)"/>
+                <text x="400" y="139" text-anchor="middle" fill="var(--ink)">LSTM dueling DQN</text><text x="400" y="156" text-anchor="middle">long / short</text>
+                <rect x="506" y="66" width="126" height="54" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+                <text x="569" y="88" text-anchor="middle" fill="var(--ink)">consensus</text><text x="569" y="106" text-anchor="middle">disagree &#8594; hold</text>
+                <g fill="none" stroke="var(--mute)" stroke-width="1.2" marker-end="url(#na)"><path d="M128 93 L166 93"/><path d="M294 82 C314 78,316 48,336 44"/><path d="M294 104 C314 110,316 140,336 143"/><path d="M464 44 C486 48,486 82,506 86"/><path d="M464 143 C486 139,486 104,506 100"/></g>
+              </g>
+            </svg>
+          </div>
+          <figcaption><b>Figure 1.</b> The two phases and the consensus gate, drawn for this page. The strategy is long-only: a sell from the VPI or a short from the agent both mean move to cash, never a short position. Because the two signals must agree, a conflict produces a hold — which is why the gate can only ever reduce trading relative to either signal alone.</figcaption>
+        </figure>
+
+        <figure>
+          <img src="/projects/index-fund-hybrid/media/architecture.png" alt="N-EIF architecture: Phase 1 portfolio construction by genetic algorithm, Phase 2 trading rule from VPI and LSTM-DQN signals" loading="lazy" decoding="async" />
+          <figcaption><b>Figure 2.</b> The manuscript's own diagram of the same framework, which is worth having beside the sketch above because it names what the sketch abstracts. Phase 1 is explicitly two steps — first <em>select</em> names using beta, trading amount and market capitalisation, then <em>weight</em> them by a genetic algorithm whose fitness is tracking error — so the selection rule and the optimiser are separate objects and the "Buy &amp; Hold (GA)" baseline is the output of both together. Phase 2 shows the two signal generators running in parallel off that basket and meeting at a single integration box before the fund is updated, which is the structural reason the decomposition in §4.2 is possible at all: each box can be switched off and the remainder still runs.</figcaption>
+        </figure>
+
+        <h3 id="b2-1"><span class="num">2.1</span>Phase 1: the tracking basket</h3>
+        <p>Following an earlier line of work from the same lab, stock selection is an iterative sector rotation. At each step the sector with the largest remaining market capitalisation is chosen, and within it a stock is picked by a priority score combining three terms: the inverse of the standard deviation of the estimated beta (so that names with a <em>stable</em> systematic risk profile are preferred), normalised trading volume, and normalised market capitalisation. The chosen stock is removed and the procedure repeats until the basket size <i>l</i> is reached; <i>l</i> ∈ &#123;20, 30, 50&#125; is swept.</p>
+        <p>Weights are then optimised by the genetic algorithm against a variance-scaled tracking objective — deviations from benchmark weights are penalised more heavily in higher-variance names:</p>
+        <div class="math">min<sub><i>w</i></sub> &nbsp; <i>Q</i>(<i>w</i><sub>1</sub>,…,<i>w</i><sub><i>l</i></sub>) = Σ<sub><i>k</i>=1..<i>l</i></sub> (<i>w</i><sub><i>k</i></sub> − <i>w</i><sup><i>m</i></sup><sub><i>k</i></sub>)<sup>2</sup> σ<sup>2</sup><sub><i>k</i></sub>,&nbsp;&nbsp; 0 ≤ <i>w</i><sub><i>k</i></sub> ≤ 1, &nbsp; Σ<sub><i>k</i></sub> <i>w</i><sub><i>k</i></sub> = 1<span class="eq">(1)</span></div>
+        <p>with <i>w</i><sup><i>m</i></sup><sub><i>k</i></sub> the benchmark capitalisation weight. GA settings: population 50, adaptive crossover 0.5–0.8, adaptive mutation 0.05–0.06, terminating when the last 5,000 trials produce no improvement above 1%. The resulting portfolio, held passively, is reported throughout as the "Buy &amp; Hold (GA)" baseline — which is what makes the first layer's contribution isolable.</p>
+
+        <h3 id="b2-2"><span class="num">2.2</span>Definition: the Volume-Price Index</h3>
+        <p>The VPI is built in two stages. First, a local covariance between volume and price is computed over a moving window of length <i>q</i>:</p>
+        <div class="math"><i>Y</i><sub><i>i</i></sub> = (1/<i>q</i>) Σ<sub><i>j</i>=<i>i</i>−<i>q</i>+1..<i>i</i></sub> (<i>V</i><sub><i>j</i></sub> − <i>V̄</i>)(<i>P</i><sub><i>j</i></sub> − <i>P̄</i>)<span class="eq">(2)</span></div>
+        <p>Second, the VPI at time <i>t</i> is the lag-one autocorrelation of that series of local covariances, again over a window of <i>q</i>:</p>
+        <div class="math">VPI<sub><i>t</i></sub> = corr( <i>Y</i><sub><i>i</i></sub>, <i>Y</i><sub><i>i</i>−1</sub> ) over <i>i</i> = <i>t</i>−<i>q</i>+1 … <i>t</i><span class="eq">(3)</span></div>
+        <p>The reading is the interpretive core of the paper. When |VPI| is near 1, successive local covariances barely change: the volume–price coupling has settled into one regime, and the paper calls this a <em>variation-decrease moment</em> — a window in which the market is directionally more predictable. A low VPI means the coupling is oscillating between regimes, and the prescribed action is to hold. Note what is being measured: not the direction of the market, but the stability of a relationship. Direction comes from elsewhere.</p>
+        <p>Signals fire only on a crossing, not on a level: VPI must rise above a threshold <i>p</i><sub>0</sub> from below, and the direction is then taken from recent price action — buy on two or more increases in the last three trading days, sell on two or more decreases. The threshold <i>p</i><sub>0</sub> is set by grid search over percentiles of the VPI distribution during training, choosing the percentile with the highest training return, and is recalibrated every 1, 10 or 30 days depending on configuration.</p>
+        <p>Behind the construction sits an asymmetry argument: volume responds more strongly to positive price changes than to negative ones, which the paper attributes to information-driven buying and, in the Korean market specifically, to short-selling restrictions that suppress sell-side volume. A figure on KOSPI 200 data reports an asymmetry ratio of 0.83 in support of this, though the manuscript does not define precisely which two quantities that ratio compares.</p>
+        <figure>
+          <img src="/projects/index-fund-hybrid/media/asymmetry.png" alt="Normalised volume against daily price change on KOSPI 200, split into up days and down days with separate fitted trends" loading="lazy" decoding="async" />
+          <figcaption><b>Figure 3.</b> That figure. Each point is one trading day of the KOSPI 200 over 2014-01 to 2025-09: horizontal axis the price change, vertical axis normalised volume, red for the 1,466 up days and blue for the 1,303 down days, with a separate trend fitted to each side. The claim is the difference in the two slopes, +5.576 against −6.701, printed as a ratio of 0.83. What a reader should also see is the scatter: the cloud is wide relative to either slope, so the asymmetry is a property of the fitted lines rather than something visible day by day — which is consistent with the paper's own position that the VPI is a regime measure and not a directional signal.</figcaption>
+        </figure>
+
+        <h3 id="b2-3"><span class="num">2.3</span>The agent, and the consensus gate</h3>
+        <p>An LSTM processes the sequence of market state, and its hidden state is the state vector handed to a dueling DQN, which splits the action-value estimate into a state-value stream and an advantage stream recombined in the usual way:</p>
+        <div class="math"><i>Q</i>(<i>s</i>,<i>a</i>) = <i>V</i>(<i>s</i>) + [ <i>A</i>(<i>s</i>,<i>a</i>) − (1/|𝒜|) Σ<sub><i>a</i>′</sub> <i>A</i>(<i>s</i>,<i>a</i>′) ]<span class="eq">(4)</span></div>
+        <p>Actions are chosen ε-greedily with ε decayed over training; learning uses experience replay and a target network. The reward is a weighted combination of realised return, a Sharpe term and a drawdown penalty, so the agent is not optimising raw return alone.</p>
+        <p>The gate is deliberately conservative: a trade executes only when the rule-based VPI signal and the learned action agree on a non-hold direction. Any conflict produces a hold. Since the framework is long-only, a sell or a short resolves to cash rather than to a short position — a choice the paper justifies on grounds of capital efficiency and regulatory compatibility rather than performance.</p>
+        <figure>
+          <img src="/projects/index-fund-hybrid/media/consensus-gate.png" alt="Two-by-two table of VPI signal against LSTM-DQN signal, giving long, short or hold" loading="lazy" decoding="async" />
+          <figcaption><b>Figure 4.</b> The gate as the manuscript draws it: the agent's buy/sell on one axis, the VPI's buy/sell on the other, and the resulting action in the four cells. Only the two agreeing corners produce a position; both disagreeing corners produce a hold. Read as a filter this is severe — a signal that is right on its own is discarded whenever the other one differs — and §4.2 is where that severity gets priced: it is exactly what turns the standalone agent, the worst strategy in the study, into the best one.</figcaption>
+        </figure>
+
+        <h2 id="b3"><span class="num">3</span>Experiments</h2>
+        <h3 id="b3-1"><span class="num">3.1</span>Setup</h3>
+        <p>KOSPI 200 over 2014-01 to 2025-09, from the Korea Exchange, covering bull markets, corrections and the COVID-19 period. The index serves as both benchmark and investment universe; sector diversification uses the WICS classification at its 26-sector granularity. Two retraining regimes are run in parallel to test sensitivity to adaptation frequency: retrain every three months and test on the following two, or retrain every six months and test on the following one.</p>
+        <p>Five strategies are compared, and they are nested so that the differences are interpretable: the KOSPI 200 benchmark; Buy &amp; Hold GA (Phase 1 only); VPI Rule-Based (Phase 1 + VPI timing, no learning); standalone LSTM-DQN (learning with neither GA selection nor VPI gating); and the full N-EIF.</p>
+        <h3 id="b3-2"><span class="num">3.2</span>Hyperparameters</h3>
+        <p>An ablation over 3<sup>5</sup> = 243 configurations: VPI window &#123;10, 20, 30&#125; days, momentum lookback &#123;3, 5, 7&#125; days, basket size &#123;20, 30, 50&#125;, rebalancing frequency &#123;1, 2, 3&#125; months, and <i>p</i><sub>0</sub> recalibration interval &#123;1, 10, 30&#125; days. Screening found the first three to drive 30–50% swings in total return while the last two moved it by under 5%, so the last two were fixed at their best values and the remaining 27 combinations examined in full. Both retraining regimes converged on the same three: VPI window 10 days, momentum lookback 3 days, basket 50.</p>
+        <h3 id="b3-3"><span class="num">3.3</span>How the claims are tested</h3>
+        <p>This is where the paper spends most of its effort, and it is the most defensible part of it. Shapiro–Wilk and Levene tests reject normality and equal variances, so the primary comparison is a non-parametric Friedman test across 134 monthly (21-trading-day) test periods, followed by pairwise Wilcoxon signed-rank tests with a Bonferroni correction at α = 0.05/4. Because cumulative returns are temporally dependent, a panel fixed-effects regression is run as a second, parametric route: cumulative return of strategy <i>i</i> at time <i>t</i> is a strategy-specific fixed effect plus a common linear time trend, with Newey–West HAC standard errors. The point of running both is that they rest on different assumptions and can therefore corroborate or contradict each other.</p>
+
+        <h2 id="b4"><span class="num">4</span>Results</h2>
+        <h3 id="b4-1"><span class="num">4.1</span>The five strategies</h3>
+        <div class="twrap"><table>
+          <thead><tr><th>Strategy (3-month retraining)</th><th class="n">Total return</th><th class="n">Annual</th><th class="n">MDD</th><th class="n">Volatility</th><th class="n">Sharpe</th></tr></thead>
+          <tbody>
+            <tr class="hl"><td>N-EIF (GA + VPI + LSTM-DQN)</td><td class="n">199.46%</td><td class="n">10.05%</td><td class="n">−20.74%</td><td class="n">12.78%</td><td class="n">0.813</td></tr>
+            <tr><td>VPI Rule-Based (GA + VPI)</td><td class="n">172.61%</td><td class="n">9.15%</td><td class="n">−32.46%</td><td class="n">14.04%</td><td class="n">0.695</td></tr>
+            <tr><td>Buy &amp; Hold GA (Phase 1 only)</td><td class="n">129.59%</td><td class="n">7.53%</td><td class="n">−39.18%</td><td class="n">17.21%</td><td class="n">0.508</td></tr>
+            <tr><td>KOSPI 200 benchmark</td><td class="n">83.99%</td><td class="n">5.47%</td><td class="n">−41.19%</td><td class="n">17.29%</td><td class="n">0.395</td></tr>
+            <tr><td>LSTM-DQN alone</td><td class="n">36.19%</td><td class="n">2.73%</td><td class="n">−31.73%</td><td class="n">13.29%</td><td class="n">0.269</td></tr>
+          </tbody></table></div>
+        <p class="cap"><b>Table 1.</b> Gross of costs, 2014–2025. The six-month retraining regime gives almost the same picture (N-EIF 196.96%, Sharpe 0.807), so the result is not sensitive to adaptation frequency. Note the ordering of the drawdown column: it falls monotonically as layers are added.</p>
+        <figure>
+          <img src="/projects/index-fund-hybrid/media/cumulative-return.png" alt="Cumulative return paths of the five strategies on KOSPI 200 from 2014 to 2025, indexed to 100" loading="lazy" decoding="async" />
+          <figcaption><b>Figure 5.</b> Table 1 as paths, indexed to 100 — the five legend figures are the table's first column. What the table cannot show is where the layers actually separate. Until 2017 the five lines are on top of each other; the GA basket pulls away from the index through 2017–2019; and the full framework only separates from the VPI rule after the March 2020 crash, holding a gap of roughly twenty index points from 2021 onward. The drawdown claim is visible at the same spot: every line collapses in February 2020, but the two gated strategies come back fastest. The red line is the standalone agent, below the benchmark for essentially the whole decade.</figcaption>
+        </figure>
+        <p>The standalone agent is the row that carries the paper's most interesting finding. Left to itself, with neither GA selection nor VPI gating, the LSTM-DQN underperforms the passive index it was supposed to beat.</p>
+
+        <h3 id="b4-2"><span class="num">4.2</span>Two independent decompositions that agree</h3>
+        <p>The Friedman test across 134 test periods rejects equality decisively (χ² = 485.58, df = 4, p &lt; 0.001), with average ranks of 1.35 for N-EIF, 1.67 for the rule, 3.11 for the GA basket, 3.96 for the index and 4.91 for the standalone agent. The six-month regime gives the same ordering. Post-hoc Wilcoxon tests with the Bonferroni correction put N-EIF ahead of every other strategy at the corrected threshold.</p>
+        <p>The panel regression then re-derives the same hierarchy from a different direction, after stripping out a common market trend of about 0.70% per month:</p>
+        <div class="twrap"><table>
+          <thead><tr><th>Layer</th><th>Comparison</th><th class="n">Fixed-effect gap</th><th class="n">Mean-return gap</th></tr></thead>
+          <tbody>
+            <tr><td>GA selection</td><td>Buy &amp; Hold GA vs KOSPI 200</td><td class="n">+20.46 pp</td><td class="n">+20.45 pp</td></tr>
+            <tr><td>VPI gating</td><td>VPI Rule-Based vs Buy &amp; Hold GA</td><td class="n">+20.37 pp</td><td class="n">+20.38 pp</td></tr>
+            <tr><td>Learned agent</td><td>N-EIF vs VPI Rule-Based</td><td class="n">+6.67 pp</td><td class="n">+6.67 pp</td></tr>
+            <tr class="hl"><td>VPI as a gate on the agent</td><td>N-EIF vs LSTM-DQN alone</td><td class="n">+62.26 pp</td><td class="n">+62.27 pp</td></tr>
+          </tbody></table></div>
+        <p class="cap"><b>Table 2.</b> The decomposition, from the fixed-effects estimates and from raw mean cumulative returns over the 134 test periods. The two columns were produced by different methods and land within 0.01 of each other.</p>
+        <figure>
+          <img src="/projects/index-fund-hybrid/media/decomposition.png" alt="Waterfall of panel-regression fixed effects from the benchmark through the GA basket and the VPI rule to N-EIF" loading="lazy" decoding="async" />
+          <figcaption><b>Figure 6.</b> Table 2's first column drawn as a waterfall of the panel-regression fixed effects, in percentage points relative to the common time trend. The benchmark sits at −25.56, the GA basket at −5.10, the VPI rule at +15.27 and the full framework at +21.94; the arrows are the three increments, +20.46 for selection, +20.37 for the gate and +6.67 for the learned agent. The proportions are the argument: the two structural layers are near-identical steps and the reinforcement-learning layer is roughly a third of either. Note what this chart leaves out — the standalone agent, whose fixed effect of −40.32 is off the bottom of the axis. Its absence is why the +62 point figure in the table has no bar here.</figcaption>
+        </figure>
+        <p>Read as a whole the decomposition says something a single headline number would hide. The two <em>structural</em> layers are worth about the same, roughly +20 points each. The learned agent adds +6.67 points on top of the rule — real, statistically resolved, and far smaller than the framing "deep reinforcement learning for trading" would suggest. And the largest number in the table is not an achievement of the agent at all: it is the cost of removing the gate from it. The agent's own fixed effect is −40.32 points, well below the index; gating turns the worst strategy in the study into the best one. The authors' framing is that VPI filtering lets the agent concentrate on timing instead of selection; a blunter reading is that most of what the agent produces on its own is noise, and the gate suppresses it.</p>
+        <p>The risk-adjusted view agrees on the top of the ranking — monthly Sharpe ratios of 0.242, 0.215, 0.155, 0.129 and 0.081 — though this table orders the middle differently from the annualised Sharpe of Table 1, placing the standalone agent above the GA basket. The manuscript does not reconcile the two orderings.</p>
+
+        <h3 id="b4-3"><span class="num">4.3</span>Model diagnostics</h3>
+        <p>The panel model explains about 75% of the variation in cumulative returns (R² = 0.7487; within 0.6281, between 0.7127), and an F-test rejects equal fixed effects across strategies (F = 214.11). The paper also reports what did <em>not</em> work: a Ljung–Box test finds residual autocorrelation at every lag, so a single linear time trend does not capture the temporal structure. Clustered standard errors are used in response, and the paper concedes that this mitigates rather than removes the problem.</p>
+
+        <h2 id="b5"><span class="num">5</span>Conclusion &amp; future work</h2>
+        <h3 id="b5-1"><span class="num">5.1</span>What the paper does not establish</h3>
+        <ul>
+          <li><b>Hyperparameters were selected on the evaluation period.</b> All 243 configurations are scored by total cumulative return over the same span the headline numbers come from, and the winner is then reported on that span. There is no out-of-sample period untouched by that search, so 199.46% is an upper bound on what the configuration would have produced in advance.</li>
+          <li><b>Returns are gross.</b> The paper says so, and offers an estimate: at 0.2% per trade with roughly 12 trades a year, the net cumulative return would be around 175%. But the trade count is nowhere reported, and a framework making daily consensus decisions with <i>p</i><sub>0</sub> recalibrated as often as daily is not obviously a twelve-trade-a-year strategy. The net figure should be read as an illustration, not a measurement.</li>
+          <li><b>Liquidity and market impact are absent</b>, as is any treatment of the cost of moving in and out of cash on the whole basket at once.</li>
+          <li><b>The VPI's own economic content is asserted more than tested.</b> There is no test that a variation-decrease moment predicts anything on its own; its value is only ever observed through the full strategy's return.</li>
+          <li><b>One market, one index, one currency.</b> Every result is KOSPI 200, and the short-selling-restriction argument behind the asymmetry is specific to that market.</li>
+          <li><b>Two reporting slips a reader should notice.</b> The Buy &amp; Hold GA fixed effect is printed as t = −2.57 with p &lt; 0.001, which those two values cannot both be. And several cross-references point at the wrong sections — the ablation study is referred to as Section 4.1 when it is in Section 5, and the statistical tests as Section 4.2 when they are in Section 6.</li>
+        </ul>
+
+        <h3 id="b5-2"><span class="num">5.2</span>Next</h3>
+        <div class="take">
+          <div><h4>What held up</h4><ul><li>The hierarchy is monotone in every metric reported — return, Sharpe and drawdown all improve as layers are added.</li><li>Two statistical routes with different assumptions produced the same decomposition to within 0.01 points.</li><li>The negative result on the standalone agent is reported rather than hidden, and it is the paper's most informative finding.</li></ul></div>
+          <div><h4>Next</h4><ul><li>Choose the next venue after the ESWA decline</li><li>A genuine out-of-sample period for the hyperparameter choice</li><li>Trade counts and costs inside the optimisation, not estimated after it</li><li>Other markets, and variations on the VPI window and lag structure</li><li>Attribution on the agent (SHAP, attention) to see what it is gated on</li></ul></div>
+        </div>
+
+        <h2 id="bA"><span class="num">A</span>Progress log</h2>
+        <ul class="tl">
+          <li><div class="d">2025.11.13</div><h4>Manuscript finalised</h4><p>Eight authors across Yonsei, Sejong and Keimyung. The evaluation panel runs to 2025-09, so it spans a full decade of KOSPI 200 including COVID.</p></li>
+          <li><div class="d">2025.11.28</div><h4>Submitted to Expert Systems with Applications</h4><p>ESWA-D-25-33272.</p></li>
+          <li class="now"><div class="d">2025.12.03</div><h4>Declined</h4><p>Expert Systems with Applications, five days after submission.</p><div class="dec"><span class="eyebrow">Ongoing</span>next venue pending</div></li>
+        </ul>
+      </div>
+    </div>
+
+    <aside class="tocw">
+      <div class="eyebrow">Contents</div>
+      <ul class="toc">
+        <li><a href="#b1"><span class="n">1</span>Introduction</a></li>
+        <li class="sub"><a href="#b1-1"><span class="n">1.1</span>The idea</a></li>
+        <li class="sub"><a href="#b1-2"><span class="n">1.2</span>The hypothesis</a></li>
+        <li><a href="#b2"><span class="n">2</span>Method</a></li>
+        <li class="sub"><a href="#b2-1"><span class="n">2.1</span>Phase 1 · the basket</a></li>
+        <li class="sub"><a href="#b2-2"><span class="n">2.2</span>The Volume-Price Index</a></li>
+        <li class="sub"><a href="#b2-3"><span class="n">2.3</span>Agent &amp; consensus gate</a></li>
+        <li><a href="#b3"><span class="n">3</span>Experiments</a></li>
+        <li class="sub"><a href="#b3-1"><span class="n">3.1</span>Setup</a></li>
+        <li class="sub"><a href="#b3-2"><span class="n">3.2</span>Hyperparameters</a></li>
+        <li class="sub"><a href="#b3-3"><span class="n">3.3</span>How claims are tested</a></li>
+        <li><a href="#b4"><span class="n">4</span>Results</a></li>
+        <li class="sub"><a href="#b4-1"><span class="n">4.1</span>Five strategies</a></li>
+        <li class="sub"><a href="#b4-2"><span class="n">4.2</span>Decomposition</a></li>
+        <li class="sub"><a href="#b4-3"><span class="n">4.3</span>Diagnostics</a></li>
+        <li><a href="#b5"><span class="n">5</span>Conclusion</a></li>
+        <li class="sub"><a href="#b5-1"><span class="n">5.1</span>Not established</a></li>
+        <li><a href="#bA"><span class="n">A</span>Progress log</a></li>
+      </ul>
+      <div class="rel"><div class="eyebrow">Related</div>
+        <a href="/projects/deep-factor-xai/">ConvFactorNet — factor prediction with XAI<span>paper · co-author</span></a>
+        <a href="/publications/">Submission history<span>publications · pending</span></a>
+        <a href="/research/diffusion-scenarios/">CASE — conditional scenario engine<span>paper · 1st author</span></a>
+      </div>
+    </aside>
+  </div>
+
+</Base>

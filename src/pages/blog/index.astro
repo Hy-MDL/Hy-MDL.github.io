@@ -1,0 +1,133 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { SERIES, SERIES_ORDER, fmt } from '../../data/series';
+const posts = await getCollection('writing');
+import graphJs from '../../scripts/graph.js?raw';
+const short = (p) => p.data.title.split(':')[0].trim();
+const byArxiv = new Map(posts.map((p) => [p.data.paper.arxiv, p.id]));
+const cite = new Set<string>();
+for (const p of posts) {
+  const body = p.body ?? '';
+  for (const q of posts) {
+    if (q.id === p.id) continue;
+    const name = short(q).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const hit = body.includes(q.data.paper.arxiv) || (short(q).length >= 4 && new RegExp('(?<![A-Za-z])' + name + '(?![A-Za-z])').test(body));
+    if (hit) cite.add([p.id, q.id].sort().join('|'));
+  }
+}
+const tagCount = new Map<string, number>();
+posts.forEach((p) => p.data.tags.forEach((t) => tagCount.set(t, (tagCount.get(t) ?? 0) + 1)));
+const sharedTags = [...tagCount].filter(([, c]) => c >= 3).map(([t]) => t);
+const deg = new Map<string, number>();
+cite.forEach((e) => e.split('|').forEach((id) => deg.set(id, (deg.get(id) ?? 0) + 1)));
+const tagSeries = (t) => { const c = new Map<string, number>(); posts.filter((p) => p.data.tags.includes(t)).forEach((p) => c.set(p.data.series, (c.get(p.data.series) ?? 0) + 1)); return [...c].sort((a, b) => b[1] - a[1])[0][0]; };
+const graph = {
+  series: SERIES_ORDER.filter((k) => posts.some((p) => p.data.series === k)).map((k) => ({ id: k, label: SERIES[k].label })),
+  nodes: [
+    ...SERIES_ORDER.filter((k) => posts.some((p) => p.data.series === k)).map((k) => ({ id: 'series:' + k, type: 'series', series: k, label: SERIES[k].label, blurb: SERIES[k].blurb })),
+    ...posts.map((p) => ({ id: p.id, slug: p.id, type: 'post', series: p.data.series, seriesLabel: SERIES[p.data.series].label, label: short(p), title: p.data.title, url: `/blog/${p.id}/`, deg: deg.get(p.id) ?? 0 })),
+    ...sharedTags.map((t) => ({ id: 'tag:' + t, type: 'tag', series: tagSeries(t), label: t })),
+  ],
+  links: [
+    ...posts.map((p) => ({ s: p.id, t: 'series:' + p.data.series, kind: 'series' })),
+    ...[...cite].map((e) => { const [a, b] = e.split('|'); return { s: a, t: b, kind: 'cite' }; }),
+    ...posts.flatMap((p) => p.data.tags.filter((t) => sharedTags.includes(t)).map((t) => ({ s: p.id, t: 'tag:' + t, kind: 'tag' }))),
+  ],
+};
+// Notes carry the year their paper appeared, so the date view groups by year.
+const yr = (d) => String(d.getFullYear());
+const byDate = [...posts].sort((a, b) => b.data.date.getTime() - a.data.date.getTime() || a.data.order - b.data.order);
+const years = [...new Set(byDate.map((p) => yr(p.data.date)))];
+const monthGroups = years.map((k) => ({ key: k, label: k, posts: byDate.filter((p) => yr(p.data.date) === k) }));
+const groups = SERIES_ORDER.map((k) => ({ key: k, ...SERIES[k], posts: posts.filter((p) => p.data.series === k).sort((a, b) => a.data.order - b.data.order) })).filter((g) => g.posts.length);
+---
+<Base title="Blog — Hyeonmin Jeon" active="blog">
+  <div class="wrap wide">
+    <div class="list-head">
+      <div><h1>Blog</h1><p>{posts.length} paper reviews and study notes, grouped into series. Each note is dated by its paper's arXiv month.</p></div>
+      <div class="filters">
+        <button aria-pressed="true" data-v="date">Newest first</button><button data-v="series">By series</button>
+        <span style="width:10px"></span>
+        <span class="fg" data-for="series"><button aria-pressed="true" data-f="all">All</button>{groups.map((g) => <button data-f={g.key}>{g.label}</button>)}</span>
+        <span class="fg" data-for="date" hidden><button aria-pressed="true" data-m="all">All dates</button>{monthGroups.map((g) => <button data-m={g.key}>{g.label}</button>)}</span>
+      </div>
+    </div>
+    <div class="wl">
+    <div class="wl-list">
+    <div class="wl-view" data-view="date">
+    {monthGroups.map((g) => (
+      <div class="yr" data-month={g.key}>
+        <div class="series-h">{g.label}<small>{g.posts.length} notes</small></div>
+        <ul class="rows">
+          {g.posts.map((p) => (
+            <li><a href={`/blog/${p.id}/`}>
+              <span class="d">{p.data.date.getFullYear()}</span>
+              <div><div class="t">{p.data.title}</div><div class="k">{p.data.summary}</div>
+                <div class="tg">{p.data.tags.slice(0, 4).map((t) => <span>{t}</span>)}</div></div>
+              <div class="r"><span>{p.data.paper.venue.length > 34 ? p.data.paper.venue.slice(0, 32) + '…' : p.data.paper.venue}</span></div>
+            </a></li>
+          ))}
+        </ul>
+      </div>
+    ))}
+    </div>
+    <div class="wl-view" data-view="series" hidden>
+    {groups.map((g, gi) => (
+      <div class="yr" data-series={g.key}>
+        <div class="series-h">{g.label}<small>Series {gi + 1} · {g.posts.length} notes</small><small>{g.blurb}</small></div>
+        <ul class="rows">
+          {g.posts.map((p) => (
+            <li><a href={`/blog/${p.id}/`}>
+              <span class="d">{p.data.date.getFullYear()}</span>
+              <div><div class="t">{p.data.title}</div><div class="k">{p.data.summary}</div>
+                <div class="tg">{p.data.tags.slice(0, 4).map((t) => <span>{t}</span>)}</div></div>
+              <div class="r"><span>{p.data.paper.venue.length > 34 ? p.data.paper.venue.slice(0, 32) + '…' : p.data.paper.venue}</span></div>
+            </a></li>
+          ))}
+        </ul>
+      </div>
+    ))}
+    </div>
+    </div>
+
+    <aside class="kg-wrap">
+      <div class="kg-head"><span class="eyebrow">Knowledge graph</span><span class="kg-count">{posts.length} notes · {cite.size} links · {sharedTags.length} shared tags</span></div>
+      <div class="kg" id="kg"><canvas aria-label="Interactive graph of notes, series and shared tags"></canvas></div>
+      <div class="kg-card" id="kg-card"></div>
+    </aside>
+    </div>
+
+  </div>
+  <script type="application/json" id="kg-data" set:html={JSON.stringify(graph)}></script>
+  <script is:inline set:html={graphJs}></script>
+  <script is:inline>
+    (function () {
+      var head = document.querySelector('.list-head .filters');
+      if (!head) return;
+      var view = 'date', ser = 'all', mon = 'all';
+      // /blog/#<series-key> opens the series view on that series (used by links from other pages)
+      var h = decodeURIComponent((location.hash || '').slice(1));
+      if (h && document.querySelector('.yr[data-series="' + (window.CSS && CSS.escape ? CSS.escape(h) : h) + '"]')) { view = 'series'; ser = h; }
+      function apply() {
+        document.querySelectorAll('.wl-view').forEach(function (v) { v.hidden = v.dataset.view !== view; });
+        document.querySelectorAll('.fg').forEach(function (g) { g.hidden = g.dataset.for !== view; });
+        document.querySelectorAll('.yr[data-series]').forEach(function (el) { el.hidden = ser !== 'all' && el.dataset.series !== ser; });
+        document.querySelectorAll('.yr[data-month]').forEach(function (el) { el.hidden = mon !== 'all' && el.dataset.month !== mon; });
+        head.querySelectorAll('button').forEach(function (b) {
+          var on = b.dataset.v ? view === b.dataset.v : b.dataset.f ? ser === b.dataset.f : mon === b.dataset.m;
+          b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+      }
+      head.querySelectorAll('button').forEach(function (b) {
+        b.addEventListener('click', function () {
+          if (b.dataset.v) view = b.dataset.v;
+          else if (b.dataset.f) ser = b.dataset.f;
+          else mon = b.dataset.m;
+          apply();
+        });
+      });
+      apply();
+    })();
+  </script>
+</Base>

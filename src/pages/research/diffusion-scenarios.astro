@@ -1,0 +1,110 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base title="CASE — Hyeonmin Jeon" active="research">
+
+  <div class="wrap det">
+    <div>
+      <header class="det-head">
+        <div class="crumb"><a href="/research/">Research</a> / Ongoing · 1st author</div>
+        <h1>CASE — Conditional Diffusion Transformers for Multi-Asset Scenario Generation and Portfolio Risk Measurement</h1>
+        <div class="sub">A generative model learns a distribution and a representation; a market scenario depends on too many factors for an unconditional one to be useful. CASE makes the generator a conditional surrogate — a market twin for one decision — and scores it by the capital it tells a desk to hold.</div>
+        <div class="acts">
+          <span class="status s-rev">Paper · Under review</span>
+          <a class="btn" href="/publications/">Submission history</a><span class="lkoff">manuscript not public · code, checkpoints and preprint after the editorial decision</span>
+        </div>
+        <div class="tags"><span class="tag">conditional diffusion</span><span class="tag">diffusion transformer</span><span class="tag">factorized attention</span><span class="tag">value at risk</span><span class="tag">expected shortfall</span><span class="tag">CRSP</span></div>
+      </header>
+
+      <div class="info"><dl>
+        <dt>Authors</dt><dd><b>Hyeon Min Jeon</b>, Hee Soo Lee*, Kyong Joo Oh*</dd><dt>Venue</dt><dd>Expert Systems with Applications</dd>
+        <dt>Manuscript</dt><dd>ESWA-D-26-39029</dd><dt>Updated</dt><dd>2026.09.22 — under review</dd>
+        <dt>Data</dt><dd>CRSP daily panel 1995–2024, extended to 2026-03 for the post-freeze decisions; a five-minute panel; and the published synthetic benchmark of a tail-risk specialist</dd>
+        <dt>Earlier title</dt><dd>Diffusion transformers for generative modeling of joint asset return distributions and portfolio risk scenarios</dd>
+      </dl></div>
+
+      <div class="prose">
+        <div class="abstract"><h2>Abstract</h2>
+          <p>Risk desks answer questions that no single volatility number can answer, and they answer them by revaluing positions against <em>joint paths</em>. CASE, the Conditional Asset Scenario Engine, is a conditional diffusion model over multi-asset return panels, built as one reusable path generator rather than a model of one statistic. Asset identity enters through observable characteristics instead of fixed name slots, attention is factorised into an asset pass and a time pass, and continuing an observed history is an ordinary denoising step. One frozen checkpoint is re-conditioned each morning and never refitted, and the paper scores its risk <em>statement</em> against what actually happened, across 139 rolling decisions and nine book compositions.</p>
+          <div class="kw"><b>Keywords</b> generative models · conditional diffusion · multi-asset scenario generation · portfolio risk measurement · market risk · transformer</div>
+        </div>
+        <p>This page summarises a manuscript under review. The full method, experiments and results are in the paper; code, checkpoints and a preprint follow the editorial decision.</p>
+
+        <h2 id="bW">Where the idea came from</h2>
+        <p>Generative models learn a distribution and, underneath it, a representation. That is what made them interesting to me as an undergraduate working on diffusion models for images and for imbalanced data: the sample is the visible part, the representation is what carries over. When I moved to finance the obvious application was market simulation — generate scenarios, revalue a book against them, read off its risk. The obvious application also has an obvious problem. A market scenario is not one object; it is the joint path of many assets, and that path is shaped by a <i>massive</i> number of factors at once — which names are in the book, what regime the market is in, how volatile each name has been, what the cross-section looked like this morning. A generator that tries to learn all of that unconditionally learns an average market, and the average market is the one you never have to make a decision in.</p>
+        <p>So the question became: what has to be conditioned on, and what can be left to the model? The answer I settled on is that the generator should be a <strong>conditional surrogate</strong> rather than a world model — a single learned object that is told the state of the world it is being asked about (the book, the names, the recent window) and produces only the paths relevant to that state. Conditioning is what shrinks the space of paths from "every market" to "this market, this morning, this book". And if asset identity enters as observable characteristics rather than as fixed slots, the same surrogate can answer for names and universes it never saw, because the representation it learned is of characteristics, not tickers.</p>
+        <h3 id="bW-2">From representation to a market twin</h3>
+        <p>The engineering follows from that framing. Attention is split into an asset pass and a time pass, so the model represents "which names move together" separately from "how a path unfolds", and the two can be inspected separately. Continuing an observed history is treated as an ordinary denoising step, so the same checkpoint that generates from scratch can also extend what the desk has already seen. The result is less a simulator of the market than a <strong>market twin</strong> for the purposes of one decision: a surrogate that is re-conditioned each morning, never refitted, and asked a question it was not trained on.</p>
+        <h3 id="bW-3">Why the experiment is about cost, not realism</h3>
+        <p>A generated path can look right and still be useless, and I spent long enough admiring samples to learn that the hard way. The experiment that eventually made sense scores the engine by the decision it feeds: for a set of portfolio books across years of decision dates, how much capital does the engine say to hold, and how often does the realised loss exceed it? That is the practical cost a scenario generator is for — a reserve, a shortfall, a book revalued — and it is where a surrogate earns or fails to earn its place next to the estimators a desk already runs. The configuration was frozen before the later decisions were seen, so the confirmatory part of the evaluation is exactly that, and the paper reports where the accuracy stops as carefully as where it holds.</p>
+        <p>The companion project <a href="/research/tailflow/">TailFlow</a> asks the same question on a synthetic market where the true tail risk is known, so that "the decision held" can be checked against "the decision was right".</p>
+
+        <h2 id="m"><span class="num">1</span>The method in brief</h2>
+        <p>Each return is split into a slowly moving volatility state and a whitened shape, so the market state is explicit in the representation and the same representation carries across frequencies. Each asset enters as six observable characteristics rather than a ticker slot, so no parameter depends on the number of assets: a name the model never saw is a new input, not a new model. The denoiser alternates attention across assets and across days, and every day carries its own noise level, so observed days are simply days at noise level zero and one set of weights both generates from scratch and continues a history. Volatility, value at risk, expected shortfall and drawdown are all read from the same generated paths, so the four numbers cannot contradict one another.</p>
+        <figure>
+          <div class="fig">
+            <svg viewBox="0 0 660 210" role="img" aria-label="CASE pipeline: representation, factorised denoiser, sampling and read-outs">
+              <defs><marker id="ca" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--mute)"/></marker></defs>
+              <g font-family="IBM Plex Mono,monospace" font-size="10.5" fill="var(--mute)">
+                <g fill="var(--code-bg)" stroke="var(--rule2)"><rect x="8" y="14" width="126" height="32" rx="6"/><rect x="8" y="62" width="126" height="32" rx="6"/><rect x="8" y="110" width="126" height="32" rx="6"/><rect x="8" y="158" width="126" height="32" rx="6"/></g>
+                <text x="71" y="34" text-anchor="middle" fill="var(--ink)">return panel</text>
+                <text x="71" y="82" text-anchor="middle" fill="var(--ink)">6 characteristics</text>
+                <text x="71" y="130" text-anchor="middle" fill="var(--ink)">37 condition channels</text>
+                <text x="71" y="178" text-anchor="middle" fill="var(--ink)">per-step noise level</text>
+                <rect x="180" y="52" width="140" height="100" rx="6" fill="var(--code-bg)" stroke="var(--rule2)"/>
+                <text x="250" y="80" text-anchor="middle" fill="var(--ink)" font-size="11.5">denoiser f&#952;</text>
+                <text x="250" y="99" text-anchor="middle">asset attention</text>
+                <text x="250" y="115" text-anchor="middle">time attention</text>
+                <text x="250" y="131" text-anchor="middle">6 blocks · 3.0M</text>
+                <rect x="366" y="66" width="122" height="72" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+                <text x="427" y="94" text-anchor="middle" fill="var(--ink)" font-size="11.5">50 reverse steps</text><text x="427" y="112" text-anchor="middle">prefix held clean</text>
+                <g fill="var(--code-bg)" stroke="var(--rule2)"><rect x="534" y="24" width="112" height="30" rx="6"/><rect x="534" y="66" width="112" height="30" rx="6"/><rect x="534" y="108" width="112" height="30" rx="6"/><rect x="534" y="150" width="112" height="30" rx="6"/></g>
+                <text x="590" y="43" text-anchor="middle" fill="var(--ink)">volatility</text><text x="590" y="85" text-anchor="middle" fill="var(--ink)">VaR&#8325;</text>
+                <text x="590" y="127" text-anchor="middle" fill="var(--ink)">ES&#8325;</text><text x="590" y="169" text-anchor="middle" fill="var(--ink)">drawdown</text>
+                <g fill="none" stroke="var(--mute)" stroke-width="1.2" marker-end="url(#ca)"><path d="M134 30 C158 30,158 76,180 80"/><path d="M134 78 C158 78,158 94,180 96"/><path d="M134 126 C158 126,158 110,180 112"/><path d="M134 174 C158 174,158 128,180 126"/><path d="M320 102 L366 102"/><path d="M488 96 C510 92,510 46,534 42"/><path d="M488 100 C510 98,510 84,534 82"/><path d="M488 106 C510 110,510 122,534 124"/><path d="M488 110 C510 116,510 164,534 166"/></g>
+              </g>
+            </svg>
+          </div>
+          <figcaption><b>Figure 1.</b> The shape of the engine, drawn for this page: four inputs, one factorised denoiser, a sampler that holds the observed days clean, and four risk read-outs taken from the same generated paths.</figcaption>
+        </figure>
+        <figure>
+          <img src="/projects/diffusion-scenarios/media/architecture.png" alt="CASE architecture: representation, six-block factorised denoiser, and the reverse sampler with the observed prefix held clean" loading="lazy" decoding="async" />
+          <figcaption><b>Figure 2.</b> The manuscript's architecture diagram: the representation and embeddings (top left), one of the six denoiser blocks with asset attention, time attention and gated updates (centre), and sampling with the observed prefix re-clamped at every reverse step (bottom left). Figure from the manuscript.</figcaption>
+        </figure>
+
+        <h2 id="e"><span class="num">2</span>How it is tested</h2>
+        <p>The model is trained on data to 2016, and every design choice was frozen in September 2024. At each decision it sees sixty days and states the risk of the next twenty for nine long-only books, against five desk standards, six scalar forecasters and six generative families given the same information. Decisions before the freeze were used to choose the configuration; decisions after it were used for nothing but scoring.</p>
+        <figure>
+          <img src="/projects/diffusion-scenarios/media/stated-vs-realised.png" alt="Stated versus realised twenty-day volatility of the equal-weight book across three windows, with per-decision error gaps" loading="lazy" decoding="async" />
+          <figcaption><b>Figure 3.</b> The statement against what actually happened, on the equal-weight book: realised twenty-day volatility in black, the engine's statement in blue and filtered historical simulation in gold. Both miss the March 2020 jump; what separates them is the recovery after it. Figure from the manuscript.</figcaption>
+        </figure>
+
+        <h2 id="r"><span class="num">3</span>What it shows</h2>
+        <div class="take">
+          <div><h4>What held up</h4><ul><li>One frozen checkpoint ran a standing risk process across 139 decisions and nine books, re-conditioned each morning and never refitted.</li><li>Before the freeze its book-risk error is below every desk standard; after it, the engine stays lowest in point estimate.</li><li>The advantage sits where the observed window is already volatile, at thresholds fixed before the confirmatory decisions were seen.</li><li>Unseen names and much wider universes cost a sampling pass, not a retraining.</li></ul></div>
+          <div><h4>Where it stops</h4><ul><li>After the freeze the margins are not statistically resolved.</li><li>It does not state a jump on the day it happens; what separates it from a reactive estimator is the recovery.</li><li>The generated paths under-build volatility clustering and excess kurtosis.</li><li>It is a daily tool: on five-minute bars filtered historical simulation is the closer statement.</li></ul></div>
+        </div>
+
+        <h2 id="s"><span class="num">4</span>Status</h2>
+        <p>Under review at Expert Systems with Applications since 2026.09.22. Code, checkpoints and a preprint will be released after the editorial decision. Next on this line: the shape defect the paths under-build, and phase-aware scenario generation with <a href="/research/finphasor/">FinPhasor</a>.</p>
+      </div>
+    </div>
+
+    <aside class="tocw">
+      <div class="eyebrow">Contents</div>
+      <ul class="toc">
+        <li><a href="#bW"><span class="n">·</span>Where the idea came from</a></li>
+        <li><a href="#m"><span class="n">1</span>The method in brief</a></li>
+        <li><a href="#e"><span class="n">2</span>How it is tested</a></li>
+        <li><a href="#r"><span class="n">3</span>What it shows</a></li>
+        <li><a href="#s"><span class="n">4</span>Status</a></li>
+      </ul>
+      <div class="rel"><div class="eyebrow">Related</div>
+        <a href="/research/finphasor/">FinPhasor — phase-preserving timing<span>paper · RRC</span></a>
+        <a href="/publications/">Submission history<span>publications · under review</span></a>
+        <a href="/blog/csdi/">CSDI — conditional score-based diffusion<span>paper review</span></a>
+      </div>
+    </aside>
+  </div>
+
+</Base>

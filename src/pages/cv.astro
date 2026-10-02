@@ -1,0 +1,101 @@
+---
+import Base from '../layouts/Base.astro';
+import { PUBS } from '../data/publications';
+const first = PUBS.filter((p) => p.filterRole === 'first'), co = PUBS.filter((p) => p.filterRole === 'co');
+const last = (p: (typeof PUBS)[number]) => p.events[p.events.length - 1];
+const fmt = (iso: string) => iso.slice(0, 7).replace('-', '.');
+const authorsShort = (html: string) =>
+  html.replace(/<sup>\*<\/sup>/g, '*')
+    .replace(/([A-Z][a-z]+) ([A-Z][a-z]+) ([A-Z][a-z]+)(\*?)/g, (_m, a, b, c, star) => `${a[0]}. ${b[0]}. ${c}${star}`)
+    .replace(/([A-Z][a-z]+) ([A-Z][a-z]+)(\*?)(?=,|<|$)/g, (_m, a, b, star) => `${a[0]}. ${b}${star}`);
+const venue = (p: (typeof PUBS)[number]) => p.venueHtml.replace(/ · earlier title:.*$/, '').replace(/^(Submitted to|Last submitted to) /, '');
+---
+<Base title="CV — Hyeonmin Jeon" active="cv">
+  <div class="rcv">
+    <a class="btn pri noprint rcv-dl" href="/cv/Hyeonmin_Jeon_CV.pdf" download>Download PDF</a>
+    <header class="rcv-head">
+      <h1>Hyeonmin Jeon</h1>
+      <div class="rcv-contact"><span>hyeonmin16@yonsei.ac.kr</span><span>Seoul, Korea</span><span>Financial Investment AI Lab, Yonsei University</span><span>Applying to Ph.D. programs in IE / OR, Fall 2027</span></div>
+    </header>
+
+    <h2>Education</h2>
+    <div class="e"><div class="h"><span><b>Yonsei University</b>, Department of Industrial Engineering</span><span>Seoul, Korea</span></div>
+      <div class="h"><span><i>M.S. in Industrial Engineering</i> — Financial Investment AI Lab, advisor Prof. Kyong Joo Oh</span><span>Mar 2025 – Feb 2027 (expected)</span></div>
+      <ul><li>GPA 3.97 / 4.0 (letter-grade basis)</li>
+      <li><u>Relevant coursework</u> (all A range): Stochastic Modelling Theory, Probabilistic Models &amp; Bayesian Inference, Time-Series Analysis, Deep Learning Theory &amp; Applications, Advanced Investment Engineering, Financial Engineering Topics, Corporate Finance</li></ul></div>
+    <div class="e"><div class="h"><span><b>Chung-Ang University</b>, School of Electrical and Electronics Engineering</span><span>Seoul, Korea</span></div>
+      <div class="h"><span><i>B.S. in Electrical and Electronics Engineering</i></span><span>Mar 2019 – Feb 2025</span></div>
+      <ul><li>GPA 3.59 / 4.0 (letter-grade basis) · Graduation thesis: <i>Light-weighting Tiny YOLOv3: The Impact of Quantization on Real-World Applications</i> (advisor Prof. Minhyeok Lee)</li>
+      <li><u>Relevant coursework</u> (all A or A+): Linear Algebra, Mathematics for Electrical Engineering, Numerical Analysis, Random Variables, Signals &amp; Systems, Machine Learning, Artificial Intelligence, Algorithms</li></ul></div>
+
+    <h2>Research Interests</h2>
+    <p class="rcv-p">Simulation optimisation and ranking &amp; selection under stochastic constraints and input uncertainty; generative models (diffusion, normalizing flows) as simulation input models; sequential decision policies with statistical guarantees in finance and operations.</p>
+
+    <h2>Research Experience</h2>
+    <div class="e"><div class="h"><span><b>Financial Investment AI Lab, Yonsei University</b></span><span>Seoul, Korea</span></div>
+      <div class="h"><span><i>Graduate Research Assistant</i></span><span>Mar 2025 – Present</span></div>
+      <ul><li>Designed a conditional diffusion transformer for multi-asset scenario generation and audited its risk statements against nine portfolio books over 139 decision dates (first-author manuscript, under review at <i>Expert Systems with Applications</i>).</li>
+      <li>Built a phase-preserving measurement of cross-sectional repricing timing from predicted wavelet scalograms; out-of-sample rank IC +0.074 where magnitude read-outs are flat (first-author manuscript, reviews completed at <i>ESWA</i>).</li>
+      <li>Treated the prior in Bayesian factor selection as a learned surrogate: a normalizing flow fit to the mixture-of-g reference reproduces the exact posterior over models (TV 0.016), and the cost of a density-free (GAN) surrogate is measured in posterior error and understated model uncertainty (working paper).</li>
+      <li>Implemented and verified ranking-and-selection procedures (KN, feasibility determination, recycled observations, CRN) and measured how a fitted input model erodes the probability-of-correct-selection guarantee.</li>
+      <li>Co-authored lab manuscripts on deep convolutional factor models with explainable AI (2nd author) and RL-based enhanced indexing (3rd author).</li></ul></div>
+    <div class="e"><div class="h"><span><b>TIPS R&amp;D Project with Urban Complex</b> (lab project)</span><span>Seoul, Korea</span></div>
+      <div class="h"><span><i>Researcher — artist-style generative engine</i></span><span>Apr 2024 – Aug 2026</span></div>
+      <ul><li>Compared three vision-language captioners for artistic style and built a structured captioning pipeline; trained a QLoRA style classifier on Qwen2-VL-7B (91.4 % seen / 76.0 % unseen; 96.0 % fused with a DINOv2 prior).</li>
+      <li>Moved StyleCrafter generation from VideoCrafter to SDXL, added domain checkpoints routed by the classifier's verdict, and specified the service API, evaluation dashboard and 3D (STL) output path. With J. Jeon and D. H. You.</li></ul></div>
+    <div class="e"><div class="h"><span><b>GAIL (AI Lab), School of EEE, Chung-Ang University</b></span><span>Seoul, Korea</span></div>
+      <div class="h"><span><i>Undergraduate Researcher</i></span><span>Dec 2022 – Dec 2024</span></div>
+      <ul><li>Diffusion-model oversampling for imbalanced fraud data (KICS Fall Conference 2023); latent-diffusion portfolio study; lifelog sleep-score prediction (ETRI challenge); 3D point-cloud classification.</li></ul></div>
+    <div class="e"><div class="h"><span><b>Carbon-Neutral ESG Practical-Problem Research Group, Chung-Ang University</b></span><span>Seoul, Korea</span></div>
+      <div class="h"><span><i>Team Lead, "Green-Navi" (Green AI track)</i></span><span>Apr 2023 – Dec 2023</span></div>
+      <ul><li>Reinforcement learning for fuel-optimal urban routing in AIMSUN; presented at the research fair (Nov 2023). MSIT / NRF Field-Linked Future-Leading Talent programme.</li></ul></div>
+
+    <h2>Publications &amp; Presentations</h2>
+    <p class="rcv-sub">Submitted to journals</p>
+    <ol class="rcv-list">
+      {first.map((p) => (<li><Fragment set:html={authorsShort(p.authorsHtml)} />. {p.title}. <i><Fragment set:html={venue(p)} /></i>. {p.stage}, {fmt(last(p).date)}.</li>))}
+      {co.map((p) => (<li><Fragment set:html={authorsShort(p.authorsHtml)} />. {p.title}. <i><Fragment set:html={venue(p)} /></i>. {p.stage}, {fmt(last(p).date)}.</li>))}
+    </ol>
+    <p class="rcv-sub">Conference presentations and competition submissions</p>
+    <ol class="rcv-list" start={PUBS.length + 1}>
+      <li>Y. Jeong*, H. Kim, D. H. You, <b>H. M. Jeon</b>, A. de Castro, T. Lee. A Study for Forecasting Solar Energy Power Generation. <i>45th International Symposium on Forecasting (ISF 2025)</i>, Beijing, Jul 2025. Talk; with SAS Institute.</li>
+      <li><b>H. M. Jeon</b>, M. Lee. Dealing with the Imbalanced-Data Problem with a Diffusion Model. <i>KICS Fall Conference</i>, Nov 2023.</li>
+      <li><b>H. M. Jeon</b> et al. Personalized Sleep Score Prediction Model Using a Lifelog Dataset. Submitted to the <i>ETRI Human Understanding AI Paper Challenge</i>, 2024.</li>
+    </ol>
+    <p class="rcv-sub">Ongoing research</p>
+    <ol class="rcv-list" start={PUBS.length + 4}>
+      <li><b>H. M. Jeon</b>. Learned Surrogate Priors for Bayesian Model Selection: Density, Uncertainty, and the Cost of a Sampler. Working paper; lab seminar, Jan 2026.</li>
+      <li><b>H. M. Jeon</b>. Bayesian Capacity Sizing for an Exchange Matching Queue under Over-Dispersed Arrivals. Working paper, 2026.</li>
+    </ol>
+
+    <h2>Teaching</h2>
+    <div class="e"><div class="h"><span><b>Graduate Program in AI Investment Engineering</b> (AI인베스트먼트협동과정, contract-based graduate program), Yonsei University</span><span>Seoul, Korea</span></div>
+      <div class="h"><span><i>Teaching Assistant</i></span><span>Sep 2025 – Present</span></div></div>
+    <div class="e"><div class="h"><span><b>Financial Engineering</b> (undergraduate), Department of Industrial Engineering, Yonsei University</span><span>Seoul, Korea</span></div>
+      <div class="h"><span><i>Teaching Assistant</i></span><span>Spring 2026</span></div></div>
+
+    <h2>Selected Projects</h2>
+    <div class="e"><div class="h"><span><b>Retina Exam Room Scheduling</b>, with Nune Eye Hospital</span><span>Feb 2026 – Present</span></div>
+      <ul><li>Recalibrated a discrete-event simulator to the hospital's records; rule, behaviour-cloned and PPO policies on a 44-day fair replay (time in room 12.2 → 8.2 min); read-only EMR integration and live comparison (wait between exams 2.73 → 1.14 min).</li></ul></div>
+    <div class="e"><div class="h"><span><b>Research-Agent Platform</b></span><span>Sep 2026 – Present</span></div>
+      <ul><li>LLM agents that verify papers, replicate numbers and draft referee reports against a journal baseline; referee committees, review ledger, MCP server (Next.js, SQLite, Anthropic SDK).</li></ul></div>
+    <div class="e"><div class="h"><span><b>Simulation-methodology reimplementations</b> — rs-lab, Input-Uncertainty Select, TailFlow, roughvol-lab, Eco-Route RL, Splat from Scratch</span><span>Sep 2026</span></div>
+      <ul><li>Ranking &amp; selection with verified guarantees; input-uncertainty effects on selection; conditional diffusion as a risk engine; rough volatility; CO₂-optimal routing on SUMO with P(correct selection) 0.956; 3D Gaussian splatting in plain PyTorch.</li></ul></div>
+    <div class="e"><div class="h"><span><b>Light-weighting Tiny YOLOv3</b> — graduation thesis, Chung-Ang University</span><span>2024</span></div>
+      <ul><li>Int8 quantization with layer fusion; weights 1.6 GB → 100 MB, inference 22–64 % faster across five devices, mAP −2.78 pt on PASCAL VOC. Team of three.</li></ul></div>
+    <div class="e"><div class="h"><span><b>fai.yonsei.ac.kr</b> — the lab's website</span><span>Jul 2025</span></div>
+      <ul><li>Built and maintain the Financial Investment AI Lab's website (React, Vite).</li></ul></div>
+
+    <h2>Honors &amp; Awards</h2>
+    <div class="e"><div class="h"><span><b>Special Prize (data use)</b>, Chungcheong ICT Innovation public-data competition — GIS and K-water data on regional waste management</span><span>2024</span></div></div>
+    <div class="e"><div class="h"><span><b>DB Financial Economics paper competition</b> — a national-pension financial-product proposal (with H. Kim)</span><span>2024</span></div></div>
+
+    <h2>Skills</h2>
+    <div class="rcv-skills">
+      <div><span>Programming</span>Python (NumPy, SciPy, pandas, PyTorch, CUDA) | C++ | MATLAB | TypeScript / Next.js | SQL | LaTeX | Linux multi-GPU servers</div>
+      <div><span>Methods</span>Discrete-event &amp; Monte Carlo simulation | Ranking &amp; selection | Variance reduction | Diffusion &amp; flow models | Reinforcement learning | Behaviour cloning | Bayesian inference | Time-series analysis</div>
+      <div><span>Tools</span>Eclipse SUMO | AIMSUN | SAS | Hugging Face | Electron | PostgreSQL / SQLite</div>
+      <div><span>Languages</span>Korean (native) | English (working proficiency; TOEFL in preparation)</div>
+    </div>
+  </div>
+</Base>

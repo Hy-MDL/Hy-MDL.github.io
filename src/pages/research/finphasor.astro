@@ -1,0 +1,88 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base title="FinPhasor — Hyeonmin Jeon" active="research">
+
+  <div class="wrap det">
+    <div>
+      <header class="det-head">
+        <div class="crumb"><a href="/research/">Research</a> / Ongoing · 1st author</div>
+        <h1>FinPhasor — Phase-Preserving Measurement of Cross-Sectional Timing in Equity Markets</h1>
+        <div class="sub">Signal processing says a signal is magnitude <em>and</em> phase. Financial deep learning predicts a scalar return — magnitude with no phase — and so cannot see when a stock reprices relative to the market. FinPhasor models that timing as a stock characteristic, with a complex wavelet representation, an oscillator template and a scale-conditioned Transformer.</div>
+        <div class="acts">
+          <span class="status s-rev">Paper · Required Reviews Completed</span>
+          <a class="btn" href="/publications/">Submission history</a><span class="lkoff">manuscript not public · code, checkpoints and preprint after the editorial decision</span>
+        </div>
+        <div class="tags"><span class="tag">continuous wavelet transform</span><span class="tag">phase-preserving prediction</span><span class="tag">damped harmonic oscillator</span><span class="tag">scale-conditioned attention</span><span class="tag">FinBERT</span><span class="tag">S&amp;P 500</span></div>
+      </header>
+
+      <div class="info"><dl>
+        <dt>Authors</dt><dd><b>Hyeon Min Jeon</b>, Hee Soo Lee*, Kyong Joo Oh*</dd><dt>Venue</dt><dd>Expert Systems with Applications</dd>
+        <dt>Manuscript</dt><dd>ESWA-D-26-35395</dd><dt>Updated</dt><dd>2026.09.17 — reviews completed</dd>
+        <dt>Data</dt><dd>S&amp;P 500 constituents, CRSP spliced with adjusted closes; ten market indicators; a market-wide news corpus. Trained to 2020-06, evaluated out of sample through 2025-12</dd>
+        <dt>Earlier title</dt><dd>DAMP — Damped Adaptive Market Physics</dd>
+      </dl></div>
+
+      <div class="prose">
+        <div class="abstract"><h2>Abstract</h2>
+          <p>Most AI systems for equity investment are trained on a scalar return, and a scalar erases timing: one disclosure lands on one date for everybody, and different names finish pricing it at very different moments. FinPhasor replaces the target. It predicts each stock's <em>future complex wavelet scalogram</em>, with a damped-oscillator template for delay, overshoot and decay, so every horizon band carries both a magnitude and a phase. Under one protocol, only the phase orders future returns: the coherence-gated medium-horizon lead earns an out-of-sample rank IC of +0.074 on S&amp;P 500 names through 2025. The paper treats this as a validated measurement and stops short of calling it a factor.</p>
+          <div class="kw"><b>Keywords</b> decision support · explainable AI · continuous wavelet transform · phase-preserving prediction · cross-sectional return characteristics · market-relative phase timing</div>
+        </div>
+        <p>This page summarises a manuscript in review. The full method, experiments and results are in the paper; code, checkpoints and a preprint follow the editorial decision.</p>
+
+        <h2 id="bW">Where the idea came from</h2>
+        <p>This one comes straight out of electrical engineering. In signal processing a signal is never just its amplitude: a filter has a magnitude response and a <i>phase</i> response, a resonant system amplifies some frequencies and delays others, and two signals with identical spectra can be completely different objects if their phases differ. I had spent years with that picture — Fourier and wavelet transforms, damped oscillators, group delay — and when I started reading financial deep learning I noticed that the entire field predicts a scalar: next period's return. A scalar is a magnitude with no phase. It records where a stock ended up and throws away <i>when</i> it got there.</p>
+        <p>And "when" is exactly what the cross-section is made of. One piece of news lands on one date for everybody; names finish repricing it days or weeks apart. That is a phase difference across the cross-section, at a frequency set by the horizon you care about. An engineer would not try to read it off the raw price; they would take the signal into a time–frequency representation, keep the coefficients complex, and look at the phase of the band that matters.</p>
+        <h3 id="bW-2">Phase, amplification and a Transformer</h3>
+        <p>Three pieces of signal processing became three design decisions. The <strong>phase</strong> of a complex wavelet coefficient became the quantity to predict and rank on — the position of a stock in its horizon cycle, relative to the market's. The <strong>amplification</strong> picture — a driven, damped oscillator that responds to a shock with a delay, an overshoot and a decay that depend on frequency — became a constrained template for how a name reacts to news, so the model does not have to learn the shape of a reaction from scratch, only how each name departs from it. And a <strong>Transformer</strong> whose attention is conditioned on scale became the predictor, because the relationships that matter run across horizons (what the 15–60 day band does depends on what the shorter bands have just done) and across the context the market and the news supply.</p>
+        <p>The target, in other words, is a stock <i>characteristic</i> rather than a return: how early or late this name sits in the market's cycle at this horizon, read off a representation that keeps timing by construction. Modelling the characteristic instead of the payoff is what makes the output explainable — a phase is a clock hand you can draw — and it is what lets the same model say when its own reading is unreliable, which matters as much as the reading.</p>
+        <h3 id="bW-3">How it became an experiment</h3>
+        <p>The hypothesis is falsifiable in a way I liked: if the phase carries the cross-sectional information, then ranking stocks by the predicted phase should order their subsequent returns, and ranking them by the predicted <i>magnitude</i> of the same surface — same model, same panel, same protocol — should not. Scalar-target systems, however wide their inputs, should not recover the ordering either, because the coordinate is not in their target. The experiment is built around those comparisons, trained to a fixed date and evaluated strictly out of sample afterwards, with the portfolio expression and its costs reported so that the measurement is tied to something a decision-support system would actually do.</p>
+
+        <h2 id="m"><span class="num">1</span>The method in brief</h2>
+        <p>The prediction target is the future complex continuous wavelet transform of returns. Its magnitude says how loud a horizon is; its phase says how far round that horizon's cycle a name has already travelled. Returns, a panel of ten market indicators and a market-wide news stream meet in one scale-conditioned cross-attention block, so each horizon reads the shared context with its own weights. Eight band-specific decoder paths predict magnitude and phase, and a separate damped-oscillator branch supplies the template for how a name responds to a shock. The read-out turns the predicted phase into a lead in trading days against the market's own cycle, keeps only readings coherent with the market clock, and ranks the cross-section.</p>
+        <figure>
+          <img src="/projects/finphasor/media/problem-objective.png" alt="Raw cumulative returns for NVDA, SPY and XOM around the September 2023 FOMC statement, and the same window after extracting the 15-60 day band of the return CWT, showing NVDA reaching the market cycle peak three days early and XOM eight days late." loading="lazy" decoding="async" style="margin:0 auto" />
+          <figcaption><b>Figure 1.</b> The object being measured, on realized data. In raw returns three names co-move and nothing says who moved first; in the 15–60 day band of the wavelet transform, one market-cycle turn resolves into three arrival times. Figure from the manuscript.</figcaption>
+        </figure>
+        <figure>
+          <img src="/projects/finphasor/media/architecture.png" alt="Model architecture with the two explanation read-outs: the forward path from the three input streams through scale-conditioned cross-attention and eight band decoder paths to the predicted complex scalogram, a Grad-CAM backward tap giving indicator and frequency attribution, and a forward-only attention tap giving the attention map and sentence-level highlights." loading="lazy" decoding="async" style="margin:0 auto" />
+          <figcaption><b>Figure 2.</b> The model and its two explanation read-outs, both aimed at the band-mean predicted phase: a gradient attribution over the market inputs, and the attention map kept from the ordinary forward pass. Neither needs a second model, so every reading ships with its explanation. Figure from the manuscript.</figcaption>
+        </figure>
+
+        <h2 id="e"><span class="num">2</span>How it is tested</h2>
+        <p>The model is trained to 2020-06 and evaluated strictly out of sample through 2025. Every test is a comparison that could fail: phase against magnitude and the other read-outs of the same predicted surface, the network against a parameter-free re-measurement of the realized scalogram, the coherence gate against a random selection of the same size, and the characteristic against twelve scalar-return systems under one protocol.</p>
+        <figure>
+          <img src="/projects/finphasor/media/era-emergence.png" alt="Bar chart of yearly gated rank IC by year, grey bars for the 2001-2011 placebo era averaging minus 0.010 and dark bars for 2012-2025 averaging plus 0.051, with stars marking years significant at t above 2." loading="lazy" decoding="async" style="margin:0 auto" />
+          <figcaption><b>Figure 3.</b> The yearly rank IC of the gated phase lead. The 2001–2011 decade lies inside the training window and is null; the reading emerges after 2012 and is strongest out of sample, which is hard to square with overfitting. Figure from the manuscript.</figcaption>
+        </figure>
+
+        <h2 id="r"><span class="num">3</span>What it shows</h2>
+        <div class="take">
+          <div><h4>What held up</h4><ul><li>Phase, not magnitude, orders future returns; every other read-out of the same predicted surface is flat.</li><li>A zero-parameter re-measurement of the realized scalogram recovers the same ranking, so the network estimates something observable.</li><li>The coherence gate beats a random selection of the same size, so it is a reliability filter rather than a sampling effect.</li><li>None of the twelve scalar-return systems recovers the ordering.</li></ul></div>
+          <div><h4>Where it stops</h4><ul><li>It is not claimed as a priced factor; the long–short alpha does not clear the paper's own multiple-testing bar.</li><li>The signal is era-conditional: null in 2001–2011, emerging after 2012.</li><li>It lives in the coherent large-cap core and weakens in the broader cross-section.</li><li>The news stream earns no predictive credit in ablation.</li></ul></div>
+        </div>
+
+        <h2 id="s"><span class="num">4</span>Status</h2>
+        <p>Required reviews completed at Expert Systems with Applications on 2026.09.17; the decision is pending. Code, checkpoints and a preprint will be released after the editorial decision. Next on this line: broader anomaly spans for the characteristic, and phase-aware scenario generation with <a href="/research/diffusion-scenarios/">CASE</a>.</p>
+      </div>
+    </div>
+
+    <aside class="tocw">
+      <div class="eyebrow">Contents</div>
+      <ul class="toc">
+        <li><a href="#bW"><span class="n">·</span>Where the idea came from</a></li>
+        <li><a href="#m"><span class="n">1</span>The method in brief</a></li>
+        <li><a href="#e"><span class="n">2</span>How it is tested</a></li>
+        <li><a href="#r"><span class="n">3</span>What it shows</a></li>
+        <li><a href="#s"><span class="n">4</span>Status</a></li>
+      </ul>
+      <div class="rel"><div class="eyebrow">Related</div>
+        <a href="/research/diffusion-scenarios/">CASE — conditional diffusion scenarios<span>paper · under review</span></a>
+        <a href="/publications/">Submission history<span>publications · RRC</span></a>
+        <a href="/blog/score-sde/">Score-Based Generative Modeling through SDEs<span>paper review · draft</span></a>
+      </div>
+    </aside>
+  </div>
+
+</Base>

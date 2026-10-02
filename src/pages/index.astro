@@ -1,0 +1,114 @@
+---
+import { PUBS, gapLabel } from '../data/publications';
+const month = (iso: string) => new Date(iso + 'T00:00:00').toLocaleString('en', { month: 'short' }) + ' ' + iso.slice(0, 4);
+import Base from '../layouts/Base.astro';
+---
+<Base title="Hyeonmin Jeon" active="home">
+
+  <div class="home">
+    <div class="profile">
+      <img class="photo" src="/etc/profile.jpg" alt="Hyeonmin Jeon" width="240" height="240">
+      <div>
+        <h1>Hyeonmin Jeon</h1>
+        <p class="role">M.S. Student (2nd year), Financial Investment AI Lab <span>· Yonsei University</span></p>
+        <div class="bio">
+          <p class="thesis">I study decision-making under uncertainty when the uncertainty itself must first be learned from data.</p>
+          <p class="kw">Generative models as simulation inputs · Ranking &amp; selection · Input uncertainty · Simulation optimisation</p>
+          <p>Diffusion models and flows stand in as the simulation's input model where no parametric family fits — asset returns, a hospital's arrivals, a road network — and ranking-and-selection procedures attach a guarantee to the decision made on them. The question underneath: how much of that guarantee survives when the input model was itself fitted from data.</p>
+          <p><b>Applying to PhD programs in IE / OR for Fall 2027.</b> Two first-author manuscripts under review.</p>
+        </div>
+        <div class="contact">
+          <a href="mailto:hyeonmin16@yonsei.ac.kr">hyeonmin16@yonsei.ac.kr</a><a href="/about/">About me</a><a href="/cv/">CV</a><a href="/cv/Hyeonmin_Jeon_CV.pdf">CV (PDF)</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="hsec"><h2>Selected work <a href="/research/">research →</a> <a href="/projects/">projects →</a></h2>
+      <ul class="feat">
+        <li><a class="card" href="/research/diffusion-scenarios/"><img src="/projects/diffusion-scenarios/media/architecture.png" alt="CASE architecture: representation, embeddings, denoiser and sampling" loading="lazy"></a>
+          <div class="kick"><span class="status s-rev">Submitted paper · ESWA</span><span>under review</span></div>
+          <a class="t" href="/research/diffusion-scenarios/">CASE — conditional diffusion transformers for portfolio risk</a>
+          <p class="k">Multi-asset scenario generation whose risk statements are audited against nine books over 139 decision dates: 7.5 % less reserve for the same shortfall.</p></li>
+        <li><a class="card" href="/research/finphasor/"><img src="/projects/finphasor/media/architecture.png" alt="FinPhasor architecture: scale-conditioned cross-attention read-out and Grad-CAM attribution" loading="lazy"></a>
+          <div class="kick"><span class="status s-rev">Submitted paper · ESWA</span><span>reviews completed</span></div>
+          <a class="t" href="/research/finphasor/">FinPhasor — phase-preserving timing measurement</a>
+          <p class="k">Predicts each stock's complex wavelet scalogram; phase, not magnitude, orders future returns. Out-of-sample rank IC +0.074.</p></li>
+        <li><a class="card" href="/research/model-uncertainty-priors/"><img src="/projects/model-uncertainty-priors/media/bo_thumb.jpg" alt="Bayesian optimisation over the learned prior: Gaussian-process surrogate, its uncertainty band and the acquisition curve" loading="lazy"></a>
+          <div class="kick"><span class="status s-wip">Working paper</span><span>experimenting</span></div>
+          <a class="t" href="/research/model-uncertainty-priors/">Learned surrogate priors for Bayesian model selection</a>
+          <p class="k">A normalizing flow as a surrogate prior reproduces the exact factor-selection posterior (TV 0.016) where a sampler-only one does not (0.597); its density lets Bayesian optimisation control and adapt it, which barely moves the decision but collapses the uncertainty measure.</p></li>
+        <li><a class="card" href="/research/tailflow/"><img src="/projects/tailflow/media/architecture.png" alt="TailFlow: conditional denoiser architecture" loading="lazy"></a>
+          <div class="kick"><span class="status s-done">Experiment</span><span>code + results</span></div>
+          <a class="t" href="/research/tailflow/">TailFlow — a diffusion model as a risk engine</a>
+          <p class="k">Conditional DDPM for return scenarios, scored against a market with known VaR/ES and as a simulation input model for constrained selection.</p></li>
+        <li><a class="card" href="/projects/eco-route-rl/"><img src="/projects/eco-route-rl/media/route_race.jpg" alt="Eco-Route RL: three routes racing on the Seoul network with CO₂ per route" loading="lazy"></a>
+          <div class="kick"><span class="status s-done">Project</span><span>code + results</span></div>
+          <a class="t" href="/projects/eco-route-rl/">Eco-Route RL</a>
+          <p class="k">A low-CO₂ route on a real Seoul network chosen with a statistical guarantee: P(correct) = 0.956 where a fixed budget reaches 0.742.</p></li>
+        <li><a class="card" href="/projects/artist-style-engine/"><img src="/projects/artist-style-engine/media/thumb.jpg" alt="Collage of README figures from the repositories the project built on: StyleCrafter, InstantStyle, StyleAligned and Qwen3-VL" loading="lazy"></a>
+          <div class="kick"><span class="status s-done">Lab project · TIPS</span><span>year 2 delivered</span></div>
+          <a class="t" href="/projects/artist-style-engine/">Artist-Style Generative Engine</a>
+          <p class="k">From an artist's images to a style the machine can name, generate and print: a QLoRA style classifier (96 % fused with DINOv2), SDXL generation routed by style family, and 3D asset output.</p></li>
+      </ul>
+    </div>
+
+    <div class="hsec"><h2>News</h2>
+      <ul class="news">
+        {PUBS.filter((p) => ['case', 'finphasor'].includes(p.id)).map((p) => (
+          <li><span class="d">{month(p.events[p.events.length - 1].date)}</span><span><a href={p.page}>{p.id === 'case' ? 'CASE' : 'FinPhasor'}</a> — {p.stage.toLowerCase()} at Expert Systems with Applications.</span></li>
+        ))}
+        <li><span class="d">Oct 2026</span><span>Working paper on <a href="/projects/exchange-queueing/">sizing an exchange's matching capacity when order arrivals are over-dispersed</a>: a 2025 course study re-run on 1.30 GB of real BTC/USDT tick data, with a Bayesian batch-arrival model as the surrogate behind the server count.</span></li>
+        <li><span class="d">Oct 2026</span><span>Seven reading notes on <a href="/blog/#surrogates-bo">Bayesian optimisation, learned priors and surrogates</a>, the methods behind the current working papers.</span></li>
+        <li><span class="d">2025.08 – 2026.08</span><span>Lab R&amp;D project with Urban Complex: <a href="/projects/artist-style-engine/">an artist-style generative engine</a> — style captioning, a QLoRA style classifier, SDXL generation routed by style family, and 3D asset output.</span></li>
+        <li><span class="d">Feb 2026 –</span><span>Personal project with Nune Eye Hospital: <a href="/projects/nune-retina-rl/">reinforcement learning for dynamic patient assignment</a> in a retina examination room — read-only EMR integration, a recalibrated simulation, and RL against the hospital's own scheduling.</span></li>
+        <li><span class="d">2026 –</span><span>Building <a href="/projects/lucubra/">Lucubra</a>, a research-agent platform where LLM agents verify papers and draft referee reports — the agent orchestration (chain-of-thought review steps, venue committees of referee personas) is the part I am working on now.</span></li>
+        <li><span class="d">2025.07 –</span><span>Built the lab's website <a href="/projects/fai-lab-site/">fai.yonsei.ac.kr</a>; this site followed in 2026.</span></li>
+        <li><span class="d">Jan 2026</span><span>Lab seminar on <a href="/research/model-uncertainty-priors/">learned priors for Bayesian factor selection</a>.</span></li>
+        <li><span class="d">Jul 2025</span><span>Talk at ISF 2025, Beijing: <a href="/research/isf2025-solar-forecasting/">A Study for Forecasting Solar Energy Power Generation</a>, joint work with SAS Institute and the University of Seoul.</span></li>
+        <li><span class="d">Mar 2025</span><span>Joined the Financial Investment AI Lab at Yonsei University as an M.S. student.</span></li>
+        <li><span class="d">Nov 2023</span><span>Presented <a href="/projects/eco-route-rl/">Green-Navi</a> (RL for fuel-optimal urban routing, team lead) at the Carbon-Neutral ESG research fair, Chung-Ang University.</span></li>
+        <li><span class="d">Nov 2023</span><span>Presented <a href="/research/#completed">Dealing with the Imbalanced-Data Problem with a Diffusion Model</a> at the 2023 KICS fall conference.</span></li>
+        <li><span class="d">2024</span><span>Submitted <a href="/research/#completed">Personalized Sleep Score Prediction Model Using a Lifelog Dataset</a> to the ETRI Human Understanding AI Paper Challenge.</span></li>
+        <li><span class="d">Dec 2022</span><span>Started as an undergraduate researcher at GAIL, Chung-Ang University.</span></li>
+      </ul>
+    </div>
+
+    <div class="hsec"><h2>Research interests</h2>
+      <div class="interests"><span class="tag">Simulation optimization &amp; ranking-and-selection</span><span class="tag">Decisions under stochastic constraints</span><span class="tag">Generative models as simulation input models</span><span class="tag">Diffusion &amp; flow-based models</span><span class="tag">Statistical output analysis &amp; monitoring</span><span class="tag">Computer vision for state estimation</span></div>
+    </div>
+
+    <div class="hsec"><h2>Publications <a href="/publications/">all, with review-stage history →</a></h2>
+      <ul class="pubs">
+
+        {PUBS.map((p) => (
+          <li><span class="y">{p.year}</span><div>
+            <div class="head"><div class="t">{p.title}</div><span class={`status ${p.stageClass}`}>{p.stageShort ?? p.stage}</span></div>
+            <div class="a" set:html={p.authorsHtml}></div><span class={`role-chip ${p.roleClass ?? ''}`}>{p.role}</span>
+            <div class="venue" set:html={p.venueHtml.split(' · earlier title')[0]}></div>
+            <div class="axis">{p.events.map((e, i) => (
+              <span class={`ev ${e.bad ? 'bad' : ''} ${i === p.events.length - 1 ? 'cur' : ''}`}
+                    data-date={e.date} data-s={e.stage} data-k={e.short ?? ''}
+                    data-gap={i ? gapLabel(p.events[i - 1].date, e.date) : ''}></span>
+            ))}</div>
+          </div></li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="two">
+      <div class="hsec"><h2>Education</h2>
+        <ul class="cv">
+          <li><span class="d">2025.03 –</span><div>M.S., Financial Investment AI Lab<div class="k">Yonsei University · 2nd year</div></div></li>
+          <li><span class="d">– 2025.02</span><div>B.S., School of Electrical and Electronics Engineering<div class="k">Chung-Ang University (CAU)</div></div></li>
+        </ul>
+      </div>
+      <div class="hsec"><h2>Experience</h2>
+        <ul class="cv">
+          <li><span class="d">2025.03 –</span><div>Graduate Researcher<div class="k">Financial Investment AI Lab, Yonsei — AI &amp; modeling for financial markets</div></div></li>
+          <li><span class="d">2022.12 – 2024.12</span><div>Undergraduate Researcher<div class="k">GAIL (AI Lab), EEE, Chung-Ang University — computer vision, generative models</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</Base>
