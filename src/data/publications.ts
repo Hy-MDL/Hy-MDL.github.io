@@ -106,20 +106,23 @@ export const PUBS: Pub[] = [
 export const byId = (id: string) => PUBS.find((p) => p.id === id)!;
 
 /** The submission now in progress, for the home page: events from the latest
- *  (re)submission on. While a declined paper has not been resubmitted yet, that
- *  last run stays, followed by the next step (next) dated at the decline; once a
- *  new submission is logged, only the new run shows. Every earlier venue stays
- *  on Publications. */
+ *  (re)submission on. After a decline: when the next venue is already chosen
+ *  (next.short), only that next step shows; while the next venue is still open,
+ *  the last run stays, followed by "next venue pending". Every earlier venue
+ *  stays on Publications. */
 export function currentRun(p: Pub): Ev[] {
   const last = p.events[p.events.length - 1];
   let i = p.events.length - 1;
   while (i > 0 && !/submitted/i.test(p.events[i].stage)) i--;
   const run = p.events.slice(i);
-  return last.bad && p.next ? [...run, { date: last.date, stage: p.next.stage, short: p.next.short }] : run;
+  if (!(last.bad && p.next)) return run;
+  const step = { date: last.date, stage: p.next.stage, short: p.next.short };
+  return p.next.short ? [step] : [...run, step];
 }
 
-/** The venue line for the home page: the current venue only. */
-export const currentVenue = (p: Pub) => p.venueHtml.split(' · earlier title')[0];
+/** The venue line for the home page: only the chosen next venue once one is set. */
+export const currentVenue = (p: Pub) =>
+  p.events[p.events.length - 1].bad && p.next?.short ? p.next.venueHtml : p.venueHtml.split(' · earlier title')[0];
 
 /** Whole days between two ISO dates. */
 export const gapDays = (a: string, b: string) =>
