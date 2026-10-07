@@ -15,10 +15,10 @@ const m = (id: string, i = 0) => ex[id]?.data.metrics[i];
 
     <div class="now">
       <div><span class="e">The question</span><span class="t">How much of a selection guarantee survives when the simulation's input model was learned from data?</span><span class="s">Every thread below is one way of asking it, and the working answer is the same: a model that carries the problem's own uncertainty, in its architecture or in its batch structure, becomes a surrogate through which the decision can be controlled and adapted. A learned scenario generator, a learned prior, a fitted input distribution, a learned arrival process, an early-life battery predictor.</span></div>
-      <div><span class="e">Where it stands</span><span class="t">Two papers under review, two working papers, and experiment lines toward the next</span><span class="s">Review stages live on Publications; code and results on each thread's experiment page.</span></div>
+      <div><span class="e">Where it stands</span><span class="t">One paper under review, one being prepared for resubmission, two working papers, and experiment lines toward the next</span><span class="s">Review stages live on Publications; code and results on each thread's experiment page.</span></div>
     </div>
 
-    <div class="sec-h" style="margin-top:30px"><h2>Ongoing</h2><span class="hnote">six threads — two papers under review, two working papers, and experiments meant to become one</span></div>
+    <div class="sec-h" style="margin-top:30px"><h2>Ongoing</h2><span class="hnote">six threads — one paper under review, one being prepared for resubmission, two working papers, and experiments meant to become one</span></div>
     <ul class="feat threads">
       <li>
         <a class="card" href="/research/diffusion-scenarios/"><img src="/projects/diffusion-scenarios/media/architecture.png" alt="CASE architecture: representation, embeddings, denoiser and sampling" loading="lazy"></a>
@@ -29,7 +29,7 @@ const m = (id: string, i = 0) => ex[id]?.data.metrics[i];
       </li>
       <li>
         <a class="card" href="/research/finphasor/"><img src="/projects/finphasor/media/architecture.png" alt="FinPhasor architecture: scale-conditioned cross-attention read-out and Grad-CAM attribution" loading="lazy"></a>
-        <div class="kick"><span>Thread 2 · timing in the cross-section</span><span class={`status ${pub('finphasor').stageClass}`}>{pub('finphasor').stageShort ?? pub('finphasor').stage} · ESWA</span></div>
+        <div class="kick"><span>Thread 2 · timing in the cross-section</span><span class={`status ${pub('finphasor').stageClass}`}>{pub('finphasor').stageShort ?? pub('finphasor').stage} · ASOC</span></div>
         <a class="t" href="/research/finphasor/">Phase-preserving measurement of when stocks reprice</a>
         <p class="k">Topic: when stocks reprice after the same news, which can be weeks apart. Method: predict each stock's future complex wavelet scalogram, keep the phase that a magnitude-only forecast throws away, and use it to rank the cross-section; Grad-CAM shows which scales the ranking relies on.</p>
         <div class="links"><a href="/research/finphasor/">paper · FinPhasor <small>1st author · {last(pub('finphasor'))}</small></a></div>
@@ -64,7 +64,7 @@ const m = (id: string, i = 0) => ex[id]?.data.metrics[i];
       </li>
     </ul>
 
-    <div class="sec-h" id="manuscripts" style="margin-top:44px;scroll-margin-top:24px"><h2>Manuscripts</h2><span class="hnote">first-author papers under review, working papers on their way to submission, then lab papers where I am second or third author; review stages on <a href="/publications/">Publications</a></span></div>
+    <div class="sec-h" id="manuscripts" style="margin-top:44px;scroll-margin-top:24px"><h2>Manuscripts</h2><span class="hnote">first-author papers (one under review, one being prepared for resubmission), working papers on their way to submission, then lab papers where I am second or third author; review stages on <a href="/publications/">Publications</a></span></div>
     <ul class="rows rl">
       <li><a href="/research/diffusion-scenarios/">
         <span class="d">{pub('case').year}</span>
@@ -75,7 +75,7 @@ const m = (id: string, i = 0) => ex[id]?.data.metrics[i];
         <span class="d">{pub('finphasor').year}</span>
         <div><div class="t">{pub('finphasor').title}</div>
           <div class="k">Measuring when stocks reprice: forecasting complex wavelet scalograms keeps the phase of price moves, which a magnitude-only forecast discards, and the phase is used to rank the cross-section by repricing timing.</div></div>
-        <div class="r"><span class={`status ${pub('finphasor').stageClass}`}>{pub('finphasor').stageShort ?? pub('finphasor').stage} · ESWA</span><span>1st author · {last(pub('finphasor'))}</span></div></a></li>
+        <div class="r"><span class={`status ${pub('finphasor').stageClass}`}>{pub('finphasor').stageShort ?? pub('finphasor').stage} · ASOC</span><span>1st author · {last(pub('finphasor'))}</span></div></a></li>
       <li><a href="/research/model-uncertainty-priors/">
         <span class="d">now</span>
         <div><div class="t">Learned Surrogate Priors for Bayesian Model Selection: Density, Uncertainty, and the Cost of a Sampler</div>

@@ -1,6 +1,8 @@
 // Single source of truth for submitted papers.
-// The home page, the publications page and the paper project pages all read this,
-// so a status change is edited once here and nowhere else.
+// The publications page, the CV's publication list, the home page's Publications and News lines
+// and the Research chips read this. Still written by hand when a stage changes: the home intro and
+// Selected-work chips, the Research summary lines, each paper page, the CV research-experience
+// bullets and the About page.
 
 export type Ev = {
   date: string;        // ISO, the date the stage was reached
@@ -26,6 +28,7 @@ export type Pub = {
   events: Ev[];
   page?: string;         // the write-up, when one is public
   lk?: string;           // availability line
+  news?: string;         // home News text after the paper's name, when "<stage> at ESWA" no longer fits
 };
 
 export const PUBS: Pub[] = [
@@ -51,16 +54,18 @@ export const PUBS: Pub[] = [
     title: 'FinPhasor: Phase-Preserving Measurement of Cross-Sectional Timing in Equity Markets',
     authorsHtml: '<b>Hyeon Min Jeon</b>, Hee Soo Lee<sup>*</sup>, Kyong Joo Oh<sup>*</sup>',
     role: '1st author', roleClass: 'first', filterRole: 'first',
-    venueHtml: 'Submitted to <b>Expert Systems with Applications</b> · ESWA-D-26-35395 · earlier title: <i>DAMP: Damped Adaptive Market Physics…</i>',
-    stage: 'Required Reviews Completed', stageShort: 'RRC', stageClass: 's-rev', filterStage: 'rrc',
+    venueHtml: 'Next: <b>Applied Soft Computing</b> · previously Expert Systems with Applications (ESWA-D-26-35395) · earlier title: <i>DAMP: Damped Adaptive Market Physics…</i>',
+    stage: 'Preparing resubmission', stageClass: 's-plan', filterStage: 'pending',
     events: [
       { date: '2026-08-22', stage: 'Submitted', short: 'ESWA', note: 'Expert Systems with Applications · ESWA-D-26-35395 · PDF build approved' },
       { date: '2026-08-24', stage: 'With editor', note: 'handling editor assigned · desk &amp; format check' },
       { date: '2026-08-31', stage: 'Under review', note: 'reviewers secured · external peer review started' },
       { date: '2026-09-17', stage: 'Reviews completed', short: 'RRC', note: 'all reviewer reports in · awaiting editor decision' },
+      { date: '2026-10-07', stage: 'Declined', bad: true, note: 'Expert Systems with Applications, after review — next: Applied Soft Computing' },
     ],
     page: '/research/finphasor/',
     lk: 'manuscript not public',
+    news: 'after review at Expert Systems with Applications, preparing a resubmission to Applied Soft Computing',
   },
   {
     id: 'convfactornet',
