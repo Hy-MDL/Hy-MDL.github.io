@@ -1,0 +1,139 @@
+% Hyeonmin Jeon, CV. Source for public/cv/Hyeonmin_Jeon_CV.pdf, rebuilt on 2026-10-07 to match the
+% published layout. Build twice with: xelatex Hyeonmin_Jeon_CV.tex
+\documentclass[11pt]{article}
+\usepackage{fontspec}
+\usepackage[a4paper,hmargin=0.9in,vmargin=0.75in]{geometry}
+\usepackage{microtype}
+\usepackage{xcolor}
+\definecolor{accent}{HTML}{3E52B4}
+\usepackage[colorlinks=true,urlcolor=accent,linkcolor=accent]{hyperref}
+\usepackage{enumitem}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+
+% Spacing measured from the published PDF. Headings carry a strut and leave a mergeable 5.9pt
+% below them, so a list or an entry table directly under a heading lines up as in the original.
+% \@afterheading keeps a heading with the first lines below it.
+\makeatletter
+\newcommand{\cvsection}[1]{\par\addvspace{14pt}{\large\scshape\color{accent}#1\strut\par}\nopagebreak\vskip 5.9pt\relax\@afterheading}
+\newcommand{\cvsubsection}[1]{\par\vspace{3.9pt}{\scshape #1\par}\nopagebreak\vskip 8pt\relax\@afterheading}
+\makeatother
+\clubpenalty=10000
+\widowpenalty=10000
+
+\setlist[enumerate]{leftmargin=2em,itemsep=4.95pt,topsep=6.1pt,partopsep=0pt,parsep=0pt}
+\setlist[itemize]{leftmargin=1.6em,itemsep=0pt,topsep=4pt,partopsep=0pt,parsep=0.9pt,before=\vspace{0.9pt}}
+
+% institution / location, then role / dates
+\newcommand{\entry}[4]{\par\noindent\begin{tabular*}{\textwidth}[t]{@{}l@{\extracolsep{\fill}}r@{}}\textbf{#1} & #2\\ \textit{#3} & #4\end{tabular*}\par}
+% a project: bold title, then italic subtitle / dates
+\newcommand{\project}[3]{\par\noindent\begin{tabular*}{\textwidth}[t]{@{}l@{\extracolsep{\fill}}r@{}}\textbf{#1} & \\ \textit{#2} & #3\end{tabular*}\par}
+\newcommand{\me}{\textbf{Hyeon Min Jeon}}
+\newcommand{\corr}{$^{*}$}
+
+\begin{document}
+
+{\centering\LARGE\scshape\color{accent} Hyeonmin Jeon\par}
+\vspace{13.7pt}
+{\centering
+\begin{tabular}{l@{\hspace{12.9pt}}l}
+Financial Investment AI Lab & Email: \href{mailto:hyeonmin16@yonsei.ac.kr}{hyeonmin16@yonsei.ac.kr}\\
+Department of Industrial Engineering, Yonsei University & Webpage: \href{https://hy-mdl.github.io}{hy-mdl.github.io}\\
+Seoul, Republic of Korea & Applying for Ph.D., Fall 2027
+\end{tabular}\par}
+
+\cvsection{Education}
+\entry{Yonsei University}{Seoul, Korea}{M.S. in Industrial Engineering}{Mar 2025 -- Feb 2027 (expected)}
+Advisor: Prof. Kyong Joo Oh, Financial Investment AI Lab. GPA 3.97/4.0.\par
+Relevant coursework: Stochastic Modelling Theory, Probabilistic Models \& Bayesian Inference, Time-Series Analysis, Deep Learning Theory \& Applications, Advanced Investment Engineering, Financial Engineering Topics, Corporate Finance.\par
+\vspace{5pt}
+\entry{Chung-Ang University}{Seoul, Korea}{B.S. in Electrical and Electronics Engineering}{Mar 2019 -- Feb 2025}
+GPA 3.59/4.0. Thesis: \textit{Light-weighting Tiny YOLOv3: The Impact of Quantization on Real-World Applications} (advisor Prof. Minhyeok Lee).\par
+Relevant coursework: Linear Algebra, Mathematics for Electrical Engineering, Numerical Analysis, Random Variables, Signals \& Systems, Machine Learning, Artificial Intelligence, Algorithms.\par
+
+\cvsection{Research Interests}
+Bayesian learning and simulation optimization under input uncertainty; learned and multi-fidelity surrogate models; generative models (diffusion, normalizing flows) as simulation input models; sequential decision-making with statistical guarantees.\par
+
+\cvsection{Publications and Working Papers}
+Note. \corr: corresponding author.\par
+\cvsubsection{Journal Manuscripts}
+\begin{enumerate}
+\item \me, Hee Soo Lee\corr, Kyong Joo Oh\corr. Conditional Diffusion Transformers for Multi-Asset Scenario Generation and Portfolio Risk Measurement. \textit{Expert Systems with Applications}, under review, 2026.
+\item \me, Hee Soo Lee\corr, Kyong Joo Oh\corr. FinPhasor: Phase-Preserving Measurement of Cross-Sectional Timing in Equity Markets. \textit{In preparation for resubmission to Applied Soft Computing}, 2026.
+\item Sang Hoe Kim, \me, Dae Hyuk You, Jiyoung Jeon, Seungho Baek, Hee Soo Lee, Kyong Joo Oh\corr. Deep Convolutional Factor Prediction with Explainable AI for Enhanced Investment Strategy. \textit{In preparation for resubmission}, 2026.
+\item Dae Hyuk You, Jiyoung Jeon, \me, Sang Hoe Kim, Sang Hyuk Yoo, Tae Yoon Kim, Hee Soo Lee, Kyong Joo Oh\corr. Benchmark-Aware Enhanced Indexing Guided by the Volume--Price Index. \textit{In preparation for resubmission}, 2026.
+\end{enumerate}
+\cvsubsection{Working Papers}
+\begin{enumerate}[resume]
+\item \me. Learned Surrogate Priors for Bayesian Model Selection: Density, Uncertainty, and the Cost of a Sampler. Lab seminar, January 2026. \href{https://hy-mdl.github.io/research/model-uncertainty-priors/}{[Link]}
+\item \me. Bayesian Capacity Sizing for an Exchange Matching Queue under Over-Dispersed Arrivals. 2026. \href{https://hy-mdl.github.io/projects/exchange-queueing/}{[Link]}
+\end{enumerate}
+\cvsubsection{Conference Presentations}
+\begin{enumerate}[resume]
+\item YoungDoo Jeong\corr, HaeRim Kim, Dae Hyuk You, \me, Andre de Castro, Taewoo Lee. A Study for Forecasting Solar Energy Power Generation. \textit{45th International Symposium on Forecasting (ISF 2025)}, Beijing, July 2025. Talk, joint work with SAS Institute.
+\item \me, Minhyeok Lee. Dealing with the Imbalanced-Data Problem with a Diffusion Model. \textit{KICS Fall Conference}, November 2023.
+\item \me{} et al. Personalized Sleep Score Prediction Model Using a Lifelog Dataset. \textit{ETRI Human Understanding AI Paper Challenge}, 2024.
+\end{enumerate}
+
+\cvsection{Research Experience}
+\entry{Financial Investment AI Lab, Yonsei University}{Seoul, Korea}{Graduate Research Assistant}{Mar 2025 -- Present}
+\begin{itemize}
+\item Generative scenario models for portfolio risk: a conditional diffusion transformer that generates joint multi-asset return scenarios, evaluated by the VaR/ES reserves set on its scenarios rather than by sample realism.
+\item Timing in the equity cross-section: forecasting complex wavelet scalograms so that the phase of price moves, and hence when each stock reprices, is preserved and used for cross-sectional ranking.
+\item Learned priors for Bayesian factor selection: replacing the mixture-of-$g$ prior with a normalizing flow that keeps an explicit density, checked against the exact posterior over models (TV distance 0.016) and tuned by Bayesian optimization; compared with a density-free GAN prior.
+\item Ranking and selection under input uncertainty: implemented and verified KN, feasibility determination, recycled observations and CRN, and studied how a fitted input model affects the probability-of-correct-selection guarantee.
+\end{itemize}
+\vspace{4pt}
+\entry{TIPS R\&D Project with Urban Complex}{Seoul, Korea}{Researcher, artist-style generative engine (lab project)}{Mar 2025 -- Aug 2026}
+\begin{itemize}
+\item Built chain-of-thought style captioning with Qwen and trained a QLoRA style classifier on Qwen2-VL-7B (91.4\% seen / 76.0\% unseen; 96.0\% fused with a DINOv2 prior).
+\item Trained SDXL-based generation with domain checkpoints routed by the classifier, and built the style memory module.
+\end{itemize}
+\vspace{4pt}
+\entry{GAIL (AI Lab), Chung-Ang University}{Seoul, Korea}{Undergraduate Researcher}{Dec 2022 -- Dec 2024}
+\begin{itemize}
+\item Diffusion-model oversampling for imbalanced fraud data; latent-diffusion portfolio study; lifelog sleep-score prediction; 3D point-cloud classification.
+\end{itemize}
+\vspace{4pt}
+\entry{Carbon-Neutral ESG Research Group, Chung-Ang University}{Seoul, Korea}{Team Lead, ``Green-Navi'' (Green AI track)}{Apr 2023 -- Dec 2023}
+\begin{itemize}
+\item Reinforcement learning for fuel-optimal urban routing in AIMSUN; presented at the research fair, November 2023 (MSIT/NRF Field-Linked Future-Leading Talent programme).
+\end{itemize}
+
+\cvsection{Selected Projects}
+\project{Retina Exam Room Scheduling, with Nune Eye Hospital}{Discrete-event simulation and reinforcement learning}{Feb 2026 -- Present}
+\begin{itemize}
+\item Recalibrated a discrete-event simulator to hospital records; compared rule, behaviour-cloned and PPO policies on a 44-day replay (time in room 12.2 $\to$ 8.2 min); read-only EMR integration and live comparison.
+\end{itemize}
+\project{Simulation-Methodology Reimplementations}{rs-lab, Input-Uncertainty Select, TailFlow, Eco-Route RL, roughvol-lab}{Sep 2026}
+\begin{itemize}
+\item Ranking \& selection with verified guarantees; input-uncertainty effects on selection; conditional diffusion as a risk engine; CO\textsubscript{2}-optimal routing on SUMO with P(correct selection) 0.956; rough volatility.
+\end{itemize}
+\project{Lucubra, research-agent platform}{LLM agents for paper verification and referee reports}{Sep 2026 -- Present}
+\project{Light-weighting Tiny YOLOv3}{Graduation thesis, team of three}{2024}
+\begin{itemize}
+\item Int8 quantization with layer fusion; total footprint 1.6 GB $\to$ 100 MB, inference 22--64\% faster across five devices, mAP $-$2.78 pt on PASCAL VOC.
+\end{itemize}
+
+\cvsection{Teaching Experience}
+\entry{Yonsei University}{Seoul, Korea}{Teaching Assistant, Financial Engineering (undergraduate)}{Spring 2026}
+
+\cvsection{Awards and Honors}
+\begin{itemize}[leftmargin=0.3in,labelsep=6.6pt,before=\vspace{1.1pt}]
+\item Special Prize (data use), Chungcheong ICT Innovation Public-Data Competition \hfill 2024
+\end{itemize}
+
+\cvsection{Skills}
+\begin{tabular}[t]{@{}p{80.8pt}@{\hspace{6pt}}p{378.9pt}@{}}
+\textsc{Programming} & Python (NumPy, SciPy, pandas, PyTorch, CUDA), C++, MATLAB, TypeScript, SQL, \LaTeX\\
+\textsc{Methods} & Discrete-event and Monte Carlo simulation, ranking \& selection, variance reduction, diffusion and flow models, Bayesian inference, reinforcement learning, time-series analysis\\
+\textsc{Tools} & Eclipse SUMO, AIMSUN, SAS, Hugging Face, Linux multi-GPU servers\\
+\textsc{Languages} & Korean (native), English (working proficiency)
+\end{tabular}
+
+\vfill
+\hfill\textit{Last updated on October 7, 2026.}
+
+\end{document}
