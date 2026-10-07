@@ -91,7 +91,7 @@ import Base from '../layouts/Base.astro';
             <div class="axis">{currentRun(p).map((e, i, run) => (
               <span class={`ev ${e.bad ? 'bad' : ''} ${i === run.length - 1 ? 'cur' : ''}`}
                     data-date={e.date} data-s={e.stage} data-k={e.short ?? ''}
-                    data-gap={i ? gapLabel(run[i - 1].date, e.date) : ''}></span>
+                    data-gap={i && run[i - 1].date !== e.date ? gapLabel(run[i - 1].date, e.date) : ''}></span>
             ))}</div>
           </div></li>
         ))}
