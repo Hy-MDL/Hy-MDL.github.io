@@ -29,6 +29,7 @@ export type Pub = {
   page?: string;         // the write-up, when one is public
   lk?: string;           // availability line
   news?: string;         // home News text after the paper's name, when "<stage> at ESWA" no longer fits
+  next?: { stage: string; short?: string; venueHtml: string };  // after a decline: the step now in progress (home page shows only this)
 };
 
 export const PUBS: Pub[] = [
@@ -66,6 +67,7 @@ export const PUBS: Pub[] = [
     page: '/research/finphasor/',
     lk: 'manuscript not public',
     news: 'after review at Expert Systems with Applications, preparing a resubmission to Applied Soft Computing',
+    next: { stage: 'Preparing submission', short: 'ASOC', venueHtml: 'Preparing submission to <b>Applied Soft Computing</b>' },
   },
   {
     id: 'convfactornet',
@@ -81,6 +83,7 @@ export const PUBS: Pub[] = [
       { date: '2026-07-16', stage: 'Resubmitted', short: 'ASOC', note: 'Applied Soft Computing · ASOC-D-26-13102' },
       { date: '2026-09-01', stage: 'Declined', bad: true, note: 'Applied Soft Computing — next venue pending' },
     ],
+    next: { stage: 'Next venue pending', venueHtml: 'Next venue pending' },
     lk: 'manuscript not public',
   },
   {
@@ -95,11 +98,27 @@ export const PUBS: Pub[] = [
       { date: '2025-11-28', stage: 'Submitted', short: 'ESWA', note: 'Expert Systems with Applications · ESWA-D-25-33272' },
       { date: '2025-12-03', stage: 'Declined', bad: true, note: 'Expert Systems with Applications — next venue pending' },
     ],
+    next: { stage: 'Next venue pending', venueHtml: 'Next venue pending' },
     lk: 'manuscript not public',
   },
 ];
 
 export const byId = (id: string) => PUBS.find((p) => p.id === id)!;
+
+/** The submission now in progress, for the home page: events from the latest
+ *  (re)submission on. After a decline it is a single step, the next one
+ *  (next), dated at the decline; the earlier venues stay on Publications. */
+export function currentRun(p: Pub): Ev[] {
+  const last = p.events[p.events.length - 1];
+  if (last.bad && p.next) return [{ date: last.date, stage: p.next.stage, short: p.next.short }];
+  let i = p.events.length - 1;
+  while (i > 0 && !p.events[i].short) i--;
+  return p.events.slice(i);
+}
+
+/** The venue line for the home page: the current venue only. */
+export const currentVenue = (p: Pub) =>
+  p.events[p.events.length - 1].bad && p.next ? p.next.venueHtml : p.venueHtml.split(' · ')[0];
 
 /** Whole days between two ISO dates. */
 export const gapDays = (a: string, b: string) =>

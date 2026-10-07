@@ -1,5 +1,5 @@
 ---
-import { PUBS, gapLabel } from '../data/publications';
+import { PUBS, gapLabel, currentRun, currentVenue } from '../data/publications';
 const month = (iso: string) => new Date(iso + 'T00:00:00').toLocaleString('en', { month: 'short' }) + ' ' + iso.slice(0, 4);
 import Base from '../layouts/Base.astro';
 ---
@@ -87,11 +87,11 @@ import Base from '../layouts/Base.astro';
           <li><span class="y">{p.year}</span><div>
             <div class="head"><div class="t">{p.title}</div><span class={`status ${p.stageClass}`}>{p.stageShort ?? p.stage}</span></div>
             <div class="a" set:html={p.authorsHtml}></div><span class={`role-chip ${p.roleClass ?? ''}`}>{p.role}</span>
-            <div class="venue" set:html={p.venueHtml.split(' · earlier title')[0]}></div>
-            <div class="axis">{p.events.map((e, i) => (
-              <span class={`ev ${e.bad ? 'bad' : ''} ${i === p.events.length - 1 ? 'cur' : ''}`}
+            <div class="venue" set:html={currentVenue(p)}></div>
+            <div class="axis">{currentRun(p).map((e, i, run) => (
+              <span class={`ev ${e.bad ? 'bad' : ''} ${i === run.length - 1 ? 'cur' : ''}`}
                     data-date={e.date} data-s={e.stage} data-k={e.short ?? ''}
-                    data-gap={i ? gapLabel(p.events[i - 1].date, e.date) : ''}></span>
+                    data-gap={i ? gapLabel(run[i - 1].date, e.date) : ''}></span>
             ))}</div>
           </div></li>
         ))}
