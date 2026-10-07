@@ -28,6 +28,8 @@
 
 % institution / location, then role / dates
 \newcommand{\entry}[4]{\par\noindent\begin{tabular*}{\textwidth}[t]{@{}l@{\extracolsep{\fill}}r@{}}\textbf{#1} & #2\\ \textit{#3} & #4\end{tabular*}\par}
+% a single line: bold text / dates
+\newcommand{\oneline}[2]{\par\noindent\begin{tabular*}{\textwidth}[t]{@{}l@{\extracolsep{\fill}}r@{}}#1 & #2\end{tabular*}\par}
 % a project: bold title, then italic subtitle / dates
 \newcommand{\project}[3]{\par\noindent\begin{tabular*}{\textwidth}[t]{@{}l@{\extracolsep{\fill}}r@{}}\textbf{#1} & \\ \textit{#2} & #3\end{tabular*}\par}
 \newcommand{\me}{\textbf{Hyeon Min Jeon}}
@@ -45,7 +47,7 @@ Seoul, Republic of Korea & Applying for Ph.D., Fall 2027
 \end{tabular}\par}
 
 \cvsection{Education}
-\entry{Yonsei University}{Seoul, Korea}{M.S. in Industrial Engineering}{Mar 2025 -- Feb 2027 (expected)}
+\entry{Yonsei University}{Seoul, Korea}{M.S. in Industrial Engineering}{Mar 2025 -- Jun 2027 (expected)}
 Advisor: Prof. Kyong Joo Oh, Financial Investment AI Lab. GPA 3.97/4.0.\par
 Relevant coursework: Stochastic Modelling Theory, Probabilistic Models \& Bayesian Inference, Time-Series Analysis, Deep Learning Theory \& Applications, Advanced Investment Engineering, Financial Engineering Topics, Corporate Finance.\par
 \vspace{5pt}
@@ -124,6 +126,9 @@ Note. \corr: corresponding author.\par
 \begin{itemize}[leftmargin=0.3in,labelsep=6.6pt,before=\vspace{1.1pt}]
 \item Special Prize (data use), Chungcheong ICT Innovation Public-Data Competition \hfill 2024
 \end{itemize}
+
+\cvsection{Military Service}
+\oneline{\textbf{Mandatory military service}, Republic of Korea}{Mar 2020 -- Sep 2021}
 
 \cvsection{Skills}
 \begin{tabular}[t]{@{}p{80.8pt}@{\hspace{6pt}}p{378.9pt}@{}}
