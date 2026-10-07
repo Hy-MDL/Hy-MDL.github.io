@@ -193,7 +193,7 @@ Figure 4 is also quiet evidence against one of the architectural choices: neighb
 
 **Stated by the authors.**
 
-- Sampling loops $N$ times over $\epsilon_\theta$ per step, unlike training; they point at WaveGrad's L1-loss-plus-schedule trick and at [DDIM](/blog/ddim/)'s non-Markovian chains as remedies, without running either.
+- Sampling loops $N$ times over $\epsilon_\theta$ per step, unlike training; they point at WaveGrad's L1-loss-plus-schedule trick and at DDIM's non-Markovian chains as remedies, without running either.
 - Neighbouring entities in a multivariate panel are ordered arbitrarily and can differ wildly in scale, unlike the waveform data the denoiser was designed for.
 - For long sequences the RNN should probably be a Transformer; where the dependency structure is known, a graph network would encode it better.
 
@@ -208,7 +208,7 @@ Figure 4 is also quiet evidence against one of the architectural choices: neighb
 
 ## 7 Extensions
 
-**What was built on this.** The paper's own future-work list has largely been executed by others. [CSDI](/blog/csdi/), published later the same year, attacks the structural weakness directly: it drops the RNN for masked two-axis attention, which makes the model non-autoregressive over the horizon and lets the same network do imputation and interpolation. Its Table 5 puts CSDI ahead of TimeGrad on electricity and traffic and behind on taxi. [TSDiff](/blog/tsdiff/) goes further and trains a single unconditional model, obtaining forecasts by self-guidance at sampling time; [Diffusion-TS](/blog/diffusion-ts/) adds an interpretable decomposition. Faster sampling arrived through [DDIM](/blog/ddim/) and the schedule work in [Improved DDPM](/blog/improved-ddpm/).
+**What was built on this.** The paper's own future-work list has largely been executed by others. [CSDI](/blog/csdi/), published later the same year, attacks the structural weakness directly: it drops the RNN for masked two-axis attention, which makes the model non-autoregressive over the horizon and lets the same network do imputation and interpolation. Its Table 5 puts CSDI ahead of TimeGrad on electricity and traffic and behind on taxi. [TSDiff](/blog/tsdiff/) goes further and trains a single unconditional model, obtaining forecasts by self-guidance at sampling time; [Diffusion-TS](/blog/diffusion-ts/) adds an interpretable decomposition. Faster sampling arrived through DDIM and the schedule work in Improved DDPM.
 
 **Open problems.** Evaluating multivariate forecasts on dependence rather than on an aggregate. Whether autoregressive rollout with a generative emission degrades over long horizons, and by how much. A principled ordering of the series axis, or an architecture that does not need one. Discrete-valued panels — Taxi and Wikipedia are counts, modelled here as continuous.
 

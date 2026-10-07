@@ -26,7 +26,7 @@ In 2019 the two dominant families of generative models each carried a structural
 
 Modelling the score sidesteps normalization entirely. If $p(x)=\tilde p(x)/Z$ then $\nabla_x\log p(x)=\nabla_x\log\tilde p(x)$, so the partition function never appears and the network $s_\theta:\mathbb{R}^D\to\mathbb{R}^D$ can be anything that maps an image to an image. <mark>Training then needs no adversary, no MCMC inner loop, and no architectural constraint</mark>, and — the authors argue, though they never demonstrate it — the loss itself can compare models.
 
-The catch, and the real content of the paper, is that "fit the score, then run Langevin" does not work on images. Sections 3.1 and 3.2 of the paper are a two-part diagnosis, and the method is the smallest mechanism that answers both parts at once. Everything that follows in this series — [NCSNv2](/blog/ncsnv2/) computing the schedule instead of guessing it, [DDPM](/blog/ddpm/) rewriting the same loss as a variational bound, [Score-SDE](/blog/score-sde/) taking the ladder to a continuum — inherits this diagnosis rather than replacing it.
+The catch, and the real content of the paper, is that "fit the score, then run Langevin" does not work on images. Sections 3.1 and 3.2 of the paper are a two-part diagnosis, and the method is the smallest mechanism that answers both parts at once. Everything that follows in this series — NCSNv2 computing the schedule instead of guessing it, [DDPM](/blog/ddpm/) rewriting the same loss as a variational bound, [Score-SDE](/blog/score-sde/) taking the ladder to a continuum — inherits this diagnosis rather than replacing it.
 
 ## 2 Background
 
@@ -52,7 +52,7 @@ $$
 \tilde x_t=\tilde x_{t-1}+\frac{\epsilon}{2}\,\nabla_x\log p(\tilde x_{t-1})+\sqrt{\epsilon}\,z_t,\qquad z_t\sim\mathcal N(0,I).
 \tag{4}
 $$
-As $\epsilon\to0$ and $T\to\infty$, $\tilde x_T$ is a sample from $p$. For $\epsilon>0$ and finite $T$ a Metropolis–Hastings correction would be needed; the paper drops it and assumes the discretization error is negligible. Note the convention — drift $\epsilon/2$, noise $\sqrt\epsilon$. [NCSNv2](/blog/ncsnv2/) writes the same chain as drift $\alpha$, noise $\sqrt{2\alpha}$, i.e. $\alpha=\epsilon/2$; the two papers' $\epsilon$ symbols are not the same quantity.
+As $\epsilon\to0$ and $T\to\infty$, $\tilde x_T$ is a sample from $p$. For $\epsilon>0$ and finite $T$ a Metropolis–Hastings correction would be needed; the paper drops it and assumes the discretization error is negligible. Note the convention — drift $\epsilon/2$, noise $\sqrt\epsilon$. NCSNv2 writes the same chain as drift $\alpha$, noise $\sqrt{2\alpha}$, i.e. $\alpha=\epsilon/2$; the two papers' $\epsilon$ symbols are not the same quantity.
 
 ## 3 Method
 
@@ -70,7 +70,7 @@ That is suggestive rather than conclusive — an unstable loss curve is consiste
 
 *Mixing.* This is a separate failure and it survives a perfect score. Let $p_{\text{data}}=\pi p_1+(1-\pi)p_2$ with disjoint supports. On $\operatorname{supp}p_1$, $\nabla_x\log p_{\text{data}}(x)=\nabla_x(\log\pi+\log p_1(x))=\nabla_x\log p_1(x)$, and symmetrically on $\operatorname{supp}p_2$: <mark>the score is exactly independent of the mixing weight $\pi$</mark>. A sampler that consumes only the score therefore has no access to $\pi$ at all. With supports that merely nearly separate — the realistic case — the information is present but reachable only by crossing a region of vanishing density, which costs a mixing time that grows exponentially. The toy experiment confirms it with the *ground-truth* score: plain Langevin puts roughly equal mass on the two modes instead of $1{:}4$ ([Fig. 3 in the paper](https://arxiv.org/pdf/1907.05600#page=5)).
 
-Keeping these two apart matters. Noise at a given scale helps the first by putting probability mass where there was none; it helps the second only if the scale is comparable to the distance between modes. The second requirement is much more demanding, and it is precisely the one [NCSNv2](/blog/ncsnv2/) later turns into a formula.
+Keeping these two apart matters. Noise at a given scale helps the first by putting probability mass where there was none; it helps the second only if the scale is comparable to the distance between modes. The second requirement is much more demanding, and it is precisely the one NCSNv2 later turns into a formula.
 
 ### 3.3 The NCSN objective
 
@@ -95,7 +95,7 @@ in which $(\tilde x-x)/\sigma\sim\mathcal N(0,I)$ and $\lVert\sigma s_\theta\rVe
 
 ### 3.4 Intuition: one data point, and two
 
-The $1/\sigma$ law falls out of the simplest possible case. Take $p_{\text{data}}=\delta(x-a)$. Then $q_\sigma=\mathcal N(a,\sigma^2I)$, its score is $-(x-a)/\sigma^2$, and a typical draw has $\lVert x-a\rVert_2\approx\sqrt D\sigma$, so $\mathbb{E}\lVert\nabla\log q_\sigma\rVert_2\approx\sqrt D/\sigma$. The $1/\sigma$ is exact here; on real data it is an empirical extrapolation of this calculation. ([NCSNv2](/blog/ncsnv2/) uses exactly this surrogate to justify replacing noise conditioning with a division by $\sigma$.)
+The $1/\sigma$ law falls out of the simplest possible case. Take $p_{\text{data}}=\delta(x-a)$. Then $q_\sigma=\mathcal N(a,\sigma^2I)$, its score is $-(x-a)/\sigma^2$, and a typical draw has $\lVert x-a\rVert_2\approx\sqrt D\sigma$, so $\mathbb{E}\lVert\nabla\log q_\sigma\rVert_2\approx\sqrt D/\sigma$. The $1/\sigma$ is exact here; on real data it is an empirical extrapolation of this calculation. (NCSNv2 uses exactly this surrogate to justify replacing noise conditioning with a division by $\sigma$.)
 
 Now two points in 1-D, $p_{\text{data}}=\pi\delta(x+a)+(1-\pi)\delta(x-a)$, and $q_\sigma$ the corresponding mixture of Gaussians. Langevin dynamics on $q_\sigma$ is diffusion in the potential $U=-\log q_\sigma$, and its mode-to-mode crossing time scales like $\exp(\Delta U)$ where $\Delta U$ is the barrier at the midpoint. For $\sigma\ll a$ the log-density at $x=0$ sits about $a^2/(2\sigma^2)$ below a mode, so the crossing time behaves like $\exp(a^2/2\sigma^2)$: at $\sigma=a/3$ that is already $e^{4.5}\approx90$ times a within-mode relaxation, at $\sigma=a/10$ it is $e^{50}$. Once $\sigma\gtrsim a$ the barrier is gone and the chain mixes in $O(1)$. This is the argument for annealing in one line: <mark>the top of the ladder needs $\sigma$ on the scale of the *distance between modes*, not on the scale of the data's own noise</mark>. It is also why $\sigma_1=1$ on CIFAR-10 turns out to be badly wrong — the follow-up measures the median pairwise distance between training images at about 18 and recommends $\sigma_1=50$.
 
@@ -113,9 +113,9 @@ $$
 \mathbb{E}\Big\lVert\frac{\alpha_i s_\theta(x,\sigma_i)}{2\sqrt{\alpha_i}\,z}\Big\rVert_2^2\;\approx\;\frac{\alpha_i}{4}\,\mathbb{E}\lVert s_\theta(x,\sigma_i)\rVert_2^2\;\propto\;\frac14\,\mathbb{E}\lVert\sigma_i s_\theta(x,\sigma_i)\rVert_2^2\;\propto\;\frac14 ,
 \tag{9}
 $$
-where the middle step uses $\alpha_i\propto\sigma_i^2$ and the last uses $\lVert s_\theta\rVert\propto1/\sigma$. So each level is run at the same effective signal-to-noise ratio, and $\epsilon$ is a single global knob. This is a heuristic with an empirical premise, not a convergence guarantee; [NCSNv2](/blog/ncsnv2/) replaces it with a closed-form calculation of how far the chain actually gets in $T$ steps.
+where the middle step uses $\alpha_i\propto\sigma_i^2$ and the last uses $\lVert s_\theta\rVert\propto1/\sigma$. So each level is run at the same effective signal-to-noise ratio, and $\epsilon$ is a single global knob. This is a heuristic with an empirical premise, not a convergence guarantee; NCSNv2 replaces it with a closed-form calculation of how far the chain actually gets in $T$ steps.
 
-Why the hand-off works: at $\sigma_1$ the modes are bridged and the field is well estimated nearly everywhere, so Langevin mixes; a sample of $q_{\sigma_i}$ then lies in a high-density region of the only slightly sharper $q_{\sigma_{i+1}}$, which is exactly where that level's score estimate saw training data. The chain never has to traverse a region the network has not seen. That "slightly" is load-bearing and entirely unquantified here; it becomes [NCSNv2](/blog/ncsnv2/)'s Technique 2.
+Why the hand-off works: at $\sigma_1$ the modes are bridged and the field is well estimated nearly everywhere, so Langevin mixes; a sample of $q_{\sigma_i}$ then lies in a high-density region of the only slightly sharper $q_{\sigma_{i+1}}$, which is exactly where that level's score estimate saw training data. The chain never has to traverse a region the network has not seen. That "slightly" is load-bearing and entirely unquantified here; it becomes NCSNv2's Technique 2.
 
 On the toy mixture annealed Langevin recovers the $1{:}4$ weights plain Langevin missed. A caution for reproducers: Section 4.3 states $L=10$, $\sigma_1=10$, $\sigma_{10}=0.1$ for that figure, while Appendix B.1 states $\sigma_1=20$, $\sigma_{10}=1$ (with $T=100$, $\epsilon=0.1$, 1,280 chains initialized uniformly on $[-8,8]^2$). The two are inconsistent; both satisfy $\sigma_1\gtrsim$ mode separation, which is the point.
 
@@ -186,14 +186,14 @@ The inpainting variant is worth pausing on: nothing is retrained, and the observ
 | Metrics | Inception and FID on 50,000 samples, official OpenAI / TTUR code |
 | Compute | 2× Titan XP for CelebA and CIFAR-10, 1× for MNIST |
 | Wall-clock training and sampling time | not stated |
-| EMA of weights | not used (added in [NCSNv2](/blog/ncsnv2/)) |
+| EMA of weights | not used (added in NCSNv2) |
 
 **CondInstanceNorm++.** Conditional instance normalization computes per-feature-map spatial statistics $\mu_k,s_k$ and applies $z_k=\gamma[i,k](x_k-\mu_k)/s_k+\beta[i,k]$, $i$ indexing the noise level. That discards $\mu_k$ entirely, and the reported consequence is shifted colours in samples. The fix restores a normalized copy of it,
 $$
 z_k=\gamma[i,k]\,\frac{x_k-\mu_k}{s_k}+\beta[i,k]+\alpha[i,k]\,\frac{\mu_k-m}{v},
 \tag{10}
 $$
-where $m,v$ are the mean and standard deviation of $\{\mu_k\}_k$ and $\alpha\in\mathbb{R}^{L\times C}$ is learned. Three tables of size $L\times C$ means <mark>conditioning memory grows linearly in $L$</mark> — tolerable at $L=10$, fatal at the $L=232$ that [NCSNv2](/blog/ncsnv2/) derives.
+where $m,v$ are the mean and standard deviation of $\{\mu_k\}_k$ and $\alpha\in\mathbb{R}^{L\times C}$ is learned. Three tables of size $L\times C$ means <mark>conditioning memory grows linearly in $L$</mark> — tolerable at $L=10$, fatal at the $L=232$ that NCSNv2 derives.
 
 **Easy to get wrong when reproducing.**
 1. The Langevin convention. Drift $\alpha_i/2$ with noise $\sqrt{\alpha_i}$ here; drift $\alpha_i$ with noise $\sqrt{2\alpha_i}$ in NCSNv2 and most later code. Copying $\epsilon=2\times10^{-5}$ across conventions silently doubles the step.
@@ -227,7 +227,7 @@ where $m,v$ are the mean and standard deviation of $\{\mu_k\}_k$ and $\alpha\in\
 
 **Claim-by-claim.**
 
-- *"State-of-the-art unconditional Inception score, 8.87."* Supported by Table 1; 8.87 beats the conditional EBM (8.30) and conditional SNGAN (8.60), not BigGAN (9.22). But the checkpoint was chosen by FID on 1,000 samples, and the same model's FID of 25.32 sits in SNGAN's neighbourhood, well behind MoLM's 18.9. A best-in-table IS with a middling FID is what residual $\sigma_L$ noise would produce — which [NCSNv2](/blog/ncsnv2/) later confirms by adding a denoising step.
+- *"State-of-the-art unconditional Inception score, 8.87."* Supported by Table 1; 8.87 beats the conditional EBM (8.30) and conditional SNGAN (8.60), not BigGAN (9.22). But the checkpoint was chosen by FID on 1,000 samples, and the same model's FID of 25.32 sits in SNGAN's neighbourhood, well behind MoLM's 18.9. A best-in-table IS with a middling FID is what residual $\sigma_L$ noise would produce — which NCSNv2 later confirms by adding a denoising step.
 - *"Samples comparable to GANs on MNIST, CelebA and CIFAR-10."* Only CIFAR-10 has numbers; the other two are sample grids, on the stated ground that preprocessing differs across papers. Honest, but two thirds of the claim stays qualitative.
 - *"The multi-scale ladder and annealing are necessary."* The $\{\sigma=0.01\}$ baseline fails, so *some* large noise is necessary — but this does not separate the two ingredients. There is no run with multi-scale training and non-annealed sampling, and no sweep over $L$.
 - *"Langevin cannot recover mode weights."* The strongest result in the paper, because Fig. 3 uses the exact score: the failure is pinned on the sampler with no estimation error to hide behind.
@@ -246,12 +246,12 @@ where $m,v$ are the mean and standard deviation of $\{\mu_k\}_k$ and $\alpha\in\
 - The diagnosis is never used for calibration. §3.2 argues that modes separated by low density cannot be weighted correctly, and then $\sigma_1$ is picked with no reference to how far apart the data actually are; one year later the successor shows $\sigma_1=1$ is off by a factor of 50 on CIFAR-10 and $L=10$ by a factor of 23.
 - Everything else is heuristic too: $\epsilon$, $T$, and both $\lambda(\sigma)=\sigma^2$ and $\alpha_i\propto\sigma_i^2$, which rest on the empirical claim $\lVert s_\theta\rVert\propto1/\sigma$ rather than a derivation.
 - Sampling costs 1,000 sequential network evaluations for a $32\times32$ image, with no way to trade quality for speed.
-- Evaluation is thin: one dataset with metrics, nothing above $32\times32$, no likelihoods, one ablation. Model selection uses 1,000-sample FID, which — as [NCSNv2](/blog/ncsnv2/) documents — is a noisy criterion applied to a sequence whose FID fluctuates strongly between checkpoints, with no EMA to damp it.
+- Evaluation is thin: one dataset with metrics, nothing above $32\times32$, no likelihoods, one ablation. Model selection uses 1,000-sample FID, which — as NCSNv2 documents — is a noisy criterion applied to a sequence whose FID fluctuates strongly between checkpoints, with no EMA to damp it.
 - The two toy-mixture $\sigma$ ladders disagree between the main text and Appendix B.1 (see §3.5).
 
 ## 7 Extensions
 
-**What was built on this.** [NCSNv2](/blog/ncsnv2/) replaces every hand-set constant here with a rule computed from the data and scales the model to $256\times256$. [DDPM](/blog/ddpm/) reaches Eq. (7)'s noise-prediction loss from a variational bound on a discrete forward chain; its simplified objective is Eq. (6) with a particular $\lambda$. [Score-SDE](/blog/score-sde/) takes $L\to\infty$ and identifies NCSN's ladder as the Variance Exploding SDE and DDPM's as the Variance Preserving one, making annealed Langevin one discretization among several and adding a probability-flow ODE that yields the likelihoods this paper cannot. [DDIM](/blog/ddim/) and [EDM](/blog/edm/) attack the 1,000-NFE cost, EDM by treating the $\sigma$-parameterization, preconditioning and schedule as design axes; [Improved DDPM](/blog/improved-ddpm/) revisits schedule and loss weighting; [Consistency Models](/blog/consistency-models/) push toward one evaluation. [CSDI](/blog/csdi/) and [TimeGrad](/blog/timegrad/) carry the machinery to time series, and [DSB](/blog/diffusion-schrodinger-bridge/) replaces the fixed Gaussian ladder with a learned bridge.
+**What was built on this.** NCSNv2 replaces every hand-set constant here with a rule computed from the data and scales the model to $256\times256$. [DDPM](/blog/ddpm/) reaches Eq. (7)'s noise-prediction loss from a variational bound on a discrete forward chain; its simplified objective is Eq. (6) with a particular $\lambda$. [Score-SDE](/blog/score-sde/) takes $L\to\infty$ and identifies NCSN's ladder as the Variance Exploding SDE and DDPM's as the Variance Preserving one, making annealed Langevin one discretization among several and adding a probability-flow ODE that yields the likelihoods this paper cannot. DDIM and EDM attack the 1,000-NFE cost, EDM by treating the $\sigma$-parameterization, preconditioning and schedule as design axes; Improved DDPM revisits schedule and loss weighting; [Consistency Models](/blog/consistency-models/) push toward one evaluation. [CSDI](/blog/csdi/) and [TimeGrad](/blog/timegrad/) carry the machinery to time series, and DSB replaces the fixed Gaussian ladder with a learned bridge.
 
 **Open problems the paper leaves.**
 - How should $\sigma_1$, $L$, $\epsilon$ and $T$ be chosen, and can the annealed chain be corrected or accelerated without re-coupling training to sampling? NCSNv2 answers the first for Gaussian kernels only.
@@ -271,7 +271,7 @@ where $m,v$ are the mean and standard deviation of $\{\mu_k\}_k$ and $\alpha\in\
 - Noise here is not regularization but what makes the estimation problem well posed at all, and the real insight is that no single scale can be both large enough to bridge modes and small enough to preserve the data.
 - The $\sigma^2$-weighted denoising loss *is* noise prediction, $\tfrac12\mathbb{E}\lVert z-\varepsilon_\theta(x+\sigma z,\sigma)\rVert^2$: a discrete ladder plus a sampler that descends it is the template DDPM reformulates as a reverse Markov chain and Score-SDE as a reverse-time SDE.
 - For a mixture with disjoint supports the score is exactly independent of the mixing weights, so *exact gradients do not fix mixing*. Anyone sampling a multimodal target with gradient-based MCMC should know this before trusting the mode proportions.
-- The weakest link is that the diagnosis is never used for calibration: the paper argues $\sigma_1$ must match the distance between modes, then sets $\sigma_1=1$ on data whose median pairwise distance is about 18. Read it next to [NCSNv2](/blog/ncsnv2/) — one paper finds the mechanism, the next measures it.
+- The weakest link is that the diagnosis is never used for calibration: the paper argues $\sigma_1$ must match the distance between modes, then sets $\sigma_1=1$ on data whose median pairwise distance is about 18. Read it next to NCSNv2 — one paper finds the mechanism, the next measures it.
 - For financial time series both failure modes transfer directly. Return panels sit close to a low-dimensional factor structure, so the manifold argument is not a metaphor, and the regimes that matter most for risk are by construction the low-density regions where a single-scale score has no training signal and a gradient-based sampler cannot recover relative frequency. Motivation for multi-scale noise in this domain, not evidence: the paper tests images only.
 
 ## References

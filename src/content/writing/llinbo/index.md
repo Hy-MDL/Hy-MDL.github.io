@@ -54,7 +54,7 @@ There is no results table, only curves, so the reading below is mine.
 
 ## What I take from it
 
-- **"The statistical model decides, outside knowledge advises" is the structure I want in my own work.** The same arc runs through the language-prior paper (a prior that is tempered away) and [consensus BO](/blog/consensus-bayesian-optimization/) (collaboration that fades to independence): borrow when data are scarce, then hand control back to the data.
+- **"The statistical model decides, outside knowledge advises" is the structure I want in my own work.** The same arc runs through the language-prior paper (a prior that is tempered away) and consensus BO (collaboration that fades to independence): borrow when data are scarce, then hand control back to the data.
 - **A confident wrong advisor is easy to screen when the referee is honest.** In my queue study, a Justify-style test with a simulation surrogate of the service-level violation would reject Erlang-C's one-server proposal immediately, and accept a good heuristic when there is one. That is a safe way to use outside knowledge, and it costs nothing when the advice is wrong.
 - **Trust should be earned within the run.** A fixed schedule ignores whether the advice has been any good. This is the part I would most like to work on.
 

@@ -231,7 +231,7 @@ Ablation, discriminative score (Table 2 / Table 9):
 
 **What was built on this.** The lineage backwards is explicit and verifiable in the paper: the polynomial trend basis is N-BEATS's, the Fourier synthetic layer follows ETSformer and the TBATS trigonometric seasonality, the guidance argument is diffusion posterior sampling (Chung et al.), and the repeated inner gradient steps are borrowed from Diffusion-LM. Forwards, the closest sibling is [TSDiff](/blog/tsdiff/), which reaches the same "one unconditional model, many conditional tasks" conclusion by a different route — self-guidance with an observation likelihood rather than a decomposition head.
 
-**Open problems.** Sampling cost is the authors' own; the obvious attacks are distillation or a consistency objective ([Consistency Models](/blog/consistency-models/)) and better solvers ([EDM](/blog/edm/)), neither tried here. How to choose $K$ and $p$ from data, rather than fixing them, is untouched. Whether the residual can be constrained — penalised, whitened, or given its own noise model — so that the decomposition is identifiable rather than merely visible is, to me, the more interesting question.
+**Open problems.** Sampling cost is the authors' own; the obvious attacks are distillation or a consistency objective ([Consistency Models](/blog/consistency-models/)) and better solvers (EDM), neither tried here. How to choose $K$ and $p$ from data, rather than fixing them, is untouched. Whether the residual can be constrained — penalised, whitened, or given its own noise model — so that the decomposition is identifiable rather than merely visible is, to me, the more interesting question.
 
 **Research directions.** *These are ideas, not results — none has been run.*
 

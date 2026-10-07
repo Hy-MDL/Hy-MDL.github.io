@@ -16,6 +16,7 @@ const nav = [['home', '/', 'Home'], ['about', '/about/', 'About'], ['research', 
   <script is:inline>
     try { const t = localStorage.getItem('theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
   </script>
+  {import.meta.env.PROD && <script is:inline data-goatcounter="https://hy-mdl.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>}
 </head>
 <body>
   <nav class="nav">

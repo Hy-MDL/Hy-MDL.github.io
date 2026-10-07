@@ -62,11 +62,11 @@ I trained as an electrical engineer before moving to industrial engineering. Bat
 current field where that background helps most directly, because the raw material is current and voltage
 traces from a cycler. For a first study in the area I did not want to build one more cycle-life predictor. My
 reading notes already cover several:
-- [Severson-style early prediction with a GP](/blog/battery-cycle-life-early-prediction/)
-- [BatteryML](/blog/batteryml/)
-- [BatteryLife](/blog/batterylife-benchmark/)
-- [BatLiNet](/blog/battery-lifetime-diverse-aging/)
-- [an interpretable pipeline on this same dataset](/blog/battery-cycle-life-ml-and-more/)
+- Severson-style early prediction with a GP
+- BatteryML
+- BatteryLife
+- BatLiNet
+- an interpretable pipeline on this same dataset
 
 What those papers mostly leave open is **what the prediction is for**. The prediction feeds a decision.
 Severson et al. built early prediction to shorten protocol testing, and Attia et al. (2020, *Nature*) then put
@@ -263,13 +263,13 @@ not copied from the paper. The 10-feature GP has the lowest MAPE on the primary 
 for the baseline). Excluding the single 148-cycle cell, its primary-test MAPE is 7.9 %. On the secondary set
 (batch 3) it is the worst of the three models on both measures: MAPE 11.8 % against 11.4 % and 11.3 %, and
 RMSE 225 against 196. Pooled over all 83 test cells its RMSE is 178 cycles, against 168 for the baseline. This
-fits the [BatteryML](/blog/batteryml/) finding that hand-crafted features in a linear model are hard to beat on
-single-chemistry LFP data. It also matches the weak secondary-test result discussed in the [tutorial on this
-dataset](/blog/battery-cycle-life-ml-and-more/).
+fits the BatteryML finding that hand-crafted features in a linear model are hard to beat on
+single-chemistry LFP data. It also matches the weak secondary-test result discussed in the tutorial on this
+dataset.
 
 The GP also overfits. Its training RMSE is 38 cycles, about a third of its primary-test error. Its noise term sits on the
 chosen floor of 0.2, which is the top of the CV grid. A low error reported on the fitting data, as in the
-[student GP replication](/blog/battery-cycle-life-early-prediction/), says little about new cells.
+student GP replication, says little about new cells.
 
 | all 83 test cells | c = 20 | c = 40 | c = 60 | c = 80 | c = 100 |
 |---|---|---|---|---|---|
@@ -438,6 +438,6 @@ the calibration of that uncertainty.
 - **Select protocols, not cells.** Pool the replicate cells of each policy into a protocol-level posterior.
   Then ask the question at the protocol level, which is the decision Attia et al.'s closed loop actually
   makes.
-- **Check transfer to other datasets.** Move to other datasets from the [BatteryLife](/blog/batterylife-benchmark/)
-  and [BatteryML](/blog/batteryml/) collections, to see whether a surrogate calibrated on one chemistry stays
+- **Check transfer to other datasets.** Move to other datasets from the BatteryLife
+  and BatteryML collections, to see whether a surrogate calibrated on one chemistry stays
   calibrated on another.

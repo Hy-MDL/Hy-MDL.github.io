@@ -17,13 +17,13 @@ Until this paper every strong image diffusion model used a convolutional U-Net a
 
 ## 1 Introduction
 
-Transformers had taken over language, recognition and autoregressive image generation, yet diffusion models stayed with the U-Net that Ho et al. borrowed from PixelCNN++: ResNet blocks with a few self-attention layers at low resolution. [ADM](/blog/diffusion-beats-gans/) ablated details such as channel counts, head configuration and adaptive normalisation, but left the overall shape untouched. Nobody had shown whether that shape is necessary.
+Transformers had taken over language, recognition and autoregressive image generation, yet diffusion models stayed with the U-Net that Ho et al. borrowed from PixelCNN++: ResNet blocks with a few self-attention layers at low resolution. ADM ablated details such as channel counts, head configuration and adaptive normalisation, but left the overall shape untouched. Nobody had shown whether that shape is necessary.
 
 The paper's position is that it is not. If a standard transformer can do the job, diffusion models inherit the training recipes and, more importantly, the predictable scaling the architecture has shown elsewhere. The authors also argue that parameter count is a poor complexity measure for image models because it ignores resolution and sequence length, and measure complexity in theoretical forward-pass Gflops instead. That choice is load-bearing: <mark>the entire scaling claim is a claim about Gflops, and the paper's own numbers show that patch size and parameters are not interchangeable ways of buying them</mark>.
 
 ## 2 Background
 
-The diffusion setup is [Improved DDPM](/blog/improved-ddpm/)'s. Data $x_0$ is noised by
+The diffusion setup is Improved DDPM's. Data $x_0$ is noised by
 
 $$
 q(x_t \mid x_0) = \mathcal{N}\!\left(x_t;\ \sqrt{\bar\alpha_t}\,x_0,\ (1-\bar\alpha_t)I\right), \tag{1}
@@ -35,7 +35,7 @@ $$
 L_{\text{simple}}(\theta) = \lVert \epsilon_\theta(x_t) - \epsilon_t \rVert_2^2, \tag{2}
 $$
 
-while a second output, the diagonal reverse-process covariance $\Sigma_\theta$, is trained with the full variational bound. Sampling uses [classifier-free guidance](/blog/classifier-free-guidance/): the label $c$ is randomly replaced by a learned null embedding $\varnothing$ during training, and at test time the two predictions are extrapolated,
+while a second output, the diagonal reverse-process covariance $\Sigma_\theta$, is trained with the full variational bound. Sampling uses classifier-free guidance: the label $c$ is randomly replaced by a learned null embedding $\varnothing$ during training, and at test time the two predictions are extrapolated,
 
 $$
 \hat\epsilon_\theta(x_t, c) = \epsilon_\theta(x_t, \varnothing) + s\,\big(\epsilon_\theta(x_t, c) - \epsilon_\theta(x_t, \varnothing)\big), \tag{3}
@@ -200,7 +200,7 @@ At $512^2$ (1024 tokens, 524.6 Gflops, 3M steps) the guided FID is 3.04 against 
 - *Parameter count does not determine quality.* Well supported, and the strongest result in the paper. S/2 (33M) ties B/4 (130M); XL/8 (676M) is beaten by S/2 (33M). Since patch size changes compute at fixed parameters, the confound is genuinely broken.
 - *adaLN-Zero is the best block.* Supported at one model size, one training length and one seed, and — as §3.2 shows — matched on Gflops but not on parameters. The identity initialisation is worth 25.21 → 19.47 at a 12.5% parameter cost; in-context conditioning is worst (35.24) but is also 226M parameters lighter than adaLN-Zero.
 - *Larger models use compute more efficiently.* Supported by Fig. 9: small models trained longer fall behind large models trained briefly, and XL/2 overtakes XL/4 after roughly $10^{10}$ training Gflops. Training compute is estimated as Gflops × batch × steps × 3, an approximation the paper states.
-- *Sampling compute cannot substitute for model compute.* Supported for one pair: L/2 at 1000 steps spends 80.7 Tflops per image for FID-10K 25.9, while XL/2 at 128 steps spends 15.2 Tflops for 23.7. Only the DDPM sampler is tested, so this says nothing about whether a better solver — [DDIM](/blog/ddim/) or [EDM](/blog/edm/)'s Heun sampler — would change the trade-off.
+- *Sampling compute cannot substitute for model compute.* Supported for one pair: L/2 at 1000 steps spends 80.7 Tflops per image for FID-10K 25.9, while XL/2 at 128 steps spends 15.2 Tflops for 23.7. Only the DDPM sampler is tested, so this says nothing about whether a better solver — DDIM or EDM's Heun sampler — would change the trade-off.
 - *State of the art.* True on FID, with three qualifications: it depends on guidance (unguided XL/2 is 9.62, barely ahead of LDM-4's 10.56), 0.19 of it comes from the fine-tuned VAE decoder, and StyleGAN-XL still wins on sFID (4.02 vs 4.60). Guidance also costs coverage — recall falls from 0.67 unguided to 0.57 at $s=1.5$ — which is the usual fidelity–diversity trade and is visible in the paper's own table.
 - *The scaling trend generalises beyond FID.* Fig. 12 repeats the analysis for sFID, IS, precision and recall and reports the same direction, with IS and precision benefiting most from scale. Fig. 13 adds that training loss falls and saturates lower with more Gflops.
 
@@ -227,9 +227,9 @@ At $512^2$ (1024 tokens, 524.6 Gflops, 3M steps) the guided FID is 3.04 against 
 **What was built on this**
 
 - [SiT](/blog/sit/) keeps the DiT backbone unchanged and swaps the diffusion objective for an interpolant/flow one, isolating the architecture from the training formulation — the control experiment this paper does not run, in the other direction.
-- [SD3](/blog/sd3-rectified-flow-transformers/) generalises the block into MMDiT, a two-stream design with separate weights for text and image tokens, precisely because a single adaLN vector is a poor channel for a sentence.
+- SD3 generalises the block into MMDiT, a two-stream design with separate weights for text and image tokens, precisely because a single adaLN vector is a poor channel for a sentence.
 - [MeanFlow](/blog/mean-flows/) and much of the recent one-step-generation literature use DiT-XL/2 as the default backbone, which is why its Gflops figure has become a unit of account.
-- [EDM](/blog/edm/) is orthogonal and complementary: DiT uses ADM's diffusion hyperparameters and 250 DDPM steps throughout, so every sampler-side improvement in that note is available to it untested here.
+- EDM is orthogonal and complementary: DiT uses ADM's diffusion hyperparameters and 250 DDPM steps throughout, so every sampler-side improvement in that note is available to it untested here.
 - PixArt-α, Lumina, Flux and the video models that followed all use DiT-style backbones with cross-attention or MMDiT text conditioning.
 
 **Open problems**
@@ -245,7 +245,7 @@ At $512^2$ (1024 tokens, 524.6 Gflops, 3M steps) the guided FID is 3.04 against 
 
 1. **Tokens versus width at matched compute for return panels.** *Hypothesis:* the "more tokens beat more width" residual in Table 4 reflects how much structure the sequence must resolve, so for a panel of assets over a window of days the analogous knob — time-patch length — has an optimum tied to the autocorrelation horizon rather than to compute. *Data:* daily log-returns for a fixed universe, 256-day windows, patch lengths 1/4/16. *Baseline:* the same Gflops spent on width, plus [Diffusion-TS](/blog/diffusion-ts/) and [TimeGrad](/blog/timegrad/). *Metric:* cross-sectional correlation error, ACF of squared returns, 1% VaR/ES backtest error. *Likely failure mode:* realistic panels sit far below the compute regime where the trend was measured, and the differences are seed noise.
 2. **adaLN-Zero as a regime-conditioning mechanism.** *Hypothesis:* a regime label or a realised-volatility scalar is exactly the low-dimensional condition adaLN suits, and gating it closed at initialisation should let a generator learn the unconditional model first and specialise later, avoiding the collapse conditional generators show on rare regimes. *Data:* returns labelled by a fitted 2–3 state HMM, with crisis states deliberately rare. *Baseline:* label concatenation, and cross-attention conditioning. *Metric:* per-regime tail statistics and conditional coverage, especially in the rarest state. *Likely failure mode:* one global modulation per sequence is too coarse to move tail behaviour, so conditional and unconditional models stay indistinguishable where it matters.
-3. **Decoupling backbone from diffusion recipe.** *Hypothesis:* at matched Gflops, retraining DiT-B/2 with [EDM](/blog/edm/) preconditioning, loss weighting and Heun sampling closes much of the gap to a larger model — meaning part of the measured "scaling" compensates for ADM's training and sampling choices. *Data:* ImageNet $256^2$ latents, unchanged. *Baseline:* DiT-B/2 as published, 400K steps, 250 DDPM steps. *Metric:* FID-50K at matched training and sampling Gflops. *Likely failure mode:* the latent space is already near-Gaussian, so EDM's $\sigma_{\text{data}}$-based preconditioning buys little and the comparison is uninformative.
+3. **Decoupling backbone from diffusion recipe.** *Hypothesis:* at matched Gflops, retraining DiT-B/2 with EDM preconditioning, loss weighting and Heun sampling closes much of the gap to a larger model — meaning part of the measured "scaling" compensates for ADM's training and sampling choices. *Data:* ImageNet $256^2$ latents, unchanged. *Baseline:* DiT-B/2 as published, 400K steps, 250 DDPM steps. *Metric:* FID-50K at matched training and sampling Gflops. *Likely failure mode:* the latent space is already near-Gaussian, so EDM's $\sigma_{\text{data}}$-based preconditioning buys little and the comparison is uninformative.
 
 ## 8 Takeaways
 

@@ -38,7 +38,7 @@ $$
 
 Pushing a prior $p_0=\mathcal{N}(0,I)$ through $\phi_t$ gives a density path $p_t=[\phi_t]_\ast p_0$. The test for whether $v_t$ *generates* $p_t$ is the continuity equation, $\partial_t p_t+\operatorname{div}(p_tv_t)=0$; every proof in the paper reduces to checking it. A CNF is this construction with $v_t(x;\theta)$ a neural network ([Neural ODE](/blog/neural-ode/)).
 
-Note the time convention: $t=0$ is noise and $t=1$ is data, the reverse of [DDPM](/blog/ddpm/) and [Score-SDE](/blog/score-sde/). I keep the paper's convention throughout. Two concurrent papers reach closely related objectives: [Rectified Flow](/blog/rectified-flow/) and [Stochastic Interpolants](/blog/stochastic-interpolants/); the paper acknowledges both and I return to the division of credit in §7.
+Note the time convention: $t=0$ is noise and $t=1$ is data, the reverse of [DDPM](/blog/ddpm/) and [Score-SDE](/blog/score-sde/). I keep the paper's convention throughout. Two concurrent papers reach closely related objectives: Rectified Flow and Stochastic Interpolants; the paper acknowledges both and I return to the division of credit in §7.
 
 ## 3 Method
 
@@ -162,7 +162,7 @@ flowchart LR
 
 ## 4 Implementation notes
 
-The architecture is the U-Net of [ADM](/blog/diffusion-beats-gans/) "with minimal changes" — the changes are not enumerated. For the 2D checkerboard toy the network is a 5-layer MLP of width 512. Reported settings:
+The architecture is the U-Net of ADM "with minimal changes" — the changes are not enumerated. For the 2D checkerboard toy the network is a 5-layer MLP of width 512. Reported settings:
 
 | | CIFAR-10 | IN-32 | IN-64 | IN-128 |
 |---|---|---|---|---|
@@ -244,12 +244,12 @@ Super-resolution, 64→256 on the ImageNet validation set (Table 2):
 - **Internal inconsistency in the numbers.** The ImageNet-32 NLLs in Table 1 do not match Table 4 at maximum $K$ for two rows: Score Matching (3.56 vs 3.57) and FM w/ Diffusion (3.54 vs 3.56). Small, but the IN-32 column cannot be read at the precision the bolding implies.
 - **Inconsistent statement about the training budget.** §6.1 says all models use "the same architecture, hyperparameter values and number of training iterations, where baselines are allowed more iterations for better convergence" — two clauses that contradict each other. Appendix E covers only FM-OT, FM-Diffusion and SM-Diffusion; DDPM and ScoreFlow are not in that sentence.
 - **$\sigma_{\min}$ is an unreported hyperparameter of the headline method**, and it sets how much the model smooths the data. No sensitivity study.
-- **No stochastic sampler**, so the ODE-versus-SDE question that [Stochastic Interpolants](/blog/stochastic-interpolants/) answers cannot even be asked here; and no conditioning beyond super-resolution — no guidance, no text, no class labels, no data-to-data coupling.
+- **No stochastic sampler**, so the ODE-versus-SDE question that Stochastic Interpolants answers cannot even be asked here; and no conditioning beyond super-resolution — no guidance, no text, no class labels, no data-to-data coupling.
 - **The speed-up is relative, not few-step.** 122–142 adaptive-solver evaluations beats 262–274 and is still two orders of magnitude from [Consistency Models](/blog/consistency-models/).
 
 ## 7 Extensions
 
-**What was built on this.** The three concurrent constructions converged: [Rectified Flow](/blog/rectified-flow/) reaches the linear interpolant from a straightening argument, [Stochastic Interpolants](/blog/stochastic-interpolants/) from a bridge-plus-latent argument that adds an SDE family on top, and this paper from conditional probability paths with the large-scale evidence attached. The linear path then became the default: [SiT](/blog/sit/) ablates interpolant against sampler on a transformer backbone, [SD3](/blog/sd3-rectified-flow-transformers/) scales rectified-flow training to text-to-image, [FM Guide](/blog/flow-matching-guide/) is the authors' own textbook treatment, and [MeanFlow](/blog/mean-flows/) pushes the same velocity parameterisation to one step. Minibatch optimal-transport couplings, which replace the independent $(x_0,x_1)$ draw with an OT assignment inside the batch, are the natural fix for the marginal-curvature gap.
+**What was built on this.** The three concurrent constructions converged: Rectified Flow reaches the linear interpolant from a straightening argument, Stochastic Interpolants from a bridge-plus-latent argument that adds an SDE family on top, and this paper from conditional probability paths with the large-scale evidence attached. The linear path then became the default: [SiT](/blog/sit/) ablates interpolant against sampler on a transformer backbone, SD3 scales rectified-flow training to text-to-image, [FM Guide](/blog/flow-matching-guide/) is the authors' own textbook treatment, and [MeanFlow](/blog/mean-flows/) pushes the same velocity parameterisation to one step. Minibatch optimal-transport couplings, which replace the independent $(x_0,x_1)$ draw with an OT assignment inside the batch, are the natural fix for the marginal-curvature gap.
 
 **Open problems.** How curved is the *marginal* field, and does the curvature grow with dimension or with the multimodality of $q$? Nothing measures it. What paths are good when neither end is Gaussian — the construction assumes $p_0=\mathcal{N}(0,I)$ throughout, and the conditional Gaussian form is what makes (6) closed-form. Is velocity regression better than score regression because of the target's conditioning, its scale, or its time-invariance, given that FM-Diffusion versus SM confounds all three? And how should $\sigma_{\min}$ trade smoothing against likelihood?
 

@@ -22,7 +22,7 @@ Pixel-space diffusion pays for every denoising step in the full dimensionality o
 
 ## 1 Introduction
 
-The motivation is cost, stated in numbers. The authors quote 150–1000 V100-days to train the strongest pixel-space diffusion models of the time ([ADM](/blog/diffusion-beats-gans/)) and about five days on a single A100 to draw 50k samples from one, at 25–1000 sequential network evaluations each. That restricts the model class to a few labs and makes every evaluation slow.
+The motivation is cost, stated in numbers. The authors quote 150–1000 V100-days to train the strongest pixel-space diffusion models of the time (ADM) and about five days on a single A100 to draw 50k samples from one, at 25–1000 sequential network evaluations each. That restricts the model class to a few labs and makes every evaluation slow.
 
 The diagnosis comes from the rate–distortion behaviour of an already trained pixel model ([Fig. 2 in the paper](https://arxiv.org/pdf/2112.10752#page=2)). Learning splits into a *perceptual compression* stage that removes high-frequency detail while learning little semantic variation, and a *semantic compression* stage where composition and content are learned. <mark>A likelihood-based model in pixel space spends much of its capacity, and all of its per-step compute, on the perceptual part.</mark> The reweighted [DDPM](/blog/ddpm/) objective down-weights those loss terms, but gradients and forward passes still run on every pixel, so the cost does not go away.
 
@@ -37,7 +37,7 @@ L_{DM} = \mathbb{E}_{x,\;\epsilon\sim\mathcal{N}(0,I),\;t}\Big[\lVert \epsilon -
 \tag{1}
 $$
 
-with $t$ uniform on $\{1,\dots,T\}$. Appendix B re-derives it in signal-to-noise form, $\mathrm{SNR}(t)=\alpha_t^2/\sigma_t^2$, showing that the ELBO term at step $t$ carries weight $\tfrac12\big(\mathrm{SNR}(t-1)-\mathrm{SNR}(t)\big)$ before the reweighting flattens it — the same algebra as DDPM's, written so the SNR of the latent space can later be discussed directly. The backbone is the [ADM](/blog/diffusion-beats-gans/) "ablated U-Net"; sampling uses [DDIM](/blog/ddim/); the guided results use [classifier-free guidance](/blog/classifier-free-guidance/). The first stage is VQGAN's autoencoder with its perceptual and patch-adversarial losses.
+with $t$ uniform on $\{1,\dots,T\}$. Appendix B re-derives it in signal-to-noise form, $\mathrm{SNR}(t)=\alpha_t^2/\sigma_t^2$, showing that the ELBO term at step $t$ carries weight $\tfrac12\big(\mathrm{SNR}(t-1)-\mathrm{SNR}(t)\big)$ before the reweighting flattens it — the same algebra as DDPM's, written so the SNR of the latent space can later be discussed directly. The backbone is the ADM "ablated U-Net"; sampling uses DDIM; the guided results use classifier-free guidance. The first stage is VQGAN's autoencoder with its perceptual and patch-adversarial losses.
 
 ## 3 Method
 
@@ -143,7 +143,7 @@ for t in ddim_schedule(200 or 250 steps):
 x = D(sigma * z)
 ```
 
-The guidance scale $s$ needs a warning. The paper reports $s=1.5$ and $s=1.25$ for ImageNet and $s=1.5$, $s=10.0$ for text, but never prints a formula for it. The line above follows the released code, whose DDIM sampler (`ldm/models/diffusion/ddim.py`) computes `e_t_uncond + unconditional_guidance_scale * (e_t - e_t_uncond)`, that is $\tilde\epsilon=\epsilon_u+s(\epsilon_c-\epsilon_u)$, i.e. $s=1+w$ in the notation of [classifier-free guidance](/blog/classifier-free-guidance/), so LDM's $s=1.5$ is Ho and Salimans' $w=0.5$.
+The guidance scale $s$ needs a warning. The paper reports $s=1.5$ and $s=1.25$ for ImageNet and $s=1.5$, $s=10.0$ for text, but never prints a formula for it. The line above follows the released code, whose DDIM sampler (`ldm/models/diffusion/ddim.py`) computes `e_t_uncond + unconditional_guidance_scale * (e_t - e_t_uncond)`, that is $\tilde\epsilon=\epsilon_u+s(\epsilon_c-\epsilon_u)$, i.e. $s=1+w$ in the notation of classifier-free guidance, so LDM's $s=1.5$ is Ho and Salimans' $w=0.5$.
 
 ## 4 Implementation notes
 
@@ -234,7 +234,7 @@ Three appendix entries look like printing errors, and a reproduction would inher
 - The pipeline is no longer purely likelihood-based. The first stage is adversarial, so the mode-covering argument made against GANs in the introduction applies only to the second stage. Recall drops from 0.62 to 0.48 exactly when guidance is turned on: that is the honest price of the headline FID.
 - Nothing measures the gap between $\mathcal{D}(\mathcal{E}(x))$ and $x$ *in the metric the downstream task cares about*. R-FID is distributional; inpainting and super-resolution need per-image accuracy.
 - The latent is a black box here: no analysis of its statistics beyond variance, and no explanation for the VQ-versus-KL result.
-- Throughput comparisons are not always step-matched (on LSUN-Bedrooms, LDM at 200 DDIM steps against ADM at 1000), so part of the speed-up belongs to [DDIM](/blog/ddim/), not to the latent.
+- Throughput comparisons are not always step-matched (on LSUN-Bedrooms, LDM at 200 DDIM steps against ADM at 1000), so part of the speed-up belongs to DDIM, not to the latent.
 - Several appendix entries are internally inconsistent (Churches at 410K/100 steps in Table 18 vs 500K/200 steps in Tables 12 and 1; CelebA-HQ FID 5.11 in Table 1 vs 5.15 in Fig. 28; Bedrooms listed at 60 generator but 55 overall V100-days).
 
 ## 7 Extensions
@@ -242,7 +242,7 @@ Three appendix entries look like printing errors, and a reproduction would inher
 **What was built on this**
 
 - Stable Diffusion (CompVis with Stability AI and Runway) is a latent diffusion model of this design, trained on 512×512 images from a LAION-5B subset with a frozen CLIP ViT-L/14 text encoder, which is why frozen autoencoder, U-Net and cross-attention on text tokens are what most later work assumes.
-- [DiT](/blog/dit/) keeps the latent and replaces the U-Net with a transformer, showing the backbone was separable from the idea; [SD3](/blog/sd3-rectified-flow-transformers/) keeps the latent and replaces the diffusion process with a rectified flow.
+- [DiT](/blog/dit/) keeps the latent and replaces the U-Net with a transformer, showing the backbone was separable from the idea; SD3 keeps the latent and replaces the diffusion process with a rectified flow.
 - [Consistency models](/blog/consistency-models/) attack the sequential-sampling limitation the authors state.
 - ControlNet (Zhang, Rao and Agrawala, ICCV 2023) adds spatial conditioning to a frozen text-to-image diffusion model through a trainable copy of its encoder, a plug-in generalization of the concatenation path of Section 3.3.
 

@@ -32,14 +32,14 @@ The target is a model that is <mark>single-step by design yet keeps the compute�
 
 ## 2 Background
 
-The paper works entirely inside the EDM parameterisation — see [EDM](/blog/edm/) for the design-space argument and [Score-SDE](/blog/score-sde/) for the SDE/ODE correspondence. Data are perturbed by an SDE with zero drift and diffusion coefficient $\sqrt{2t}$, so $p_t = p_\text{data} * \mathcal N(0, t^2 I)$ and time *is* the noise standard deviation. The associated probability-flow (PF) ODE shares those marginals and, with a learned score $s_\phi(x,t)\approx\nabla\log p_t(x)$, collapses to
+The paper works entirely inside the EDM parameterisation — see EDM for the design-space argument and [Score-SDE](/blog/score-sde/) for the SDE/ODE correspondence. Data are perturbed by an SDE with zero drift and diffusion coefficient $\sqrt{2t}$, so $p_t = p_\text{data} * \mathcal N(0, t^2 I)$ and time *is* the noise standard deviation. The associated probability-flow (PF) ODE shares those marginals and, with a learned score $s_\phi(x,t)\approx\nabla\log p_t(x)$, collapses to
 
 $$
 \frac{dx_t}{dt} = -t\, s_\phi(x_t, t).
 \tag{1}
 $$
 
-Sampling draws $\hat x_T\sim\mathcal N(0,T^2I)$ and solves Eq. (1) backwards, stopping at a small $\epsilon$ for numerical stability; pixels are rescaled to $[-1,1]$ with $T=80$, $\epsilon=0.002$. Every solver step is a network call — the whole bottleneck. [DDIM](/blog/ddim/) is the ancestor of this deterministic view.
+Sampling draws $\hat x_T\sim\mathcal N(0,T^2I)$ and solves Eq. (1) backwards, stopping at a small $\epsilon$ for numerical stability; pixels are rescaled to $[-1,1]$ with $T=80$, $\epsilon=0.002$. Every solver step is a network call — the whole bottleneck. DDIM is the ancestor of this deterministic view.
 
 ## 3 Method
 
@@ -194,7 +194,7 @@ flowchart LR
 
 ## 4 Implementation notes
 
-Architectures are borrowed wholesale: NCSN++ (from [Score-SDE](/blog/score-sde/)) for CIFAR-10, the ADM networks of [Diffusion Beats GANs](/blog/diffusion-beats-gans/) for ImageNet 64×64 and both LSUN sets. Teachers are EDMs trained in-house; for LSUN, where EDM published no hyperparameters, the authors reused the ImageNet settings with batch size cut from 4096 to 2048 and trained 600k (Bedroom) / 300k (Cat) iterations.
+Architectures are borrowed wholesale: NCSN++ (from [Score-SDE](/blog/score-sde/)) for CIFAR-10, the ADM networks of Diffusion Beats GANs for ImageNet 64×64 and both LSUN sets. Teachers are EDMs trained in-house; for LSUN, where EDM published no hyperparameters, the authors reused the ImageNet settings with batch size cut from 4096 to 2048 and trained 600k (Bedroom) / 300k (Cat) iterations.
 
 | Hyperparameter | CIFAR-10 CD | CIFAR-10 CT | ImageNet 64 CD | ImageNet 64 CT | LSUN 256 CD | LSUN 256 CT |
 |---|---|---|---|---|---|---|
@@ -307,7 +307,7 @@ Datasets: CIFAR-10, ImageNet 64×64, LSUN Bedroom and Cat 256×256. Metrics: FID
 
 ## 7 Extensions
 
-**What was built on this.** Within this collection, [MeanFlow](/blog/mean-flows/) is the closest descendant in spirit: it also swaps "integrate the field" for "learn an integrated quantity", but parameterises the *average* velocity over an interval rather than the map to a fixed origin, which removes the target network. [Rectified Flow](/blog/rectified-flow/) attacks the same goal from the other side — straighten the trajectory until the solution map is trivial. Outside the collection and not cited in this PDF: latent consistency models applied the recipe to [latent diffusion](/blog/latent-diffusion/) with guidance folded in; consistency trajectory models generalised $f$ to map between two arbitrary times; and a follow-up by the same first author removed the EMA target and replaced LPIPS with a pseudo-Huber loss — *(from general knowledge, unverified)*.
+**What was built on this.** Within this collection, [MeanFlow](/blog/mean-flows/) is the closest descendant in spirit: it also swaps "integrate the field" for "learn an integrated quantity", but parameterises the *average* velocity over an interval rather than the map to a fixed origin, which removes the target network. Rectified Flow attacks the same goal from the other side — straighten the trajectory until the solution map is trivial. Outside the collection and not cited in this PDF: latent consistency models applied the recipe to [latent diffusion](/blog/latent-diffusion/) with guidance folded in; consistency trajectory models generalised $f$ to map between two arbitrary times; and a follow-up by the same first author removed the EMA target and replaced LPIPS with a pseudo-Huber loss — *(from general knowledge, unverified)*.
 
 **Open problems.**
 - Why the teacher gap persists. Theorem 1 gives $O((\Delta t)^p)$ for *zero* loss, but the loss is never zero, and nothing relates a given non-zero loss to sample quality or separates optimisation error from the expressiveness of one evaluation.
@@ -327,7 +327,7 @@ Datasets: CIFAR-10, ImageNet 64×64, LSUN Bedroom and Cat 256×256. Metrics: FID
 - CD is the practical recipe — EDM teacher, one Heun step, LPIPS, stop-gradient target — and it dominates progressive distillation at matched teacher and matched metric, the cleanest comparison in the paper.
 - CT is the conceptually new part: one unbiased score estimate makes the teacher cancel algebraically, at the price of a bias–variance trade-off in $N$ that must be scheduled.
 - The 1-D Gaussian case shows one-step generation is *exactly* achievable when $f$ is linear; everything hard about the method is the non-Gaussian remainder, which is also the likeliest explanation for the persistent teacher gap.
-- In this series, this is the step from "solve the PF ODE faster" ([DDIM](/blog/ddim/), [EDM](/blog/edm/)) to "skip the solver", alongside [Rectified Flow](/blog/rectified-flow/)'s straightening and ahead of [MeanFlow](/blog/mean-flows/).
+- In this series, this is the step from "solve the PF ODE faster" (DDIM, EDM) to "skip the solver", alongside Rectified Flow's straightening and ahead of [MeanFlow](/blog/mean-flows/).
 - For financial time series, one-step sampling is attractive whenever many scenario paths are needed. Two caveats are load-bearing: there is no LPIPS analogue for return paths, so $d$ must be designed rather than borrowed; and CT's low recall is a warning exactly where tail coverage is the point. The paper offers evidence on neither.
 
 ## References

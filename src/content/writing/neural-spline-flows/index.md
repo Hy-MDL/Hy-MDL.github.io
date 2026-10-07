@@ -45,7 +45,7 @@ For anyone using a flow to *evaluate* densities on tabular data, this is the pap
 
 Both are fixed by choosing a family defined on $[-B,B]$ with linear tails and an inverse that is a quadratic root. This is an unusually concrete example of numerical analysis driving a model-design decision, and it is why the rational-quadratic choice is not arbitrary.
 
-**Invertible linear transformations.** The mixing step between transformers, taken from [Glow](/blog/glow/): $W=PLU$ with $P$ a fixed permutation, $L$ unit lower triangular and $U$ upper triangular with positive diagonal, guaranteeing invertibility. Determinant in $O(D)$; inverse by two triangular solves at $O(D^2M)$ for batch size $M$, or a one-time $O(D^3)$ explicit inverse that can be cached.
+**Invertible linear transformations.** The mixing step between transformers, taken from Glow: $W=PLU$ with $P$ a fixed permutation, $L$ unit lower triangular and $U$ upper triangular with positive diagonal, guaranteeing invertibility. Determinant in $O(D)$; inverse by two triangular solves at $O(D^2M)$ for batch size $M$, or a one-time $O(D^3)$ explicit inverse that can be cached.
 
 ## 3 Method
 
@@ -181,7 +181,7 @@ Test log-likelihood in nats, error bars two standard deviations. The first four 
 | Model | POWER | GAS | HEPMASS | MINIBOONE | BSDS300 |
 |---|---|---|---|---|---|
 | [FFJORD](/blog/ffjord/)$^{\star\dagger}$ | $0.46\pm0.01$ | $8.59\pm0.12$ | $-14.92\pm0.08$ | $-10.43\pm0.04$ | $157.40\pm0.19$ |
-| [Glow](/blog/glow/) | $0.42\pm0.01$ | $12.24\pm0.03$ | $-16.99\pm0.02$ | $-10.55\pm0.45$ | $156.95\pm0.28$ |
+| Glow | $0.42\pm0.01$ | $12.24\pm0.03$ | $-16.99\pm0.02$ | $-10.55\pm0.45$ | $156.95\pm0.28$ |
 | Q-NSF (C) | $\mathbf{0.64\pm0.01}$ | $12.80\pm0.02$ | $-15.35\pm0.02$ | $\mathbf{-9.35\pm0.44}$ | $\mathbf{157.65\pm0.28}$ |
 | **RQ-NSF (C)** | $\mathbf{0.64\pm0.01}$ | $\mathbf{13.09\pm0.02}$ | $\mathbf{-14.75\pm0.03}$ | $-9.67\pm0.47$ | $157.54\pm0.28$ |
 | [MAF](/blog/maf/) | $0.45\pm0.01$ | $12.35\pm0.02$ | $-17.03\pm0.02$ | $-10.92\pm0.46$ | $156.95\pm0.28$ |

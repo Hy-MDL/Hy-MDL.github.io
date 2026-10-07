@@ -20,7 +20,7 @@ This short note is where Kannan, Bayraksan and Luedtke's residual framework meet
 
 ## The problem, in one paragraph
 
-The [ER-SAA](/blog/data-driven-saa-covariates/) and [ER-DRO](/blog/residuals-dro-covariates/) frameworks reuse residuals $y^i-\hat f_n(x^i)$ as samples of the noise, which is valid only when the noise is independent of $X$. When demand variability depends on season, or wind variability on location, a residual from a calm covariate is the wrong size for a volatile one. <mark>Reusing raw residuals then puts the same spread on every new covariate</mark>, too narrow in volatile states and too wide in calm ones.
+The [ER-SAA](/blog/data-driven-saa-covariates/) and ER-DRO frameworks reuse residuals $y^i-\hat f_n(x^i)$ as samples of the noise, which is valid only when the noise is independent of $X$. When demand variability depends on season, or wind variability on location, a residual from a calm covariate is the wrong size for a volatile one. <mark>Reusing raw residuals then puts the same spread on every new covariate</mark>, too narrow in volatile states and too wide in calm ones.
 
 ## The idea, as I understand it
 
