@@ -95,21 +95,23 @@ and Lenovo's default "starts charging when the battery drops below 96%, and stop
 
 To see which parts of the machine act on the battery, I annotated iFixit's teardown photos of the M1 MacBook Air
 (A2337). Every chip identity comes from iFixit's
-[teardown article](https://www.ifixit.com/News/46884/m1-macbook-teardowns-something-old-something-new); the boxes
-were placed by me from chip markings legible in the full-resolution photos. Four roles are marked: the SoC (active and
+[teardown article](https://www.ifixit.com/News/46884/m1-macbook-teardowns-something-old-something-new); the boxes,
+the grouping into roles and the link from each role to battery ageing are my own analysis, not iFixit's: I placed
+each box from chip markings legible in the full-resolution photos and assigned the role from the part's documented
+function. Four roles are marked: the SoC (active and
 idle power), the PMICs (sleep and standby drain), the charger and USB-C power path (charge voltage, current and
 optimized charging), and the battery pack with its distance to the SoC (cell temperature).
 
-![Figure 2 — M1 MacBook Air logic board, front and back. (1–2) M1 SoC with its two on-package LPDDR4X memory dies; (3–4) Apple APL1096 / APL1097, "likely PMICs" per iFixit; (5) Siliconix 7655, 40 A battery MOSFET; (6) Intersil 9240H1, whose charger role is my reading of the part family; (7–8) TI CD3217B12 USB and power-delivery ICs. Photo: iFixit, CC BY-NC-SA 3.0; annotations by the author.](./figs/v6_board_annotated.jpg)
+![Figure 2 — M1 MacBook Air logic board, front and back. (1–2) M1 SoC with its two on-package LPDDR4X memory dies; (3–4) Apple APL1096 / APL1097, "likely PMICs" per iFixit; (5) Siliconix 7655, 40 A battery MOSFET; (6) Intersil 9240H1, whose charger role is my reading of the part family; (7–8) TI CD3217B12 USB and power-delivery ICs. Photo: iFixit, CC BY-NC-SA 3.0. Boxes, roles and their link to battery ageing are my own analysis.](./figs/v6_board_annotated.jpg)
 
 The Air has no fan: "Apple nixed the fan in favor of a simple aluminum heat spreader hanging off the left edge of the
 logic board" (iFixit). The pack sits in three sections below the board, and the closest cell edge is roughly 2 cm
 (21.0 mm, scaled from the 30.4 cm case width) from the SoC centre. The label on the pack reads 49.9 Wh.
 
-![Figure 3 — Bottom view with the lower case removed: the three battery-pack sections and the approximate position of the M1 under the heat spreader, mapped from the board photo. Photo: iFixit, CC BY-NC-SA 3.0; annotations by the author.](./figs/v6_chassis_annotated.jpg)
+![Figure 3 — Bottom view with the lower case removed: the three battery-pack sections and the approximate position of the M1 under the heat spreader, mapped from the board photo. Photo: iFixit, CC BY-NC-SA 3.0. Boxes, roles and their link to battery ageing are my own analysis.](./figs/v6_chassis_annotated.jpg)
 
 Photos: [iFixit](https://www.ifixit.com/News/46884/m1-macbook-teardowns-something-old-something-new), licensed
-[CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/).
+[CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/). The annotations are my interpretation and are not endorsed by iFixit.
 
 ## 3 Measured inputs
 
