@@ -244,9 +244,8 @@ Arrivals are Poisson with a time-varying rate (15-minute peak of 1,500 veh/h). E
 
 **Validation** (`results/corridor_validation.json`). Vehicle counts balance exactly in all 96 checked runs (48 plans × 2 seeds, demand ×1.15); the smallest net gap was 1.91 m, with no negative speeds and no uncommitted driver crossing a non-green stop line. Queue discharge settles at a 2.24 s headway — 1,606 veh/h/lane, at the low end of the usual 1,600–2,000 range. Cell flows stay under the IDM equilibrium curve (maximum 1,665 vs 1,700 veh/h/lane). A replication takes 0.26 s in a batch of 16 and 1.1 s alone.
 
-![Figure 7 — Trajectories in lane 1 over ten minutes of the peak. Left: uncoordinated offsets, platoons are stopped at almost every signal. Right: the selected plan (120 s cycle, 50 km/h green wave), most platoons pass through the bands. **Simulated corridor, not a real road.**](./figs/corridor_timespace.png)
 
-![Figure 8 — Left: Edie flow–density cells (250 m × 20 s) from five demand levels against the IDM equilibrium relation of the mean driver. Right: mean discharge headway by queue position at an oversaturated signal.](./figs/corridor_validation.png)
+![Figure 7 — Left: Edie flow–density cells (250 m × 20 s) from five demand levels against the IDM equilibrium relation of the mean driver. Right: mean discharge headway by queue position at an oversaturated signal.](./figs/corridor_validation.png)
 
 ### 4.2 A fuel and CO₂ model for the corridor
 
@@ -260,7 +259,7 @@ with m = 1,770 kg (the report's 1,620 kg kerb weight plus load) and assumed C_r 
 
 The fit gives α = 0.357 mL/s (1.29 ℓ/h idle), η = 0.388 and κ = 0.746, with all six anchors inside 10 % (RMS 5.8 %). **This is a calibration, not a validation**: three parameters against five effectively independent numbers, on speed traces I had to invent (surrogates of FTP-75 and HWFET matched to published summary statistics, plus two stylised AIMSUN traces), cannot show that the model predicts emissions.
 
-![Figure 9 — Left: relative residual at each anchor. Right: steady-speed fuel economy of the fitted model with the two archived AIMSUN points.](./figs/corridor_fuel_fit.png)
+![Figure 8 — Left: relative residual at each anchor. Right: steady-speed fuel economy of the fitted model with the two archived AIMSUN points.](./figs/corridor_fuel_fit.png)
 
 Inside the corridor, (3) is evaluated once per vehicle per 0.5 s step on the speed and acceleration the car-following model has just produced, so what the fuel model consumes is literally one vehicle's trajectory. That is easiest to see on a single car:
 
@@ -300,7 +299,7 @@ The procedures come from `rsel`, the library of my [rs-lab](/research/rs-lab/) p
 
 Mean CO₂ per vehicle spans 246.0–326.3 g and mean travel time 450–759 s; five plans are feasible. The lowest-CO₂ plan overall (90 s cycle, 40 km/h wave, advisory; 246.0 g) takes 481.8 s and is **infeasible**. The best feasible plan is the 120 s cycle with a 50 km/h wave (246.4 g, 450.1 s, 1.0 stops per vehicle); against an uncoordinated 90 s plan (308.3 g, 632 s, 6.6 stops) it saves 61.8 g per vehicle, 20.1 % (95 % paired CI 61.62–62.05 g).
 
-![Figure 10 — Left: the 48 plans; the shaded band is the feasible region. Right: where each method's selections fall over 1,000 macro-replications.](./figs/corridor_landscape.png)
+![Figure 9 — Left: the 48 plans; the shaded band is the feasible region. Right: where each method's selections fall over 1,000 macro-replications.](./figs/corridor_landscape.png)
 
 <figure class="vid">
   <video src="/projects/eco-route-rl/media/corridor.mp4" autoplay loop muted playsinline preload="metadata" poster="/projects/eco-route-rl/media/corridor.jpg"></video>
@@ -326,19 +325,19 @@ The single-run comparison — the archived report's habit — recommends a plan 
   <figcaption>Animation 5 — The procedure of the row "Sequential (simultaneous), CRN" at work on one macro-replication (the first, m = 0; δ = 2.5 g, ε = 5 s, α = 0.05, n₀ = 10), <strong>on the simulated corridor of §4</strong>. Every point is one of the 48 plans at its current pair of estimates with 95 % intervals, the dashed line is the travel-time limit q = 475 s and the shaded half is the feasible side; the right panel magnifies the contending corner. Watch the intervals shrink as replications accumulate, plans turn green when the feasibility check declares them feasible and fade out as they are eliminated, and the replication counter climb; the orange ring is the plan that one run per plan would have chosen, redrawn from fresh independent replications — 16 such draws gave 5 different answers, 3 of them infeasible. This macro-replication stops after 540 replications on the runner-up, 0.71 g behind the true best and inside δ: an acceptable but not an exact selection, which is the 5.9 % case of the table. The per-stage means, variances and eliminations are logged in <code>results/corridor_selection_trace.json</code>, and the traced run reproduces <code>rsel.constrained_select</code> exactly on the same observations.</figcaption>
 </figure>
 
-![Figure 11 — Selection quality against total replications. Open circles mark one run per plan; the dotted line is 0.95.](./figs/corridor_pcs_budget.png)
+![Figure 10 — Selection quality against total replications. Open circles mark one run per plan; the dotted line is 0.95.](./figs/corridor_pcs_budget.png)
 
 **Probability constraint.** With P(TT > 540 s) ≤ 0.012, the sequential procedure selected a clearly infeasible plan in 9.4 % of macro-replications (CRN, 1,591 runs) — above α. The per-replication exceedance share is mostly zero with occasional spikes, far from normal. Batch means of 10 replications restored the behaviour (0.4 % infeasible) at 5,798 runs. The single-run approach picked an infeasible plan 38.5 % of the time.
 
 **CRN and recycled observations.** Over the 1,128 plan pairs the median CO₂ correlation under CRN is 0.95 and the median variance-reduction factor of a difference is 13.7 (IQR 8.1–23.3, minimum 2.6); for best vs runner-up it is 37.8 (s.d. 1.74 g vs 10.70 g). With 50 replications per plan the 95 % half-width for that difference is 0.49 g paired vs 2.98 g independent; only the former resolves a 0.71 g gap. For four thresholds, recycling cut feasibility determination from 6,131 to 2,325 replications and constrained selection from 2,805 to 979 (CRN; 11,043 to 3,898 independent), with every feasibility decision correct in ≥ 99.9 % of macro-replications.
 
-![Figure 12 — Left: replications until the sequential procedures stop. Right: total replications to answer four thresholds with fresh or recycled observations.](./figs/corridor_replications.png)
+![Figure 11 — Left: replications until the sequential procedures stop. Right: total replications to answer four thresholds with fresh or recycled observations.](./figs/corridor_replications.png)
 
-![Figure 13 — Left: variance-reduction factors over all plan pairs. Right: CI half-width for the best-vs-runner-up CO₂ difference.](./figs/corridor_crn.png)
+![Figure 12 — Left: variance-reduction factors over all plan pairs. Right: CI half-width for the best-vs-runner-up CO₂ difference.](./figs/corridor_crn.png)
 
 **Demand.** At demand ×0.85 the best plan switches to the 90 s cycle (saving 19.96 %; sequential: 99.8 % exact, 492 runs). At ×1.15 a single plan is feasible (120 s cycle, 40 km/h wave; 474.4 s; saving 17.76 %), inside the tolerance band: the procedure selected it in 77.8 % of macro-replications and reported "no feasible plan" in 22.2 % — allowed by the ε-tolerance, never an infeasible pick — while the single-run approach chose an infeasible plan 64.6 % of the time.
 
-![Figure 14 — Left: CO₂ saving of the best feasible plan against the uncoordinated 90 s plan with 95 % paired CIs. Right: acceptable selections by demand level; the hatched part is the "no feasible plan" outcome.](./figs/corridor_demand.png)
+![Figure 13 — Left: CO₂ saving of the best feasible plan against the uncoordinated 90 s plan with 95 % paired CIs. Right: acceptable selections by demand level; the hatched part is the "no feasible plan" outcome.](./figs/corridor_demand.png)
 
 **What §4 establishes, and what it does not.** It establishes that these procedures, as implemented here, attain their nominal guarantee on a problem whose truth is known, and it quantifies what CRN is worth when the competing systems share their entire random input. It establishes nothing about Seoul: the corridor is invented.
 
@@ -399,7 +398,7 @@ At the headline budget q = 1,320 s the true best feasible route is `fastest` and
 | Sequential (simultaneous), independent | 429 (p90 687) | 0.958 | 1.000 | 0.000 | 0.000 |
 | Sequential (two-phase), CRN | 1,716 (p90 6,000) | 0.833 | 0.873 | 0.000 | 0.127 |
 
-![Figure 15 — Left: what each way of spending replications buys at the 22-minute budget, against the 40 runs §3.6 spent. Right: the shortest-versus-fastest comparison as the indifference zone is tightened — filled markers are zones narrower than the true 13.3 g gap, where the 1 − α guarantee applies; the dashed line is the replication cost.](./figs/sumo_selection.png)
+![Figure 14 — Left: what each way of spending replications buys at the 22-minute budget, against the 40 runs §3.6 spent. Right: the shortest-versus-fastest comparison as the indifference zone is tightened — filled markers are zones narrower than the true 13.3 g gap, where the 1 − α guarantee applies; the dashed line is the replication cost.](./figs/sumo_selection.png)
 
 **The attained probability of correct selection is 0.956 against a nominal 0.95**, with every selection acceptable, at a cost of 490 SUMO runs against the 40 of §3.6 — which themselves attain 0.742. Three things in that table are worth saying plainly.
 
@@ -480,7 +479,7 @@ At eight replications four of the ten route pairs read below 1×, which is what 
 | A vs fastest | 1.96 km | 0.065 | +0.419 | 1.67× |
 | A vs C | 1.11 km | 0.031 | +0.496 | 1.92× |
 
-![Figure 16 — Left: how much road two routes share against how correlated their CO₂ is under CRN, with the synthetic corridor's median and the background fleet's own cross-arm correlation for reference. Right: the variance-reduction factors of the two stages side by side, ten route pairs against 1,128 plan pairs.](./figs/sumo_crn_gap.png)
+![Figure 15 — Left: how much road two routes share against how correlated their CO₂ is under CRN, with the synthetic corridor's median and the background fleet's own cross-arm correlation for reference. Right: the variance-reduction factors of the two stages side by side, ten route pairs against 1,128 plan pairs.](./figs/sumo_crn_gap.png)
 
 The one pair that shares a lot of road — the two direct paths, 11.28 km in common — is also the only pair with a correlation above 0.5 and the only VRF above 2×. Across all ten pairs the linear relationship is r = 0.543, but the rank correlation is −0.176: **it is that single high-overlap pair carrying the relationship, not a smooth trend**, and among the six pairs that share under 3 km the correlation wanders between 0.14 and 0.50 with no ordering by overlap at all. Nor is the residual a network-wide "busy draw" factor: the correlation between an arm's CO₂ and the replication's own background-fleet time loss is between −0.01 and +0.11 for all five arms.
 
