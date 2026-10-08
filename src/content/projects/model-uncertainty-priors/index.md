@@ -278,7 +278,10 @@ the result is not a marginal likelihood. It is computed anyway, because it is wh
   <figcaption>Bayesian optimisation over the prior's scale, on the real objective (dashed): nine evaluations.</figcaption>
 </figure>
 
-![What tuning the flow prior's shape changed, relative to the untuned prior: training pricing error −5.2 %, the held-out decision −0.4 %, posterior entropy −59.0 %. Bars are the mean of five Bayesian-optimisation seeds; crosses are the seeds (results/control_bars.json).](./figs/control_bars.png)
+<figure class="vid">
+  <video src="/projects/model-uncertainty-priors/media/control_bars.mp4" autoplay loop muted playsinline preload="metadata" poster="/projects/model-uncertainty-priors/media/control_bars.jpg"></video>
+  <figcaption>Each Bayesian-optimisation step samples a tilt of the flow prior (top, change in training pricing error; ring = best so far). For the best tilt, training error falls 5.4 %, the held-out decision 0.3 %, and posterior entropy 58.7 % (seed 0; five-seed means −5.2 / −0.4 / −59.0 %).</figcaption>
+</figure>
 
 **The decision objective.** For a candidate prior $\pi_\theta$, fit the model-averaged SDF on a 240-month
 training window — posterior probabilities from (4), loadings averaged over models — and price the next 240
