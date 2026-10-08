@@ -18,7 +18,17 @@ kind: project
 thumb: "/projects/tiny-yolo-quantization/media/thumb.jpg"
 ---
 
-Object detectors are judged on big GPUs, but the places that need them — drones, cameras on a farm, a security box — have a Raspberry Pi's worth of compute and a battery. The graduation project asked a plain question: take the smallest YOLO, quantize it to 8-bit integers, and measure what that is actually worth on hardware people own, from a 55-dollar Pi to a 1,400-dollar GPU. This was my first piece of work on quantisation and the reason the topic is still on my reading list.
+## In short
+
+**Where it started.** Object detectors are judged on big GPUs, but the places that need them have a Raspberry Pi's worth of compute. Our three-person graduation project took the smallest YOLO, quantized it to 8-bit integers, and measured what that is worth from a 55-dollar Pi to a 1,400-dollar GPU.
+
+**What I learned building it.** Symmetric scales are cheap but cost accuracy where activations are lopsided, so the two layers right before the detection heads got asymmetric scales and values were clipped at three sigma.
+
+**What that made me curious about.** Whether the saving is the same on every machine, so we ran it on five.
+
+**What worked, and what did not.** The total footprint fell from 1.6 GB to about 100 MB, and inference got 22 % (i5) to 61 % (RTX 3080) faster; a quantized model on an i5 (0.65 s) beat the original on a more expensive i7 (0.77 s). mAP fell from 65.33 % to 62.55 %, and live detection on the Pi stayed at about two seconds a frame.
+
+**Where it leads.** Real time on a Pi needs a smaller network, non-linear quantization or a hardware accelerator. This was my first work on quantisation, and the reason the topic is still on my reading list.
 
 ![The quantization scheme: convolution, batch-norm and LeakyReLU fused into one int8 MAC with a bias shift, and the Tiny YOLOv3 layer table.](./figs/quantization_architecture.png)
 

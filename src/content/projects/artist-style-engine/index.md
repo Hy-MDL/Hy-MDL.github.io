@@ -20,7 +20,17 @@ scope: lab
 thumb: "/projects/artist-style-engine/media/thumb.jpg"
 ---
 
-An artist has a way of drawing that is theirs: the line, the palette, how perspective is bent, what the characters are for. The project's question is whether that can be captured from a few works and used — to describe it, to generate new objects in it, and to make those objects into goods an artist could sell. It is a TIPS-funded R&D project of Urban Complex with Yonsei as the research partner; the lab develops the model engine, the company builds the service, collects the data and works with the artists. On the lab side the project is three of us — Jiyoung Jeon, Daehyuk You and me. I joined in March 2025; my parts are listed under "What I built". This page is what was built, month by month, including the month the work vanished.
+## In short
+
+**Where it started.** An artist has a way of drawing that is theirs: the line, the palette, how perspective is bent, what the characters are for. The project asks whether that can be captured from a few works and used to generate new objects an artist could sell. It is a TIPS-funded R&D project of Urban Complex with Yonsei as the research partner; the lab develops the model engine, the company builds the service, collects the data and works with the artists. On the lab side the project is three of us — Jiyoung Jeon, Daehyuk You and me. I joined in March 2025; my parts are listed under "What I built".
+
+**What I learned building it.** The first-year generators were style-transfer models, and their ceiling showed in the results: the outline of the source object could not change, so the output only wore the artist's surface. Hence the August 2025 reset to personalisation plus a 3D stage. For the memory bank, ordinary captions lost exactly what mattered, so I forced Qwen2-VL's captions into four fixed sections.
+
+**What that made me curious about.** Whether a bigger model or more reasoning would fix the style families every classifier confused, and whether one base model could generate for every artist.
+
+**What worked, and what did not.** Scale did not help: Qwen3-VL-30B scored 42 % on the gold set and 100 % on a curated 20; the bottleneck is category boundaries, not model size. A QLoRA classifier training 0.48 % of Qwen2-VL-7B reached 91.4 % on seen artists and 76.0 % on unseen ones (7.2 % without the adapter), and a DINOv2 prior checked by Qwen3-VL reached 96.0 %. No single base model covered every artist, so the classifier's real job became routing: toy art to a toy checkpoint, the rest to SDXL + StyleCrafter. The worst failure was not a model: in April 2026 the project directory was deleted, with no git and no second copy. The records were rebuilt; the images and adapters were not.
+
+**Where it leads.** Year two is delivered. What remains is on the service and data side: artist material accumulating in the company's database, and the classify, describe and generate hooks connected into the platform.
 
 ![The pipeline agreed in August 2025: A — learn an artist's style from their images; B — generate new objects in that style; C — model the 2D result in 3D and produce a physical object.](./figs/pipeline_abc.png)
 

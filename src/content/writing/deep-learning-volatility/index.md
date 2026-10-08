@@ -80,6 +80,8 @@ Three arguments are given for this grid-based training. Neighbouring grid points
 
 The network is deliberately small: four hidden layers of 30 units, ELU activations, linear output of size 88. For the 11-parameter Bergomi-type models the paper reports 6,808 weights, although its formula counts one hidden-to-hidden block too many: four layers of 30 units give 5,878. ELU is chosen over ReLU for a specific reason: the approximation theorem of Hornik, Stinchcombe and White for derivatives requires a smooth activation, and the calibration step relies on $\nabla_\theta \tilde F \approx \nabla_\theta \tilde P$. Inputs are rescaled to $[-1,1]$, outputs are standardised, batch size is 32, and training runs up to 200 epochs with early stopping.
 
+> **My comment.** My roughvol-lab surrogate uses the same 8×11 grid with a wider network (four layers of 256, SiLU, smooth for the same reason). Its learning curve was flat beyond 10,000 surfaces, 2.46 bp to 2.29 bp, against 2.15 bp of Monte Carlo noise in the held-out targets. That makes me think the useful budget here goes into paths per label rather than into more parameter draws.
+
 ### 3.4 The calibration step
 
 With $\tilde F$ fixed, the online problem is
@@ -104,11 +106,15 @@ Gradient-based solvers (Levenberg–Marquardt, BFGS, L-BFGS-B, SLSQP) are compar
 | Network, surface gradient | 113 µs |
 | Speed-up, network vs. Monte Carlo | 9,000–16,000× |
 
+> **My comment.** A per-surface evaluation time is not a calibration time. In roughvol-lab the batched speed-up over direct Monte Carlo calibration was 385×, but for a single surface on the GPU it was only 3.4×, because the 40-iteration, 8-start Levenberg–Marquardt loop was kernel-launch bound. I would want the speed-up reported per calibration on the hardware a desk actually uses.
+
 **Accuracy.** Heat maps of relative error over the grid ([Fig. 6 in the paper](https://arxiv.org/pdf/1901.09647#page=20)) show that <mark>the mean relative error between network and Monte Carlo is well under 0.5% everywhere, with standard deviation below 1%</mark>, comparable to the Monte Carlo confidence band itself. The maximum error, however, reaches 25% at some grid points.
 
 **Synthetic calibration.** Calibrating with Levenberg–Marquardt to test-set surfaces, the 99% quantile of the surface RMSE is below 1% for both models.
 
 **SPX history.** Rough Bergomi with five forward-variance levels is calibrated daily to SPX smiles from January 2010 to March 2019, on maturities of 1 to 12 months and strikes 0.85 to 1.25. <mark>The calibrated $H$ stays below one half and mostly in $[0.1, 0.15]$</mark>, in line with earlier time-series estimates. Against a brute-force Monte Carlo calibration the RMSE gap is below 0.2% most of the time ([Fig. 12](https://arxiv.org/pdf/1901.09647#page=25)), and the network fit is sometimes better, which the authors attribute to exact network gradients versus finite differences on a noisy pricer. Differential evolution beats Levenberg–Marquardt on the surrogate, which they read as a hint that <mark>the network's first derivatives may not be accurate enough</mark>, and leave open.
+
+> **My comment.** I wonder whether this is about local minima rather than derivatives. With 8 Sobol starts per surface and a forward-mode Jacobian, Levenberg–Marquardt on my own surrogate recovered $H$ to a mean absolute error of 0.0008 on 2,000 synthetic surfaces. A single-start local method against a global one confounds the two explanations, and multiple starts would separate them cheaply.
 
 **Exotics and model recognition.** Replacing the strike axis by a barrier axis, the same recipe prices digital down-and-in and down-and-out options under rough Bergomi with average absolute error under 10 bp. A closing proof of concept trains a classifier to recognise which model generated a surface.
 

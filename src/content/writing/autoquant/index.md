@@ -114,6 +114,8 @@ A candidate passes if mean $g_s \ge 0.005$, worst-scenario $g_s \ge 0$, mean max
 
 Bold marks the best return and Sharpe on the blind window. <mark>The screened configuration earns less than the naive top-1 in every window and less than buy-and-hold on the hold-out; what it buys is a shallower drawdown and fewer trades.</mark> A moving-block bootstrap on validation months puts the two-stage minus one-stage difference at -0.016 with a 95% interval of [-0.040, 0.008], so the two are not statistically distinguishable.
 
+> **My comment.** This is the same trade I measured in input-uncertainty-select: a bootstrap feasibility margin cut the infeasibility rate from 0.244 to 0.048 but raised regret from 21.1 to 24.1 bp and left the true probability of a good selection at 0.06. A screen that only moves you along the risk-return frontier is a risk preference, and I would rather see it labelled that way than as robustness.
+
 **Cost ladder.** One fixed configuration on the 2019–2021 core sample:
 
 | Variant | CAGR (dec.) | Sharpe | MaxDD | Trades |
@@ -138,6 +140,8 @@ Bold marks the best return and Sharpe on the blind window. <mark>The screened co
 
 There are also bookkeeping ambiguities. The case study states 40 Stage I trials, yet the sensitivity scan selects trial IDs up to 108, which suggests (my inference) that the 120-trial budget was used there. Random search scoring exactly -1.0000 at small budgets, with invalid-trial rates of 28% to 67%, implies a largely infeasible search space, so the optimizer comparison partly measures constraint handling. The replay parity evidence is on SOL/USDT one-hour bars, not the 4-hour anchor.
 
+> **My comment.** Auditing my own course report on exchange traffic taught me to look for exactly this: two of its headline diagnostics existed only as literals in figure scripts. A paper whose selling point is reconciled ledgers should let a reader recompute the trial count from the ledger, and I would check that before trusting any number downstream of Stage I.
+
 **Not shown.** No live or paper-trading record, no market-impact model, no full signal specification, and no comparison with simple alternatives such as walk-forward re-optimization.
 
 ## 6 Takeaways
@@ -147,6 +151,8 @@ There are also bookkeeping ambiguities. The case study states 40 Stage I trials,
 - Report PBO and a bootstrap interval alongside any tuned strategy. A PBO of 0.586 after all this care is a sober reference point.
 - Threshold policies are hyperparameters too; scan them.
 - For generative modeling of financial series, the relevance is indirect: the binding constraint in this study is a handful of non-overlapping evaluation windows, which is where realistic synthetic paths could help, but for perpetuals a simulator would have to produce funding jointly with price and be scored under this kind of strict cost accounting. The paper contains no generative or stochastic modeling.
+
+> **My comment.** In CASE I froze the configuration in September 2024 and kept the later decisions for scoring only, which is the honest version of an ex-ante threshold. The cost was that the post-freeze margins were not statistically resolved, so I sympathise with a paper whose single blind window per asset cannot say much.
 
 ## References
 

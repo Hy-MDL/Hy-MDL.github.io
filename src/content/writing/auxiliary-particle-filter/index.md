@@ -66,6 +66,8 @@ $$
 
 with $\alpha^{j,k}_{t+1}\sim\alpha_{t+1}\mid\alpha_t^j$. By Rosenblatt's theorem these should be i.i.d. uniform on $(0,1)$ if the model is right, *allowing the development of a whole portfolio of exact diagnostic tests via the routine application of Monte Carlo test*. A particle filter comes with a free, exact, model-specification check — the probability integral transform — and this is the paper that says so in the SMC context.
 
+> **My comment.** A coarse version of this check, the coverage of the 95% predictive interval, is what exposed my own model in the exchange-queueing reanalysis: the gamma-mixed Cox posterior covered 3–53% of real one-minute blocks, and only a log-normal burst law at a nested scale reached nominal coverage. I would now compute the full PIT histogram by default rather than one coverage number, because it shows which tail is wrong.
+
 ### 2.2 Why SIR breaks
 
 Following Liu, if $h$ does not vary quickly with $\alpha$ the variance of the self-normalised importance sampler is approximately proportional to
@@ -96,6 +98,8 @@ This is the paper's real organising contribution and it is easy to lose.
 **Weakness 2 — approximation.** *The tails of (2) usually only poorly approximate the true tails of $\alpha_{t+1}\mid Y_t$ due to the use of the mixture approximation. As a result (3) can only ever poorly approximate the true $f(\alpha_{t+1}\mid Y_{t+1})$ when there is an outlier.* No sampling scheme can repair this, because the object being sampled from is itself wrong where it matters. §4's fixed-lag filter *partially* deals with it; the conclusion admits *it still cannot deal with some problems*.
 
 That a method paper distinguishes "my Monte Carlo is inefficient" from "the thing my Monte Carlo targets is wrong in the tail", and reports partial success on the second, is unusual and is why this paper aged well.
+
+> **My comment.** This is the split I try to keep in TailFlow. Its 1-day ES error of 16.2% is read against a sampling floor of 7.6%, the error the true model makes with the same scenario count, so only the part above the floor is charged to the generator. Without a known truth, like the Kalman answer here or the Hamilton filter in my synthetic market, I do not see how the two errors can be told apart at all.
 
 ### 2.4 The stress test
 

@@ -18,19 +18,17 @@ kind: project
 thumb: "/projects/marketshell/media/thumb.jpg"
 ---
 
-## Abstract
+## In short
 
-marketshell is a terminal application for the unglamorous part of equity research: looking at the same twenty
-tickers every morning, seeing what moved, whether the move is large relative to recent volatility, and what the
-company last said. It is written in Python on Textual 8 and operated entirely from the keyboard. This write-up is
-about four design decisions rather than features: why a TUI, how a price chart is rasterised into braille and
-half-block characters without a plotting library, how the app stays responsive while it downloads and parses, and
-what "fresh" means for end-of-day data. All numbers were measured on a headless 64-core Linux server (AMD EPYC
-7452), not on a laptop, while that server was heavily shared (load average 72–100): cached rows appear 741 ms after
-process start (351 ms in an earlier, less contended run), a refresh that finds 50 tickers fresh makes zero requests,
-and coalescing redraws cut the median event-loop lag during a 50-ticker download from 622 ms to 4.4 ms. The intended
-live source, Stooq's keyless CSV endpoint, refused every scripted request made on 2026-09-21; the app reports that in its
-status bar and keeps working from cached, imported or bundled synthetic bars.
+**Where it started.** My research loop alternates between a shell, where models train and logs scroll, and a browser tab that exists only to answer "what did this ticker do, and is that unusual?". The browser costs a context switch, a mouse and megabytes of page to show six numbers that fit in a 120×36 character grid. So I wrote a keyboard-only terminal app in Python on Textual 8 that runs where the work already is, including over SSH on a lab server with no display.
+
+**What I learned building it.** A character grid makes the rendering problem small enough to own completely, so the charts come from a hand-written rasteriser: braille cells as 2×4 dot bitmaps, min–max column binning so a one-day crash stays visible on a five-year chart, half-block candles. The first version took 20.9 ms for a 136×28 panel; vectorising the binning brought it to 10 ms on the loaded server.
+
+**What that made me curious about.** The first version never did I/O on the UI thread and still stalled badly during a refresh. I wanted to know which change actually fixes that.
+
+**What worked, and what did not.** Coalescing redraws into one table rebuild per 50 ms was the clear win: median event-loop lag during a 50-ticker refresh fell from 622 ms to 4.4 ms. Limiting downloads to three worker threads was less clear-cut than I expected: it halved the typical worst stall but did not move p95, and on the oversubscribed server it slowed the refresh (11.9 s vs 7.0 s). Cached rows appear 741 ms after process start. The intended live source, Stooq's keyless CSV endpoint, refused every scripted request on 2026-09-21; the app reports that and does not try to get around it, so every price shown is synthetic.
+
+**Where it leads.** A second keyless source behind the same client, in-place cell updates to remove the O(N) table rebuild, and wiring the filings panel to the real *callsignal* database, which so far it has met only as my fixture.
 
 ## 1 Introduction
 

@@ -21,6 +21,8 @@ Continuous-time finance writes the log-price as $dY_t = \mu_t\,dt + \sigma_t\,dW
 
 The paper attacks this from two sides. First, options. The at-the-money skew $\psi(\tau) = \partial_k \sigma_{BS}(k,\tau)\big|_{k=0}$ is well described by a power law in time to expiry; the authors fit $\psi(\tau) = A\,\tau^{-0.4}$ to SPX closing quotes on 20 June 2013 ([Fig. 1.2](https://arxiv.org/pdf/1410.3394#page=5)), where conventional stochastic volatility gives a skew flat for small $\tau$ and then decaying as a sum of exponentials. Fukasawa had shown that fBM-driven volatility generates $\psi(\tau) \sim \tau^{H-1/2}$ for small $\tau$, so matching a skew that blows up at short expiry needs $H$ near zero; with $H > 1/2$ the skew *increases* with expiry, which no equity market does. <mark>The same asymptotic that makes fBM attractive to Comte and Renault rules out their sign of $H - 1/2$.</mark> It also removes the standard argument that an exploding short-dated smile implies jumps.
 
+> **My comment.** I reproduced this asymptotic in roughvol-lab: with $H=0.07$ the local log-log slope of the simulated rough Bergomi ATM skew at the shortest maturities was $-0.447$, against the theoretical $H-\tfrac12=-0.43$, while a fitted Heston gave $-0.008$. The Heston number is the flat short end the paper describes.
+
 Second, and the actual subject of the paper: the realized volatility series itself says $H$ is small — a statement about the physical measure, obtained without touching an option price.
 
 ## 2 Background
@@ -161,6 +163,8 @@ Details that are easy to get wrong. The second regression must go through the or
 ### 5.1 Recovering the estimator's bias
 
 Running the whole pipeline on 2,000 simulated days with true $H = 0.14$: the one-hour uncertainty-zones proxy returns $H \approx 0.16$, the eight-hour realized-variance proxy $H \approx 0.18$, and in both cases $\zeta_q$ is still linear in $q$. The fSS calculation of Appendix C gives $0.161$ and $0.184$ for window lengths $1/24$ and $1/3$ of a day against a true $0.140$, with the fitted $\nu$ falling from $0.300$ to $0.263$ and $0.230$. <mark>Both routes say the same thing: the index estimates near $0.14$ are upper bounds, and the true exponent is probably nearer $0.1$.</mark>
+
+> **My comment.** In roughvol-lab I measured a bias in the opposite direction. Independent measurement noise in the log-volatility proxy adds a lag-independent floor to the moment curve and pushes $H$ *down*: at the noise level of a daily Garman–Klass proxy, true $H$ of 0.1 / 0.3 / 0.5 came out as 0.048 / 0.199 / 0.396. Smoothing pushes up and noise pushes down, so "upper bound" holds only for a proxy clean enough that smoothing wins, which is the Cont–Das point in numbers.
 
 ### 5.2 Spurious long memory
 

@@ -202,6 +202,8 @@ Test log-likelihood in nats, error bars two standard deviations. The first four 
 
 **The paper's own generalisation thesis** is the most interesting sentence in the discussion: RQ-NSF excels on *Power, Gas, and Hepmass, the datasets with the highest ratio of data points to dimensionality from the five considered*, and on ImageNet rather than CIFAR-10 because ImageNet has *over an order of magnitude more data points*. *When the dimension is increased without a corresponding increase in dataset size, RQ-NSF still performs competitively with other approaches, but does not outperform them.* Extra transformer flexibility is a capacity increase and pays only when there is data to spend it on. This is directly actionable: for a financial factor panel — tens of dimensions, hundreds to low thousands of monthly observations — this paper predicts its own method will not help.
 
+> **My comment.** The flow prior in my factor-selection project sidesteps this warning in an unexpected way: it is fitted to draws from a known hyper-g/n mixture, so the data per dimension is whatever I choose to sample, not the few hundred months of the panel. I suspect that is part of why an affine-coupling stack was enough there to land within 0.0159 total variation of the exact model posterior.
+
 ### 5.2 VAE prior and posterior
 
 Dynamically binarised MNIST and EMNIST; ELBO and an importance-weighted $\log p$ with 1000 samples.
@@ -241,6 +243,8 @@ Bits/dim and parameter count; bold marks the lowest bits/dim in each column. $\s
 - **The trainable splines on the pass-through half (§3.3) are never ablated.**
 - **Ten flow steps everywhere**, with no depth study, even though "fewer steps needed" is offered as the offset for the 30–40% per-step cost. The two are never measured against each other.
 - **The 30–40% overhead is measured with a linear bin search** while the complexity argument uses binary search — an inconsistency that makes the real cost unclear in either direction.
+
+> **My comment.** In my factor-selection prior the target is a heavy-tailed scale mixture, and the tail weight is set by element-wise sinh–arcsinh layers between the affine couplings, not by the coupling transform. I wonder whether swapping those couplings for RQ splines would change anything there: the spline would only reshape the bulk inside $[-B,B]$ and leave the tail to the same sinh–arcsinh layers.
 
 ## 7 Extensions
 

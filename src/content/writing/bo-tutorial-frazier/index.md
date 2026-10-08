@@ -57,6 +57,8 @@ Kernels are the power-exponential (Gaussian) kernel, $\alpha_0\exp(-\sum_i\alpha
 
 The loop (the paper's Algorithm 1): GP prior; $n_0$ points from a space-filling design; then repeatedly update the posterior, maximise the acquisition, evaluate, until the budget $N$ is spent; report the best evaluated point or the maximiser of the posterior mean.
 
+> **My comment.** When I used this loop to tune the hyper-g/n prior in my factor-selection project, BO did its job as an optimiser (median regret 0 by evaluation 9, while random search and Sobol had not converged after 20), and the tuned prior then priced slightly worse held out than the default. Nothing in the choice between EI, KG and ES addresses that. Before picking an acquisition rule I would now ask whether the objective I can evaluate is the one I actually care about.
+
 ### 3.1 Expected improvement: reward = best value seen
 
 Assume exact observations and that only evaluated points may be reported. Stopping now yields $f_n^\ast=\max_{m\le n}f(x_m)$; one more evaluation at $x$ raises this by $[f(x)-f_n^\ast]^+$. Hence
@@ -224,6 +226,8 @@ There are none, and no tables. The three figures are illustrations (one EI itera
 ## 6 Limitations
 
 **Stated by the author.** Multi-step optimal acquisition is intractable in general and approximate versions are not yet practical. There are no finite-time bounds explaining why one-step rules work, and few asymptotic rates. GPs are the default surrogate though other models may suit some problems better. High dimensions are open. ES needs layered approximations; discretised KG scales badly.
+
+> **My comment.** My own failure with a GP surrogate came through a constraint, not the objective. In the battery degradation study the surrogate picked a charge rate at 45 °C that it said would keep the peak temperature under the 60 °C limit, and the simulator reached 60.7 °C. A point chosen to maximise the objective sits on the constraint boundary by design, which is exactly where a confident GP is least trustworthy, so I wonder whether an acquisition rule should spend some evaluations on feasibility near the chosen point before reporting it.
 
 **My reading.**
 

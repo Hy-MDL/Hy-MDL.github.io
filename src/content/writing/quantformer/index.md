@@ -66,6 +66,8 @@ $$
 
 and turned into a one-hot vector with $\varrho$ classes, each covering a fraction $\varphi$ of stocks. With $\varrho=3,\varphi=0.2$ the three classes are the ranges $[0,0.2)$, $[0.4,0.6)$ and $[0.8,1]$ of $\Psi$; stocks in between receive an all-zero "null" label, which can be either dropped or kept in training. With $\varrho=5$ the five quintiles tile the universe and there is no null label.
 
+> **My comment.** This is the kind of target FinPhasor is written against: a return quantile says where a stock ends up next period, not when it got there. In FinPhasor only the phase of the predicted scalogram ordered future returns, and none of the twelve scalar-return systems recovered that ordering; I would like Quantformer's rank IC reported so it could be put on the same scale.
+
 ### 3.3 Encoder and loss
 
 The embedding is $X_i' = X_iW_E+\theta_E$ with $W_E\in\mathbb R^{2\times d}$. Standard multi-head scaled dot-product attention follows,
@@ -125,6 +127,8 @@ Main results (paper's Table 3):
 **Strengths.** The model is tiny, the inputs are two public series, code is released, the fee assumption is harsh, and the long-only constraint matches the market. Comparing against a hundred factors under one identical trading rule is a fairer benchmark than the usual handful. Casting the task as cross-sectional quantile classification with a deliberately ignored middle is a sensible way to fight label noise.
 
 **Weaknesses.** <mark>There is no neural baseline</mark>: no LSTM, no vanilla transformer with positional encoding, no MLP on the flattened window. The paper therefore cannot say whether removing positional encoding or using attention at all is what helps — a striking gap given that attention without position is permutation-invariant over the 20 steps. There is one train/test split, no retraining during the 3.4-year test, no seed variance, and the headline rests on one of nine configurations chosen after seeing test results. Figure 3 shows that the winning strategy spent 2020–2021 below the index; the outperformance is concentrated in 2022–2023, when the CSI 300 fell. Treatment of delisted stocks is not discussed. The risk-free rate is LIBOR rather than a Chinese rate.
+
+> **My comment.** Without positional encoding the encoder treats the 20 steps as an unordered set unless position leaks in through the values, so it may not be able to tell a stock that rallied last month from one that rallied nineteen months ago. I would shuffle the steps at test time; if Month 1 barely changes, a plain short-term reversal or momentum sort is the baseline it really needs.
 
 **Loose ends.** The abstract speaks of "transfer learning from sentiment analysis", but no pretrained weights are used; the transfer is of task framing only. MSE on softmax outputs is an unusual choice over cross-entropy and is not justified. The text and Table 3 disagree on Month 1's win rate (57.3% vs 57.8%), and the text gives the benchmark return as -1.77% while the tables say 1.77%.
 

@@ -18,7 +18,13 @@ scope: lab
 thumb: "/projects/fai-lab-site/media/research.jpg"
 ---
 
-A lab website has one job: let a prospective student, collaborator or reviewer find out in a minute what the lab does, who is in it, what it has published and what it teaches. The Financial Investment AI Lab (Prof. Kyong Joo Oh, Department of Industrial Engineering, Yonsei University) did not have one that did that, so I built it. The site is a single-page React application built with Vite, served at fai.yonsei.ac.kr, bilingual where the content is (the introduction and course descriptions are in Korean; navigation, section titles and the publication metadata are in English).
+## In short
+
+**Where it started.** A lab website has one job: let a prospective student, collaborator or reviewer find out in a minute what the lab does, who is in it, what it has published and what it teaches. The Financial Investment AI Lab (Prof. Kyong Joo Oh, Department of Industrial Engineering, Yonsei University) did not have one that did that, so I built it in July 2025 and maintain it; the site belongs to the lab.
+
+**What I learned building it.** A site like this is worth something only if it stays current, so the decision that mattered was holding content as data: a publication or a course is added by editing a record, not a page, and the research page's journal-type and topic filters stay correct as entries are added.
+
+**What it is now.** A single-page React application built with Vite, one production JavaScript asset and no runtime dependency on external CDNs, served at fai.yonsei.ac.kr and bilingual where the content is (the introduction and course descriptions are in Korean; navigation, section titles and the publication metadata are in English).
 
 ![Home: the lab's name, a one-line statement, and the four research areas.](./figs/home.png)
 

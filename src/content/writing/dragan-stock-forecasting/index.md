@@ -46,6 +46,8 @@ $$
 
 The critic therefore never sees a price in isolation. Note that the generator as described receives no noise vector: given a window it returns a single number.
 
+> **My comment.** This is the sentence that decides how I read everything after it. With no noise input there is no conditional distribution to score, so nothing here could be evaluated the way I evaluate CASE, by the VaR and ES a book is told to hold and how often the realised loss exceeds it.
+
 ### 3.2 Critic loss
 
 $$
@@ -107,6 +109,8 @@ The authors also tabulate earlier GAN forecasters but caution that features, cod
 **Strengths.** The comparison among GAN losses is controlled, which is uncommon in this niche: same generator, same critic, same conditioning. The two regularisers are cheap, well motivated and easy to reproduce from the equations.
 
 **Weaknesses.** <mark>There is no random-walk baseline.</mark> For daily closes, predicting tomorrow's price as today's is the reference that any level-forecasting model must beat, and RMSE in price units on trending stocks is dominated by that persistence. The test-set plots in Figure 3 look like a smoothed and slightly delayed copy of the real series, which is what near-persistence forecasts look like; without the naive number it is impossible to say how much skill remains. No directional accuracy, return-based metric or trading evaluation is given.
+
+> **My comment.** The first thing I would add is the persistence RMSE in the same table. My guess is that the Google column, where the margin is 0.002, sits almost exactly on it, and I would not be surprised if the other five do too.
 
 The density comparison in Figure 2 is of price *levels* pooled over the test period. Any forecast that tracks the level closely will reproduce that histogram, so it says little about whether the model has learned a distribution. This links to a more basic point: with no latent noise input, the generator is a deterministic regressor and the critic functions as a learned loss. Calling the result a generative model of prices is a stretch; the GAN vocabulary of mode collapse applies only loosely.
 

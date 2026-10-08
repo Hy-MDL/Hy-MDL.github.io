@@ -18,11 +18,36 @@ kind: project
 thumb: "/projects/roughvol-lab/media/thumb.jpg"
 ---
 
-## Abstract
+## In short
 
-Rough volatility models replace the Brownian driver of log-volatility by a process with Hurst exponent H ≈ 0.1. They explain two stylised facts at once — the scaling of volatility increments and the power-law explosion of the at-the-money (ATM) implied-volatility skew — but they are non-Markovian, have no closed-form prices and are slow to calibrate. This project rebuilds the full tool chain from scratch: fractional Brownian motion (fBm) by exact Cholesky and by Davies–Harte, rough Bergomi and Heston simulators, a Fourier pricer used as ground truth, a moment-scaling Hurst estimator, an implied-volatility solver, and a neural surrogate for calibration. The emphasis is on measurement: each simulator is validated against a known law, each price comes with a confidence interval whose coverage is checked empirically, and each variance-reduction technique is scored by variance *and* by cost.
+**Where it started.** Rough volatility models drive log-volatility with a process whose Hurst exponent is H ≈ 0.1,
+and that one change explains both the scaling of volatility increments and the power-law explosion of the ATM skew.
+The price is practical: the models are non-Markovian, have no closed-form prices and are slow to calibrate. I wanted
+to rebuild the whole tool chain myself, from fractional Brownian motion to a calibration surrogate, and to report no
+Monte Carlo number without a confidence interval whose coverage I had checked.
 
-## 1 Introduction
+**What I noticed first.** The simulators passed their checks against known laws, but the classical benchmark did not
+come out perfectly clean: with 2 million paths, my Heston prices sat 1.8–2.4 standard errors above the closed form,
+all on the same side, a visible remnant of Euler bias. The skew did what the theory says: a local slope of −0.447 at
+the shortest maturities for H = 0.07 (theory −0.43), against −0.008 for a fitted Heston.
+
+**What that made me curious about.** Volatility is never observed directly. How rough does a smooth process look when
+it is measured through a noisy proxy? And when variance-reduction techniques are stacked, does each one still pay for
+itself once its cost is counted?
+
+**What worked, and what did not.** The noise question had an uncomfortable answer. Through a simulated Garman–Klass
+proxy, a true H of 0.1 / 0.3 / 0.5 is estimated as 0.048 / 0.199 / 0.396. A correction restores 0.100 / 0.300 / 0.501,
+but it rests on an i.i.d.-noise assumption, so I make no claim about any real asset. On variance reduction, adding
+antithetic sampling to a control variate *lowered* the VRF (4.47 → 3.88), yet still won on efficiency because a pair
+needs half the Gaussian draws; ranking by variance alone would have picked the wrong estimator. The full combination
+reached a 7.54× efficiency gain. The neural surrogate recovered H to ±0.0008 and calibrated 385× faster batched, but
+only 3.4× for a single surface on the GPU, and 50,000 training surfaces were more than needed.
+
+**Where it leads.** The hybrid scheme is first order, so the next step is Richardson extrapolation or the rough-Donsker
+correction, and the Hurst study needs intraday realised variance from real data rather than a daily range proxy
+(section 5).
+
+## 1 Background
 
 Gatheral, Jaisson and Rosenbaum observed that moments of log-volatility increments scale as $\Delta^{qH}$ with $H$ near 0.1, far below the 0.5 of diffusions. On the pricing side, Bayer, Friz and Gatheral showed that the rough Bergomi model reproduces the observed ATM skew $\psi(\tau)\propto\tau^{H-1/2}$ with four parameters, while classical stochastic-volatility models produce a skew that flattens as $\tau\to0$.
 

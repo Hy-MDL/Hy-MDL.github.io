@@ -30,6 +30,8 @@ $$
 $$
 the squared gradient of the downstream loss with respect to the outcome, at a reference decision $\hat z_x$ from a frozen sample-average solver. $\lambda=0$ is ordinary flow matching.
 
+> **My comment.** The reference decision worries me more than the weight itself. In TailFlow every fitted generator picked the truly best portfolio in at most 45% of decisions, so a reference $\hat z_x$ from a sample-average solver on such a model is more often than not a different portfolio from the truly best one, and the weight then sharpens the fit around that decision's sensitive region. I would want to see the weight recomputed as the generator improves, and how often the reference decision changes when it is.
+
 The theory is a chain I found easy to follow:
 1. Regret is at most twice a "decision discrepancy" between the true and generated distributions.
 2. That discrepancy is bounded by a velocity error weighted by an ideal, intractable sensitivity.

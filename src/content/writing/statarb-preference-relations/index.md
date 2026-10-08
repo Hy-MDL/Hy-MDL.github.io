@@ -71,6 +71,8 @@ $$
 
 It is worth unpacking Eq. (3), although the paper does not phrase it this way: row $i$ of $B^\top\rho$ adds up stock $i$'s signal against every other stock, so <mark>the utility of a stock is simply its average pairwise signal against the whole universe</mark>. That also explains the paper's Theorem 1: if $\rho=\rho^*+\epsilon$ with zero-mean noise, the estimator is unbiased, and if the noise is uncorrelated across pairs its variance shrinks as $N$ grows.
 
+> **My comment.** Working Eq. (3) through for the signal in Eq. (6) makes me suspect something stronger. Because $\mu_{ij}$ is the rolling mean of $\log p_i-\log p_j$, the numerator is $d_i-d_j$, with $d_i$ stock $i$'s log price minus its own 60-day mean; if every pair had the same $\sigma$, the utility would be exactly $(d_i-\bar d)/\sigma$, a single-stock reversal score. The pair-specific $\sigma_{ij}$ is the only place where pairwise structure survives the averaging.
+
 ### 3.2 Preference-preserving graph transformations
 
 Taking the sign of $\rho^*$ would put almost every stock into a position. Three transformations, each shown to keep the graph a valid preference graph, are applied in order.
@@ -114,6 +116,8 @@ Annualised excess returns of the long-short portfolio with utility-proportional 
 | **553 stocks (full set, single run)** | **14.03%** | 18.95% | **3.94** |
 
 <mark>Returns rise steadily with the number of securities, from about zero at 50 stocks to 14.03% at 553</mark>. At 250 stocks the whole bootstrap interval is already positive.
+
+> **My comment.** With $n=m=20$ fixed, a larger universe also means a more extreme selection: the top and bottom 20 of 553 sit further out than the top and bottom 20 of 50. Part of this curve may be that, not more information per stock, and I would rerun with $n$ and $m$ scaled to a fixed fraction of $N$ to separate the two.
 
 **Variants.** Four combinations are compared: equal (EW) or utility-proportional (UP) weights, with or without the decorator (w/ M). UP beats EW on mean return in every configuration ([Fig. 3 in the paper](https://arxiv.org/pdf/2310.08284#page=12)). <mark>The decorator lowers volatility and sharply lowers turnover in all cases, but on the full universe it does not raise the mean return.</mark> Holding periods stretch from a few days to as long as 23 days ([Fig. 2](https://arxiv.org/pdf/2310.08284#page=11), [Fig. 5](https://arxiv.org/pdf/2310.08284#page=13)).
 

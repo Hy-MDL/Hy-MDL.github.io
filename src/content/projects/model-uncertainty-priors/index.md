@@ -17,54 +17,42 @@ kind: research
 thumb: "/projects/model-uncertainty-priors/media/posterior_thumb.jpg"
 ---
 
-## Abstract
+## In short
 
-Huang & Shi (*Journal of Econometrics*, 2025) measure model uncertainty in the cross-section of stock returns
-as the entropy of the posterior probabilities over factor subsets, computed under a mixture of g-priors. The
-prior is where the subjectivity sits, and the programme this project continues is to **learn** it. The page
-treats a learned prior as a *surrogate that carries model uncertainty in its architecture*: a normalizing flow
-over the SDF loadings whose exact density turns any candidate prior into a posterior over models, an entropy
-and a model-averaged SDF in about a second. Three things are asked of that surrogate, in order.
+**Where it started.** Huang & Shi (2025) measure model uncertainty in factor selection as the entropy of the posterior
+over factor subsets, computed under a mixture of g-priors. The prior is where the subjectivity sits, so the seminar this
+project starts from proposed learning it with a GAN instead. That attempt left open questions: the GAN prior's
+theoretical basis was called weak, and the deck closed by asking whether lowering model uncertainty is even desirable.
+I wanted to answer those on a simulated panel where the exact posterior over all $2^{10}$ subsets can be computed.
 
-**Can it be checked?** The mixture of g-priors has a closed form only because this setup is conjugate, so the
-exact machinery is rebuilt (closed-form g-prior, hyper-g/n mixture by quadrature, posterior probabilities over
-all $2^{10}$ subsets of a simulated panel with known truth) and used as a measuring stick. The flow reproduces
-the exact posterior: the paired difference in entropy is $-0.0008$ $[-0.0017, +0.0001]$ and the total
-variation from the exact model posterior is 0.0159. A GAN cannot pass the same check, and the reason is
-measurable. Having no density, it must estimate the marginal likelihood by sampling the prior, and that
-estimator's effective sample size decays like $T^{-d/2}$, from 20,000 draws to 1.0. Its posterior lands 0.7958
-away in total variation, its entropy is understated by 71% and its expected calibration error is twelve times
-the baseline's. Using the *correct* prior without its density is 37 times worse than using an approximate prior
-with one: what fails is the route, not the fit.
+**What I noticed first.** The posterior needs marginal likelihoods, and a marginal likelihood is an integral against the
+prior's *density*. A GAN has none, so it has to estimate that integral by sampling the prior, and the estimator's
+effective sample size collapses from 20,000 draws to 1.0. A normalizing flow has an exact density, and it reproduced the
+exact posterior within 0.0159 in total variation; the GAN route landed 0.7958 away and understated the entropy by 71%.
+Using the *correct* prior without its density was 37 times worse than an approximate prior with one. What fails is the
+route, not the fit.
 
-**Can it be controlled?** Bayesian optimisation over the prior's shape, scored by the out-of-sample pricing
-error of the model-averaged SDF, works as an optimiser and buys almost nothing. Over a 21 × 21 grid of the
-hyper-g/n hyperparameters the objective spans only 0.25614 to 0.25794. Tilting the flow lowers the training error from 0.25733 to
-0.24352, but the held-out error moves only from 0.25135 to 0.25045, while the held-out posterior entropy falls
-from 0.783 to 0.321. The pricing objective is nearly flat in the prior; the uncertainty measure is not, and an
-optimiser free to change the prior spends that freedom on the measure.
+**What that made me curious about.** If the flow's density is what makes it checkable, it should also make it usable:
+any reshaped prior can be scored in about a second. Could I then tune the prior's shape against the out-of-sample
+pricing error (control), and re-tune it as data arrive (adaptation)?
 
-**Can it be adapted?** Re-tuning the flow at every refit on past data only did not improve the decision.
-Against the flow as trained, the change in pricing error is $-0.00235$ $[-0.00822, +0.00372]$ in a stationary
-simulation and $+0.00680$ $[-0.00117, +0.01549]$ with a structural break. On the real Fama–French panel it is
-$+0.02025$ $[-0.00018, +0.04385]$, the worst controller ($p = 0.054$). Meanwhile the entropy falls by 0.343,
-0.321 and 0.111. A fixed tilt chosen with hindsight on the evaluation data would have changed the error by
-$-0.01209$ $[-0.01989, -0.00430]$ in the stationary case, so some room existed; the diagnostics point to a
-controller whose internal objective was too noisy to find it.
+**What worked, and what did not.** The check worked. Control did not pay off: Bayesian optimisation lowered the training
+error from 0.25733 to 0.24352, but the held-out error only moved from 0.25135 to 0.25045, while the held-out entropy fell
+from 0.783 to 0.321. Adaptation did not improve the decision in any setting, and on the real Fama–French panel it was
+the worst controller ($+0.02025$ $[-0.00018, +0.04385]$). The pricing objective is nearly flat in the prior, so the loop
+spends its freedom on the uncertainty measure and manufactures certainty. The seminar's ranking also reproduced, but its
+Sharpe margin of $+0.0037$ $[-0.0081, +0.0148]$ does not survive a bootstrap.
 
-The seminar's empirical rankings reproduce: the cGAN model average tops the out-of-sample Sharpe table on the
-real Fama–French panel, and the GAN prior lowers measured uncertainty. With error bars, though, the winning
-margin is $+0.0037$ $[-0.0081, +0.0148]$, the GAN prior makes the portfolio significantly worse, and the
-lowered uncertainty is overconfidence rather than information. Taken together, a tractable density is what
-makes a learned prior checkable, controllable and adaptable at all. It is not sufficient: under a pricing
-objective, the cheapest thing for the loop to move is the uncertainty measure itself.
+**Where it leads.** A fixed tilt chosen with hindsight would have changed the error by $-0.01209$, so some room existed;
+my controller's objective was too noisy to find it. The next step is to change the objective, not the optimiser, guard
+the entropy, and work out the consistency theory a flow prior still lacks (section 6).
 
 <figure class="vid">
   <video src="/projects/model-uncertainty-priors/media/posterior_space.mp4" autoplay loop muted playsinline preload="metadata" poster="/projects/model-uncertainty-priors/media/posterior_space.jpg"></video>
   <figcaption>Posterior over all 1,024 factor subsets as T grows: the flow's density route (teal) tracks the exact posterior (ink); the same exact prior used only by sampling (ochre) collapses onto a few models.</figcaption>
 </figure>
 
-## 1 Introduction
+## 1 Background
 
 ### 1.1 Topic — the factor zoo, and where model choice enters
 

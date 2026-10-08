@@ -18,51 +18,49 @@ kind: research
 thumb: "/projects/tailflow/media/architecture.png"
 ---
 
-## Abstract
+## In short
 
-TailFlow is a small conditional diffusion model (≈0.22 M parameters, written from scratch) that generates the next ten
-daily returns of six assets given the current volatility state. The page treats it as a *surrogate that carries the
-market's uncertainty in its architecture*: the condition embedding holds the volatility state, the heavy-tail transform
-holds the shape of the tails, and the whole 10-day distribution comes out as scenarios that any risk measure or decision
-can be computed from. Everything is scored on a synthetic regime-switching Student-t market whose true VaR, ES and
-optimal decisions are known. No market data is used: the keyless source refused scripted access, and that was respected.
-Three things are asked of the surrogate, in order.
+**Where it started.** In CASE I used a conditional diffusion model to state portfolio risk on real markets, and the
+results were good where it mattered. But on real data I could never say *how wrong* the stated tail was, because the
+true tail is never observed. So I wanted one setting where the answer is known exactly: a synthetic regime-switching
+Student-t market whose true VaR, ES and best decisions can be computed. TailFlow is a small conditional diffusion model
+(≈0.22 M parameters, written from scratch) built to be checked there.
 
-**Can it be checked?** Against the known truth, TailFlow has the lowest 1-day ES error of all methods (0.155 / 0.162 at
-95 / 99%, mean of three training seeds, against 0.237 / 0.280 for filtered historical simulation), but its 10-day ES is
-13.3% / 21.5% too low. The cause is measurable: the one-shot generator draws the whole window from the state at the
-origin, so the autocorrelation of squared returns inside a generated window is 0.013, against 0.099 in held-out windows.
+**What I noticed first.** Against the truth, its 1-day ES was the most accurate of every method (error 0.155 / 0.162 at
+95 / 99 %, against 0.237 / 0.280 for filtered historical simulation). The 10-day ES, though, was 13.3 % / 21.5 % too
+low. The cause turned out to be simple and measurable: the generator draws the whole window from the state at the
+origin, so a large loss on day 2 never raises the volatility of day 3 (autocorrelation of squared returns 0.013 in
+generated windows, 0.099 in real ones).
 
-**Can it adapt?** Without retraining, the model is run in chunks of one day, and every scenario path re-conditions on
-the returns it has just generated, using the same state formula as for observed data. This halves the 10-day bias, to
-−6.7% / −9.8%, and brings the 10-day ES error below filtered historical simulation (0.151 / 0.168 against 0.201 / 0.221),
-at 301 s instead of 9 s for the test split. It does not remove the bias: filtered historical simulation remains less biased (+1.7% /
-−1.2%), and the clustering the rolled generator creates has the wrong shape. On weakly trained models the per-path
-feedback can also run away.
+**What that made me curious about.** If the condition is just a summary of a return history, the model could be fed its
+own generated path. Would that bring back the missing clustering without retraining? And if I could re-train the model
+cheaply, could a set of models stand in for my uncertainty about the model itself, and make a risk-constrained
+decision safer?
 
-**Can it control a decision?** In a CVaR-constrained choice among 15 portfolios, every fitted input model picks the truly
-best portfolio in at most 45% of decisions, against 63–85% for the true model with the same simulation budget. Training
-11 TailFlows per history (seed members, moving-block bootstrap members) and treating them as a posterior over input
-models, a robust rule that takes the largest member CVaR lowers the probability of an infeasible choice in all 12 cells
-with $n \ge 1{,}000$ (at $n$ = 2,000 and a 7.51% limit, from 0.405 to 0.155), and lowers regret in 6 of them (raising
-it in 2). The same budget spent on more scenarios from one model improves no cell. What the ensemble does not do is find the right
-portfolio: no rule exceeds 0.385, the robust rule raises the hit rate in 1 of 12 cells and lowers it in 4, and at the
-loosest limit it is over-conservative. The ensemble's spread is also too narrow to be a calibrated uncertainty. The
-surrogate can be adapted and used for robust control; neither closes the gap to the true model.
+**What worked, and what did not.** Re-conditioning on its own path halved the 10-day bias (to −6.7 % / −9.8 %) and put the
+10-day ES error below filtered historical simulation, at 301 s instead of 9 s. It did not remove the bias, the
+clustering it creates has the wrong shape, and on weakly trained models the feedback can run away. In a CVaR-constrained
+choice among 15 portfolios, a robust rule over an ensemble of 11 TailFlows cut the chance of breaking the risk limit in
+all 12 settings with $n \ge 1{,}000$ (from 0.405 to 0.155 at $n$ = 2,000). What it never did was find the right portfolio:
+every fitted model picks the truly best one in at most 45 % of decisions, against 63–85 % for the true model. The
+ensemble makes the choice safer, not sharper.
+
+**Where it leads.** The remaining gap sits in ranking the portfolios' expected returns, not in the tail, and the
+ensemble's spread is too narrow to be read as a calibrated uncertainty. Those are the next two things to fix (section 6).
 
 <figure class="vid">
   <video src="/projects/tailflow/media/reverse_minimal.mp4" autoplay loop muted playsinline preload="metadata" poster="/projects/tailflow/media/reverse_minimal.jpg"></video>
   <figcaption>The model's own sampler turning noise into ten-day paths after the observed history; dashed, the true 1 % and 99 % quantiles.</figcaption>
 </figure>
 
-## 1 Introduction
+## 1 Background
 
-### 1.1 Topic — scenario generators are used twice
+### 1.1 Why score a generator by the decision
 
 Scenario generators are used twice: to compute risk numbers (VaR, expected shortfall), and as the input distribution
 of a simulation that ranks decisions. Generative models are usually judged by how realistic the samples look. The
-questions that matter are different: are the tail numbers right, and if I optimise against these scenarios, do I still
-pick the right thing?
+questions that matter here are different: are the tail numbers right, and if I optimise against these scenarios, do I
+still pick the right thing?
 
 The project builds a conditional DDPM (ε-prediction, ancestral and DDIM samplers, explicit heavy-tail treatment); a
 synthetic market with known truth; four baselines — historical simulation (HS), filtered HS with EWMA volatility
@@ -70,25 +68,23 @@ synthetic market with known truth; four baselines — historical simulation (HS)
 FZ0 joint VaR–ES score) on held-out synthetic paths; and an input-uncertainty experiment in which each generator feeds
 a constrained selection problem whose true answer is known.
 
-### 1.2 Idea — a model that carries the problem's uncertainty, used as a surrogate
+### 1.2 Three kinds of uncertainty, and where each one lives in the model
 
-The research direction behind this page is that a model which carries the uncertainty inherent to a problem — through
-its architecture, or through the structure of how it is trained — can serve as a surrogate through which a decision is
-adapted or controlled. For return scenarios, three kinds of uncertainty sit on top of each other, and each maps to one
-place in TailFlow:
+For return scenarios, three kinds of uncertainty sit on top of each other, and each maps to one place in TailFlow:
 
-- **the market's own randomness given the current state.** This is what the conditional diffusion model represents in
-  its architecture: the condition is a summary of recent volatility, and the output is a full joint distribution of the
-  next ten days, not a point forecast;
+- **the market's own randomness given the current state.** The conditional diffusion model represents this directly:
+  the condition is a summary of recent volatility, and the output is a full joint distribution of the next ten days,
+  not a point forecast;
 - **the state moving during the horizon.** A large loss on day 2 should raise the volatility of day 3. The one-shot
-  generator cannot represent this, because it sees the state only at the origin. The surrogate can be **adapted**
-  without retraining by feeding its own generated path back into its condition (section 2.6);
+  generator cannot represent this, because it sees the state only at the origin; feeding its own generated path back
+  into its condition is the adaptation tried in section 2.6;
 - **uncertainty about the model itself**, because it is estimated from a finite history. An ensemble of re-trained
-  models is a crude posterior over input models, and a decision can be **controlled** robustly across it (section 2.7).
+  models is a crude posterior over input models, and a decision can be made robust across it (section 2.7).
 
-As in the companion project on learned priors, a surrogate has to be checkable before anything is built on it. That is
+As in the companion project on learned priors, the model has to be checkable before anything is built on it. That is
 why everything here is done on a synthetic market: it is the only setting in which the true VaR, ES and best decision
-are known, so every claim about the surrogate can be scored rather than argued.
+are known, so every claim can be scored rather than argued. No market data is used: the keyless source refused
+scripted access, and that was respected.
 
 ### 1.3 Questions, and where they are answered
 

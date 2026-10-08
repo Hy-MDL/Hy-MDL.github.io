@@ -74,6 +74,8 @@ This is the cleanest proof in the flow literature and it is four lines. It also 
 
 The caveat is immediate and the review states it: *this is just a statement of representational power and makes no guarantees about the flow's behavior in practice.* Universality at infinite width and depth says nothing about what a 10-layer flow trained on a few thousand points will do.
 
+> **My comment.** This is why I would rather grade a learned prior against an exact answer than argue from universality. In the factor-selection setup the hyper-g/n posterior over all $2^{10}$ factor subsets is computable, so the flow can be scored by its total-variation distance from it (0.0159), which says something universality never could.
+
 ### 3.2 Conditioner and transformer
 
 $$
@@ -155,6 +157,8 @@ Because $T$ is a diffeomorphism, $\mathcal{U}$ and $\mathcal{X}$ must be homeomo
 
 This is the deepest limitation in the review and the least acted on. A standard normal base has one mode. Real data — regimes in a return series, classes in an image set, failure modes in a sensor panel — often does not. Every flow in this series is spending capacity making the bridges between modes as thin as it can afford, and none of them can make them vanish. The fixes are latent-variable flows (RAD, Cornish et al.) that index a *mixture* of flows, and they give up analytic $p_x(x)$ for a variational bound — which is to say they give up the reason you wanted a flow.
 
+> **My comment.** For daily returns I suspect this bites less than for images, since a regime-switching return distribution is a scale mixture around one centre and its support is connected. Where I would expect a bridge is a regime-level quantity, for example 20-day realised volatility in a two-regime market like TailFlow's synthetic one, which should be close to bimodal; that is the place I would measure the inter-mode mass.
+
 ## 4 Practical notes the review collects
 
 - **Depth is the norm.** *Implementing a flow often amounts to composing as many transformations as computation and memory will allow* — Glow's architecture uses *as many as 320 sub-transformations distributed across 40 GPUs*.
@@ -201,6 +205,8 @@ followed by momentum negation. That flow is *volume-preserving*, so its absolute
 - **The 2021 vintage shows in one place.** The simulation-free continuous-time methods ([Flow Matching](/blog/flow-matching/), Rectified Flow, Stochastic Interpolants) arrived after publication, and §4's treatment of continuous flows is entirely maximum-likelihood-with-a-solver. The conceptual apparatus survives — a probability path and a velocity field are still the objects — but the computational picture it paints is now the historical one.
 - **Model selection is absent.** Nothing on how to compare two fitted flows, on marginal likelihood, on priors over flow parameters, or on any Bayesian treatment of the flow itself. Given the review's framing around well-specified probabilistic models, that is the missing chapter.
 - **The $K$-part spectrum is stated and never explored**, here or anywhere since as far as I know.
+
+> **My comment.** My model-uncertainty project sits in this missing chapter from an unusual side: the flow is not a model being compared but the prior that turns factor subsets into posterior probabilities. Its density made it controllable, and that cut both ways: Bayesian optimisation over its shape barely moved the held-out pricing error (0.25135 to 0.25045) while the held-out posterior entropy fell from 0.783 to 0.321. A flexible prior lets you tune the uncertainty measure itself, a hazard I would want any Bayesian treatment of flows to name.
 
 ## 7 Extensions
 

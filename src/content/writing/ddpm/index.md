@@ -104,6 +104,8 @@ $$
 
 The $1/\sqrt{\alpha_t}$ undoes the forward shrinkage and the second term subtracts the network's estimate of the noise added so far, scaled to one step's worth. This is a change of variables for $\mu_\theta$, not an approximation. Plugging Eq. (6) into Eq. (5), the $x_t$ terms cancel and
 
+> **My comment.** This parameterisation is where my own TailFlow model first broke. With plain $\epsilon$-prediction, near $\tau=T$ the right answer is essentially $x_\tau$ itself, and any error is divided by $\sqrt{\bar\alpha_\tau}$ when converted to $\hat x_0$. I ended up wiring that trivial part into the output so the network learns only the remainder, and dividing the loss by $\bar\alpha_\tau$: another reweighting over noise levels, chosen for numerical rather than perceptual reasons.
+
 $$
 L_{t-1}-C=\mathbb E_{x_0,\epsilon}\Big[\underbrace{\frac{\beta_t^2}{2\sigma_t^2\,\alpha_t(1-\bar\alpha_t)}}_{w_t}\big\lVert\epsilon-\epsilon_\theta\big(\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\,\epsilon,\;t\big)\big\rVert^2\Big].
 \tag{7}
@@ -143,6 +145,8 @@ $$
 $$
 
 The data scale enters the reverse variance only through $v_{t-1}/v_t$. For $s^2=1$ every $v_t=1$, so the variance is exactly $\beta_t$ and the mean is $\sqrt{\alpha_t}x_t$. For $s^2=0$ (a point mass) $v_t=1-\bar\alpha_t$ and the variance is exactly $\tilde\beta_t$. For $0<s^2<1$ it lies strictly between, which is the content of the paper's "two extremes" remark for unit-variance-bounded data.
+
+> **My comment.** This small calculation decided a design choice for me. TailFlow's targets are whitened to unit variance, so $\sigma_t^2=\beta_t$ is the exact reverse variance at any step count, and in my runs $\tilde\beta_t$ and DDIM came out under-dispersed with few steps. The paper's "similar results for both" is a statement about image quality; in a risk model the same choice sets how wide the tail is.
 
 The mean can be checked the same way. For $s^2=1$ the optimal predictor is $\mathbb E[\epsilon\mid x_t]=\sqrt{1-\bar\alpha_t}\,x_t$; inserting it into Eq. (6) gives $\frac{1}{\sqrt{\alpha_t}}(x_t-\beta_tx_t)=\sqrt{\alpha_t}x_t$, matching Eq. (9). And $-\mathbb E[\epsilon\mid x_t]/\sqrt{1-\bar\alpha_t}=-x_t$ is the score of $\mathcal N(0,1)$. Here a perfectly trained reverse chain is exact for any $\beta_t$; for non-Gaussian data the true reverse kernel is not Gaussian and only small $\beta_t$ controls the error.
 

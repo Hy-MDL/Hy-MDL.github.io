@@ -24,6 +24,8 @@ Diffusion models sample by integrating a differential equation, so one good imag
 
 The iterative sampler is both the strength and the weakness of diffusion models. It buys a compute–quality dial and it is what makes zero-shot inverse problems work, but the authors put the cost at 10–2000 times more compute per sample than a GAN, VAE or normalizing flow. Two lines of work attack it, and the paper is precise about where each one stops.
 
+> **My comment.** The cost is not abstract for me. Re-conditioning TailFlow on its own generated path took 301 s against 9 s for filtered historical simulation, because the network runs ten reverse chains instead of one. That is the setting where a one-step map would change what is practical, provided it keeps the dispersion, which is the open question below.
+
 **Better solvers.** DDIM, DPM-Solver and DEIS integrate the probability-flow ODE more cleverly, but the paper's position is that they still need more than ten network evaluations for competitive samples: they are all still *integrating*, and no reparameterisation makes the trajectory's curvature vanish.
 
 **Distillation.** Compressing the sampler into a student avoids integration at test time, but most methods (knowledge distillation, DFNO) must first run the slow teacher over many noise vectors to build a synthetic dataset, which is itself expensive. Progressive distillation (PD) is singled out as the only prior method that avoids this, and is therefore the baseline compared against everywhere.
@@ -153,6 +155,8 @@ $$
 Three things fall out. The consistency function is *linear in $x$*, so the skip branch of Eq. (2) realises it exactly with $c_\text{out}\equiv0$ — the network has nothing to do. The boundary condition is automatic. And one-step sampling is exact: $\hat x_T\sim\mathcal N(0,T^2)$ gives $f(\hat x_T,T)\sim\mathcal N\!\big(0,T^2(\sigma^2+\epsilon^2)/(\sigma^2+T^2)\big)\approx\mathcal N(0,\sigma^2)$ for $T\gg\sigma$.
 
 So the entire difficulty sits in the departure of $p_\text{data}$ from a Gaussian: the trajectory bundle stops being a scaling family, $f$ stops being linear, and the structure the single evaluation must encode is exactly what the multi-step sampler used to build up gradually — which is also why the residual gap to the teacher looks structural rather than like a tuning problem.
+
+> **My comment.** The one piece of evidence I have points the same way. In TailFlow, DDIM and the $\tilde\beta$ reverse variance were under-dispersed with few steps, while ancestral sampling with $\beta$ stayed exact for unit-variance targets; for a risk model the deterministic route lost exactly the spread I needed. Heavy-tailed returns are the non-Gaussian remainder this paragraph describes, so before using a consistency model for scenarios I would check its ES against a known truth, not its FID-like scores.
 
 ### 3.6 Algorithm
 

@@ -18,19 +18,39 @@ kind: research
 thumb: "/projects/rs-lab/media/thumb.jpg"
 ---
 
-## Abstract
+## In short
 
-When a decision is made by simulating `k` alternatives, the analyst needs to know how many replications are enough
-and how likely the final pick is to be wrong. Ranking-and-selection (R&S) procedures answer both with a guarantee of
-the form "the best system is selected with probability at least 1 − α". I implemented the main frequentist
-procedures from scratch as an importable NumPy package, `rsel`: Kim & Nelson's fully sequential KN, the sequential
-feasibility check of Andradóttir & Kim for a stochastic constraint, their combination into constrained selection,
-feasibility under several candidate thresholds with recycled observations, and three baselines. The package is then
-put on trial: 5,000 macro-replications per normal-means configuration and 1,000 on an (s,S) inventory model and a
-tandem queue. Every guarantee held (tightest case: 0.952 against a nominal 0.95), while equal allocation with the
-same budget reached only 0.84–0.87 in the slippage configuration.
+**Where it started.** When a decision is made by simulating $k$ alternatives, I need to know how many replications
+are enough and how likely the pick is to be wrong. Ranking-and-selection (R&S) procedures answer both with a proof
+that the best system is selected with probability at least 1 − α. But a proof is about the procedure in the paper,
+and what runs is my code, with its own constants, indexing and stopping rules. An off-by-one in the stage counter
+or a wrong exponent in η silently turns a 95% procedure into an 85% one, and nothing crashes. So I wrote the main
+procedures from scratch as a small NumPy package, `rsel`, that my application projects can import, and put each one
+on trial: 5,000 macro-replications per normal-means configuration, and 1,000 on an (s,S) inventory model and a
+tandem queue.
 
-## 1 Introduction
+**What I noticed first.** Every guarantee held, and the bounds were not loose. The feasibility check in its least
+favourable configuration came out at 0.952 against a nominal 0.95, close enough that a region drawn too wide would
+have shown up. Sequential elimination paid off: KN needed half of Rinott's budget in the slippage configuration,
+while equal allocation with the same budget reached only 0.84–0.87.
+
+**What that made me curious about.** If the guarantee holds, what does it actually cost, and what can be shared?
+Several thresholds could reuse the same observations, and common random numbers could make close systems easier to
+tell apart.
+
+**What worked, and what did not.** Recycling observations across eight thresholds cut 5,377 replications to 1,395
+(−74%). CRN cut KN on the queue from 2,576 to 460 replications (−82%), but did almost nothing for constrained
+selection on the same queue (1,608 → 1,550), because that budget is dominated by single-system feasibility checks
+that CRN cannot help. The sensitivity runs showed that δ and ε are promises about the problem, not tuning knobs:
+set above the true gap, they void the guarantee (δ = 0.6: 0.702; ε = 0.4: 0.481). Two things I cannot claim: the
+recycling bound (3) is my own derivation, which held empirically (≥ 0.962 at nominal 0.95) but may be more
+conservative than the published one, and the two test beds are too easy to reveal a slightly anti-conservative
+implementation.
+
+**Where it leads.** Variance updating, procedures for thousands of systems, Bayesian allocation (OCBA, knowledge
+gradient) as a comparison, and the two application projects that import `rsel` (section 5).
+
+## 1 Background
 
 A simulation model returns noisy outputs, so "policy 7 looked cheapest" is a statement about one sample path. The
 R&S literature replaces it with a procedure that decides *sequentially* how much to simulate each alternative, drops
@@ -39,12 +59,9 @@ clearly inferior ones early, and comes with a proof that the probability of corr
 constraint (a service level or a mean wait that is itself only observable through simulation), one also needs a
 feasibility decision with its own tolerance ε.
 
-A proof concerns the procedure in the paper; what runs is an implementation with its own constants, indexing and
-stopping rules. An off-by-one in the stage counter or a wrong exponent in η silently turns a 95% procedure into an
-85% one, and nothing crashes. The point of this project is therefore double: (i) a small library that my two
-application projects can import, and (ii) evidence, for each procedure, of *what guarantee it gives and whether my
-code delivers it*. Where I was not certain of a published constant, I derived a conservative one and let the
-empirical PCS be the judge.
+The point of this project is double: (i) a small library that my two application projects can import, and (ii)
+evidence, for each procedure, of *what guarantee it gives and whether my code delivers it*. Where I was not certain
+of a published constant, I derived a conservative one and let the empirical PCS be the judge.
 
 ## 2 Method
 

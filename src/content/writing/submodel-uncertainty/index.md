@@ -34,6 +34,8 @@ $$
 
 <mark>The useful shift for me is treating a learned routing rule or a generative model as the same kind of object as an input distribution: something estimated, with uncertainty that has to travel to the output.</mark>
 
+> **My comment.** The catch for generative submodels is how the plausible versions are drawn. In TailFlow I used an ensemble of 11 re-trained models as a posterior over input models, and its spread turned out too narrow to read as a calibrated uncertainty: it made the decision safer without being an honest sample of the epistemic distribution this decomposition needs.
+
 ## What the results show
 
 | synthetic model, 90% intervals | coverage | width | source |
@@ -46,6 +48,8 @@ $$
 - **Even the full version under-covers.** 87% is below 90%. The authors blame bias, which is not corrected; with 100 macro-replications, 87 against 90 is also within noise.
 - **The attribution is plausible but weakly separating.** On the toy model the ranking agrees with an ANOVA, but the scores are close: 0.25 for the most important piece and 0.20 for one the ANOVA finds insignificant.
 - **In a contact-centre digital twin,** the frequentist and Bayesian versions disagree on which routing submodel matters most: 0.096 against 0.210 for the expert-side routing.
+
+> **My comment.** I read the 87% as the optimistic end. Bootstrapping a submodel's training data resamples around the fitted model, not around the truth, and in my input-uncertainty study the bootstrap standard deviation under-stated the actual true-minus-fitted CVaR error by 2.5–16× whenever the input model was misspecified.
 
 ## Where I am not convinced
 

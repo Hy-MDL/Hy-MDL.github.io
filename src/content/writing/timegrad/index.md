@@ -126,6 +126,8 @@ sample(h_T, covariates C, horizon H, paths S):
 
 The asymmetry between the two loops is the whole cost story, and also the whole exposure-bias story: the RNN only ever sees real inputs during training and only ever sees its own samples at test time.
 
+> **My comment.** TailFlow sits at the other end of this trade. It generates a whole 10-day block jointly from the state at the origin, so there is no exposure bias, but a loss on day 2 never raises volatility on day 3; feeding it its own generated path, the TimeGrad move, halved the 10-day ES bias without retraining, at a large cost in sampling time. So I read the autoregressive rollout as buying exactly the clustering a joint block misses.
+
 ### 3.6 Scaling, covariates, and the denoiser
 
 Each series is divided by its context-window mean (or by 1 if that mean is zero) before entering the model, and samples are multiplied back afterwards — the DeepAR trick, which the authors note is not replaceable by an input-to-output shortcut of the LSTNet kind. Traffic, whose values already live in $(0,1)$, needs no scaling. Covariates are time features (hour of day, day of week), lag features chosen by the data frequency, and learned embeddings for categorical or time-independent features; all are known over the forecast window by construction.
@@ -180,6 +182,8 @@ Claim by claim.
 *"Flows struggle with disconnected modes, EBMs do not."* This is asserted with citations, not tested. No experiment isolates multimodality; the §3.4 argument is mine, not the paper's, and the Transformer-MAF comparison confounds the emission head with the sequence encoder (Transformer vs LSTM), so the table cannot attribute the gap to either.
 
 *"$N$ can be reduced to ≈10 without significant loss; optimal near 100."* Supported by the one ablation in the paper: Electricity, $N=2,4,8,\dots,256$, five runs each, everything else fixed. The curve drops steeply to roughly $N\approx16$ and then flattens, with no benefit beyond 100. The authors report similar behaviour on other datasets without showing it. <mark>This is the most practically useful number in the paper: it turns the sampler budget into a tunable knob rather than a fixed 100× price.</mark>
+
+> **My comment.** One caution before trusting the plateau: TimeGrad samples with $\Sigma_\theta=\tilde\beta_n$, and in TailFlow that reverse variance made the ancestral sampler under-dispersed at small step counts, so I switched to $\beta$, which is exact at any step count for unit-variance targets. CRPS-sum on an aggregate may barely register under-dispersion; a 1% quantile would.
 
 ![Figure 3 — CRPS-sum on Electricity versus the number of diffusion steps N (log–log): a steep drop up to roughly 16 steps, then a plateau](./fig3.png)
 *Source: Rasul et al., arXiv:2101.12072, Fig. 3, CC BY 4.0.*

@@ -148,6 +148,8 @@ so the subtracted term is larger and the variance is smaller.
 
 **Two corollaries the paper states and that are easy to overlook.** First, the schemes *compose*: applying stratified sampling to the $n-R$ residual draws *can then only decrease the conditional variance* further, so residual-stratified dominates both. Second, *the fact that the conditional variance is reduced does not depend on the particular choice of the sub-intervals* — equal strata are convenient, not necessary, and a weight-adapted partition is legal.
 
+> **My comment.** In roughvol-lab the variance ranking and the work-normalised ranking disagreed: antithetic sampling lowered the variance-reduction factor once a control variate was present (4.47 to 3.88) but still won on efficiency because a pair needs half the Gaussian draws. I would want the same accounting here, since systematic needs one uniform where stratified needs $n$, and a conditional-variance ordering alone cannot see that.
+
 ### 4.2 Systematic: the counter-example
 
 Take $n$ even and a particle population consisting of two distinct values *interleaved*:
@@ -183,6 +185,8 @@ $$
 The authors are careful about what this does and does not show. The construction depends on the interleaved ordering; *it is easy to verify (using simulations) that, in this example, systematic resampling becomes very similar to residual/stratified resampling if the particles are randomly permuted before resampling*, and *the above counter-example probably corresponds to a "rare" situation*. The conclusion they draw is the right-sized one: systematic resampling *is a variance reduction method which is not as robust as* stratified and residual, and *theoretical study of the behavior of systematic resampling probably is a very hard task*.
 
 The practical reading is a one-line safeguard: if you use systematic resampling, permute the particles first. It costs nothing and removes the only known failure mode.
+
+> **My comment.** I read systematic resampling as common random numbers taken to the extreme: one shared uniform drives every slot. In rs-lab CRN cut the simulation budget by up to 82% because the induced correlation sits between systems being compared, where it cancels in the difference. Here the same device correlates the slots of a single estimator, where correlation adds variance, and the interleaved example is simply the ordering that makes it as bad as possible.
 
 ### 4.3 A central limit theorem
 

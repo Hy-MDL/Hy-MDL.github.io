@@ -69,6 +69,8 @@ These three facts are the whole toolkit. (2) says $F$ increases in every coordin
 
 **$F$ cannot be evaluated exactly** in the value-oracle model: (1) is a sum over $2^{\lvert X\rvert}$ terms. It can be estimated by sampling, with Chernoff bounds controlling the error, and §3 does the accounting.
 
+> **My comment.** On the simulated panel of my factor-selection project the ground set is ten factors, so all $2^{10}$ subsets are enumerated exactly and (1) would be computable without sampling. What gives me pause is the product measure: a posterior over factor subsets is not independent across factors, so its marginal inclusion probabilities are not a point $y$ whose $F(y)$ equals the posterior expected value. I wonder how large that gap is when factors are strongly redundant, which is exactly when selection is hard.
+
 ## 3 Method
 
 > **Key idea.** Do not commit to elements. Move fractionally inside the matroid polytope, always in the direction that maximises the local gain, for exactly one unit of time. Because the gain available is always at least the remaining deficit, the value follows the differential equation $\phi'=\mathrm{OPT}-\phi$ — and $1-1/e$ is just $\phi(1)$.
@@ -182,6 +184,8 @@ flowchart LR
 - **$\delta$ depends on the matroid rank $d$, not on $n$** — a small mercy, since the rank is the number of elements you will select.
 - **Nothing is committed until the end.** The flow's iterates are fractional, so unlike discrete greedy there is no notion of a partial solution you could stop and use; the rounding is what produces a set.
 - **No experiments.** This is a theory paper, start to finish; there is not a single computed instance in it.
+
+> **My comment.** Part of the cost looks avoidable to me. Choosing the max-weight base needs only the ranking of the $w_j$, not their levels, and that is the situation where common random numbers pay: in rs-lab, sharing randomness across alternatives cut KN's budget by up to 82% on the tandem queue. I would estimate every $f(R+j)-f(R)$ on the same draws of $R$ and see how far the sample count can fall before the chosen base changes.
 
 ## 5 Results
 

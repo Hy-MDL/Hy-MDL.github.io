@@ -92,6 +92,8 @@ $$
 
 Two things go wrong. The conditional mean is shrunk by $\sqrt{\alpha_t}$, and the conditional variance is inflated from $1-\rho^2$ to $1-\alpha_t\rho^2$. At the end of the chain $\alpha_t\to1$ and the damage vanishes; at the start $\alpha_t\to0$ and the model is imputing from the *prior*. <mark>The conditioning is weakest exactly at the high-noise steps that choose which mode the sample falls into, which is why later fine-grained steps cannot repair it.</mark> Equation (6) also predicts a qualitative finding buried in Appendix G: the unconditional model's intervals are systematically *wider* than CSDI's, which is what $1-\alpha_t\rho^2>1-\rho^2$ says.
 
+> **My comment.** This is the choice CASE makes for continuing a history: every day carries its own noise level, observed days sit at level zero, and the observed prefix is re-clamped clean at every reverse step. Equation (6) is the cleanest argument I have seen for why that matters most at the high-noise end of the chain, which is, I suspect, where a twenty-day scenario's volatility level gets decided.
+
 ### 3.3 Self-supervised choice of targets
 
 At sampling time the split is forced: all observed values condition, all missing values are targets. At training time <mark>a subset of the *observed* values is promoted to targets and the remainder conditions</mark>. Four rules, to be chosen from what is known about test-time missingness:
@@ -203,6 +205,8 @@ Reading the claims one at a time.
 *"5–20% MAE improvement over deterministic methods."* Supported but softer: the two strongest comparators (GLIMA at 0.265 and 10.54; BRITS at 0.278 and 11.56) are cited from their own papers rather than re-run, and the margin at 90% missing is only 7%.
 
 *"Both attention axes matter."* Supported, with a twist: removing the temporal layer is about twice as damaging as removing the feature layer, and factorized attention beats attention over the flattened grid by a wide margin (0.238 vs 0.418) at matched parameter count.
+
+> **My comment.** CASE factorises attention the same way, an asset pass and a time pass. The difference I care about is the feature axis: CSDI gives each feature a learned 16-d embedding, so a new sensor or a new stock is a new slot, whereas CASE describes each asset by six observable characteristics so an unseen name is just a new input. I would like to know how much of CSDI's feature-attention gain survives if the embedding is replaced by observable side information.
 
 *"Competitive at interpolation and forecasting."* Interpolation on the irregularly sampled healthcare data is a clean win: CRPS 0.380 / 0.418 / 0.556 against mTANs 0.526 / 0.567 / 0.689 and Latent ODE 0.700 / 0.676 / 0.761. Forecasting is mixed on CRPS-sum — wins on electricity (0.017) and traffic (0.020, less than half TimeGrad's 0.044), a tie on wiki inside the error bars, a heavy loss on solar to TLAE (0.298 vs 0.124) and a narrow one on taxi to TimeGrad. The appendix is kinder: on per-series CRPS (Table 11) and on MSE (Table 12) CSDI leads four of five. <mark>The headline metric is the one where CSDI looks weakest, which is unusually honest.</mark> Those baselines are quoted, not re-run.
 

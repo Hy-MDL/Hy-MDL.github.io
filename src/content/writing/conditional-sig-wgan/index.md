@@ -91,6 +91,8 @@ The authors' flowchart is [Fig. 2 in the paper](https://arxiv.org/pdf/2006.05421
 
 Assuming $X_{t+1}=g(X_{\text{past},t},\varepsilon_{t+1})$ with i.i.d. noise, the generator is a one-step map — a feed-forward network with residual connections and parametric ReLUs taking the $\bar p$ lags and a Gaussian noise vector — applied recursively to its own outputs to produce a future of any length. The same generator is used for every baseline so that only the training objective differs.
 
+> **My comment.** This is the choice I went against in TailFlow, which draws the whole ten-day window jointly from the state at the origin. That is exactly why its generated windows had squared-return autocorrelation 0.013 against 0.099 in real ones. A recursive one-step generator gets the feedback for free but compounds its own errors over the horizon, and with $\bar q=3$ these experiments are too short to tell which cost is larger.
+
 ## 4 Experiments
 
 **Setup.** Baselines: CWGAN, TimeGAN, RCGAN, GMMN (Gaussian-kernel MMD), and GARCH on the financial data, all neural ones sharing the 3-layer AR-FNN; 80/20 train/test split. Metrics: $\ell_1$ distance between histograms of marginals, absolute error of lag-1 autocorrelation, $\ell_1$ distance between cross-correlation matrices, the train-on-synthetic-test-on-real $R^2$ compared with train-on-real $R^2$, and Sig-$W_1$ itself. Data: (i) VAR(1) with $d\in\{1,2,3\}$, $T=40000$, $\bar p=\bar q=3$, signature degree 2; (ii) log return and log median realised volatility of SPX, and of SPX plus DJI, from the Oxford-Man realised library, windows of 3, signature degree 3 and 2 respectively; (iii) hourly BTC-USD, 2021 for training and 2022 for testing, 24 hours of past to 6 hours of future, degree 4.
@@ -116,6 +118,8 @@ On 3-dimensional VAR(1) with a fixed two-minute training budget, SigCWGAN has th
 **Weaknesses.** Sig-$W_1$ is reported as an evaluation metric although it is the quantity SigCWGAN optimises, so those columns favour it by construction. In the VAR(1) table the $R^2$ column is bolded at SigCWGAN's 0.0394, the largest value, while the neighbouring figure defines the predictive score as an absolute $R^2$ difference (lower better) under which GMMN's 0.0026 would win; the text and the table do not obviously agree, and I could not resolve this from the paper. Windows are very short ($\bar p=\bar q=3$ for equities), the dependence metric is lag-1 only, and no standard deviations over seeds are given. A truncated signature has $\sum_{k\le M} d^k$ terms, and the authors concede the method may suffer in high path dimension. The OLS step assumes the conditional expected signature is linear in a low-degree past signature, and, as a matching of conditional means in feature space, the loss constrains the conditional law only up to the truncation level.
 
 **Not shown.** Tail behaviour or risk measures of generated paths, more than four channels, longer conditioning windows on real data, and any comparison with likelihood-based or diffusion models.
+
+> **My comment.** This is the gap I care about most. CASE scores generated paths by the capital they imply, and the paper is open that its paths under-build volatility clustering and excess kurtosis; a degree-2 or degree-3 signature on three-day windows would see neither. I would compute Sig-$W_1$ on twenty-day windows of my own generated paths and check whether it ranks generators the same way the ES backtest does.
 
 ## 6 Takeaways
 

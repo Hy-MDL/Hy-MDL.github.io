@@ -69,6 +69,8 @@ $$
 
 Here $f_k=k/\tau$, so $2\pi f_k\tau c$ evaluates to $2\pi k n/\tau$ at step $n$; the bar denotes the conjugate index, and the second cosine is the conjugate partner that makes the sum real. Selection is per block, per channel and per sample, so nothing fixes the periods in advance — but note that the model can only ever place energy on the $\tau$-periodic Fourier grid, which is exact for a period dividing $\tau$ and leaky otherwise. The estimate adds both branches and $R$, the output of the last decoder block:
 
+> **My comment.** What I notice is that the head keeps phase, not just amplitude, which is the quantity FinPhasor is built on. But a DFT over a 24-step window gives one phase per mode for the whole window, while the timing I care about, when a stock reprices relative to the market, moves within the window. That is why I used a complex wavelet scalogram there; I would be curious whether a wavelet version of this layer helps on anything other than strictly periodic data.
+
 $$
 \hat{x}_0(x_t,t,\theta)=V^{t}_{\text{tr}}+\sum_{i=1}^{D}S_{i,t}+R. \tag{5}
 $$
@@ -110,6 +112,8 @@ with $\eta$ the step size and $\gamma=0.05$ in the experiments. A second discrep
 Take one channel, $\tau=24$, and suppose the block's seasonal input is a clean sinusoid of period 8. Its DFT concentrates on $k=3$ and its conjugate; $K=1$ already recovers amplitude and phase exactly, and (4) reproduces the sinusoid with no error. Now let the period be 7. The energy spreads across neighbouring bins, top-$K$ keeps the largest few, and what is left over — the leakage — must be picked up by $R$. Now let the input be a random walk, which is what a price series looks like. Its periodogram falls like $1/f^2$ with no isolated peak, so top-$K$ selects the lowest frequencies not because they are periodic but because they are large. The seasonal branch then imposes spurious oscillation at the window scale, and the genuine structure ends up in $R$.
 
 That is the honest boundary of the inductive bias: it helps exactly when the series really is trend-plus-a-few-periods, it is harmless when the residual can absorb the difference, and it is misleading when a practitioner reads the "seasonal" output of a non-seasonal series as if it meant something. The paper's own interpretability evidence (Appendix C.5) is a synthetic dataset built from a trend and a seasonality, where the learned components match the ground truth and the residual is near zero — a fair demonstration of the best case, and only of the best case.
+
+> **My comment.** For returns, the structure I put in CASE's representation is a different one: each return is split into a slowly moving volatility state and a whitened shape, so the market state is explicit before the denoiser sees anything. It is the analogue of this paper's decomposition for data with no period, and even so CASE's generated paths under-build volatility clustering. A structural prior on the output gets the level right more easily than the dynamics.
 
 ### 3.5 Algorithm
 

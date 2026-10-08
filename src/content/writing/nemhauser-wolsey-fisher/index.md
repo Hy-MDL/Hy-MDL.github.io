@@ -175,6 +175,8 @@ $$
 
 This is stronger than (11) in a way easy to miss: the greedy value is within $1-1/e$ of a *computable upper bound*, not merely of the unknown optimum. Solve the LP, run greedy, and you have a certified gap for the instance in front of you rather than a worst-case promise.
 
+> **My comment.** This is the result I would actually use. A certified gap on the instance in front of me is the same kind of statement I care about in rs-lab, a guarantee checked on the problem I have, not a promise about the worst problem anyone could build.
+
 **Partial enumeration, §7.** Given any heuristic with ratio $\ge1-\beta(K)$, enumerate all $\binom{\lvert N\rvert}{R}$ subsets of size $R$, apply the heuristic to each of the $\binom{\lvert N\rvert}{R}$ residual problems with $K$ replaced by $K-R$, and take the best:
 
 $$
@@ -221,6 +223,8 @@ flowchart LR
 - **Everything is exact worst-case analysis.** There is not a single computational experiment in the paper, and there are no instances beyond the adversarial families constructed to show tightness.
 - **The tightness families are constructions, not data.** Part (c) of Theorem 4.1 exhibits problems attaining the bound; §5 does the same for interchange via a class of uncapacitated location instances.
 - **$\theta$ must be known** to use the non-monotone bounds (10)–(11), and for a general submodular function it is itself a maximisation over all $(S,j)$.
+
+> **My comment.** The oracle assumption is where this meets my own work. If z is a simulation, every marginal gain is a noisy estimate and each greedy argmax becomes a ranking-and-selection problem with its own error, which the 1 − 1/e argument does not account for; I would want to know how much of the bound survives a step that picks the wrong element with probability α.
 
 ## 5 Results
 

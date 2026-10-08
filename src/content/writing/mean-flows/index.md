@@ -52,6 +52,8 @@ $$
 
 This is a field determined entirely by $v$; no network appears in it. It reduces to $v$ as $r\to t$, and additivity of the integral means one step over $[r,t]$ automatically agrees with two steps over $[r,s]$ and $[s,t]$. Consistency is thus a consequence of the definition, not an imposed constraint. If $u$ were known, sampling would be a single subtraction, $z_r = z_t-(t-r)\,u(z_t,r,t)$.
 
+> **My comment.** This is what I would want for CASE's daily re-conditioning, which runs 50 reverse steps per scenario set across 139 decisions and nine books. What I do not know is whether averaging the velocity over a long interval smooths away the volatility clustering that CASE's paths already under-build.
+
 ![Figure 2 — The average velocity points along the displacement between two times and generally differs from the tangent direction given by the instantaneous velocity; the field changes with the end time t.](./fig2.png)
 *Source: Geng et al., arXiv:2505.13447, Fig. 3, CC BY 4.0.*
 
@@ -92,6 +94,8 @@ $$
 $$
 
 substituted for $v_t$ in (5). <mark>Guidance strength is baked in at training time, and guided sampling remains a single evaluation.</mark> The price is that $\omega$ is no longer a free inference-time knob.
+
+> **My comment.** For a risk model I would not accept this trade. I want to vary the strength of the condition after training, for instance to see how much of a stated ES comes from the conditioning window, and baking ω in removes that check.
 
 ### 3.5 Design choices
 

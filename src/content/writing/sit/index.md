@@ -61,6 +61,8 @@ $$
 
 with $\bar W_t$ a reverse-time Wiener process and $w_t\ge 0$ arbitrary. Setting $w_t=0$ recovers the probability-flow ODE. The proof is two lines of Fokker–Planck algebra: substituting $s = p_t^{-1}\nabla p_t$ into the forward Kolmogorov equation for (3) makes the extra terms cancel as $\tfrac12 w_t \nabla\!\cdot\!\nabla p_t - \tfrac12 w_t \Delta p_t = 0$, which holds identically for *any* $w_t\ge0$. This step is exact, not an approximation, and it is where the paper's freedom comes from. Since $w_t$ appears in neither $v$ nor $s$, <mark>the amount of noise injected during sampling is a post-training hyperparameter: the weights never see it</mark>.
 
+> **My comment.** This is the axis I find most tempting for CASE, because the sampler's noise level never enters the weights and a frozen checkpoint can be re-sampled without retraining. I wonder whether more injected noise would put back some of the volatility clustering and excess kurtosis CASE's generated paths under-build, or whether that defect sits in the learned field where no sampler can reach it.
+
 ### 3.2 Velocity and score are the same object
 
 Velocity is learned by plain regression onto the time derivative of the path:
@@ -138,6 +140,8 @@ which tends to $w_t^{\mathrm{KL}}$ as $\eta\to0$ and to a finite limit as $t\to1
 ### 3.4 Intuition: a 1-D Gaussian
 
 Two things become concrete if the data are $\mathcal N(0,s^2)$ in one dimension. First, the endpoint bias. The paper's own VP example has $\alpha_t = e^{-t}$, $\sigma_t=\sqrt{1-e^{-2t}}$ ($\beta_t=2$ in the convention of §3.2). At $T=1$ that leaves $\alpha_1 = e^{-1} \approx 0.368$: the "pure noise" you start sampling from still carries 37% of the data signal. Driving $\alpha_T$ below $0.01$ needs $\int_0^T\beta \approx 9.2$, so VP must run long or ramp $\beta$ steeply. The exact interpolants pay nothing for this — $\alpha_1=0$ by construction.
+
+> **My comment.** In TailFlow I squashed the cosine schedule so that $\bar\alpha_T = 10^{-4}$, i.e. $\alpha_T = 0.01$, which is the "ramp $\beta$ steeply" fix. An exact interpolant would make that knob unnecessary, though in TailFlow the endpoint was not the bias that mattered; the missing volatility feedback inside the generated window was.
 
 Second, transport cost. Here $p_t = \mathcal N(0,\rho_t^2)$ with $\rho_t^2 = \alpha_t^2 s^2 + \sigma_t^2$, and both fields are linear: $s(x,t) = -x/\rho_t^2$ and, since $\rho_t\dot\rho_t = \dot\alpha_t\alpha_t s^2 + \dot\sigma_t\sigma_t$,
 

@@ -31,6 +31,8 @@ The setting: probability measures $\{\pi_n\}_{n\in\{1,\dots,p\}}$ on a *common* 
 - **Global optimisation**, $\pi_n(x)\propto\pi(x)^{\phi_n}$ with $\phi_p\to\infty$: simulated annealing with a population.
 - **Rare events**, $\pi_n(x)\propto\pi(x)\mathbb{I}_{E_n}(x)$ with nested $E_1\supset\cdots\supset E_p=A$, where $\Pr(A)$ is recovered as the final normalising constant.
 
+> **My comment.** The "adapt" step in my factor-selection project re-tuned the flow prior at every refit on past data, and it did not improve the out-of-sample decision. A sequential sampler is the other way to carry a posterior forward as data arrive, moving particles rather than retraining the prior; with only $2^{10}$ subsets exact enumeration made it unnecessary there, but it would matter with a larger candidate set.
+
 Against MCMC the complaint is specific: *it is difficult to assess when the Markov chain has reached its stationary regime and it can easily become trapped in local modes. Moreover, MCMC methods cannot be used in a sequential Bayesian estimation context.*
 
 And the reason standard SMC does not transfer: *these algorithms deal with the case where the target distribution of interest, at time $n$, is defined on $S_n$ with $\dim(S_{n-1})<\dim(S_n)$. Conversely, we are interested in the case where the distributions $\{\pi_n\}$ are all defined on a common space $E$.*
@@ -48,6 +50,8 @@ Z_n=\int w_n\,\eta_n\,dx. \tag{1}
 $$
 
 The variance is approximately proportional to $1+\operatorname{var}_{\eta_n}\{w_n(X_n)\}$, so you want $\eta_n$ close to $\pi_n$, which is *very difficult when $\pi_n$ is a non-standard high dimensional distribution. As a result, despite its relative simplicity, IS is almost never used when MCMC methods can be applied.*
+
+> **My comment.** This is the failure I measured in my factor-selection project's GAN route. Averaging the likelihood over prior draws is importance sampling with the prior as proposal, and as the sample grows the posterior concentrates, so the effective sample size decayed like $T^{-d/2}$, from 20,000 draws to 1.0. Tempering would fix the reweighting, since the prior cancels from $\gamma_n/\gamma_{n-1}$, but the MCMC move needs the prior density in its acceptance ratio, which is exactly what a GAN cannot supply.
 
 The sequential fix is to build $\eta_n$ out of the previous particles by moving them with a Markov kernel, giving
 

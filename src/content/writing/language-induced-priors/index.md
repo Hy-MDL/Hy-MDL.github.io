@@ -38,6 +38,8 @@ the evidence (a likelihood ratio, scaled by $\beta_k$) plus the language prior (
 
 The tempering $\beta_k$ was the part I had to work through. With the toy's sizes (4 target points, 200 per source, one dimension, unit noise), a truly relevant source evaluated at the noisy target estimate looks about 25 nats worse than it should, while a prior of 0.9 is worth only about 2.2 nats. Without tempering, the target's own sampling noise throws relevant sources away and EM settles on the target-only estimate. Scaling the evidence by roughly $1/\sqrt{dN_k/N_0}$ brings that 25 down to about 3.5, the same order as the prior; as $N_0$ grows, the data take over. <mark>So "the prior guides when target signals are weak and the data refine it as samples accumulate" is not a slogan: it is the tempering schedule.</mark> (The arithmetic is mine, with the toy's sizes.)
 
+> **My comment.** The artist-style engine's best classifier fuses a DINOv2 prior with a Qwen3-VL verdict using fixed weights (0.25 / 0.75). This paper made me notice what that fusion lacks: the weight on the evidence never depends on how much evidence sits behind it, and here that dependence is the whole mechanism.
+
 The theory splits the same way. With a correct prior, the first EM step's bias shrinks, and once the iterate is near the target the error is within about twice that of an oracle that knows the relevant set. With any prior, the estimator is consistent as target data grow.
 
 ## What the results show

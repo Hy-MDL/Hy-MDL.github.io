@@ -81,6 +81,8 @@ $$
 
 with $N$ the number of paths and $\Phi^{cv}$ the hedged payoff. <mark>A better hedge therefore means a less biased calibration gradient</mark>, not merely a less noisy one.
 
+> **My comment.** In roughvol-lab I report a variance-reduction factor next to every Monte Carlo number, but only as an efficiency figure. This bound says variance reduction also changes where the optimiser goes, because the calibration gradient is less biased, and that is a reason to build the control variate in before training, not after.
+
 ### 3.5 Randomised training across maturities
 
 Coefficients use one network per maturity bucket $[T_{i-1},T_i]$. A path-dependent $\Psi$ couples all buckets, and back-propagating through all of them is memory-hungry. The authors instead sample one bucket uniformly per step and differentiate only its weights, rescaling by the number of buckets. They prove the resulting gradient is unbiased (Theorem 4.1); memory stays constant in the number of networks.
@@ -101,6 +103,8 @@ Coefficients use one network per maturity bucket $[T_{i-1},T_i]$. A path-depende
 | **41 (0.6–1.4)** | **0.172** | **0.183** | **0.193** | **0.021** |
 
 (Widths are my subtraction.) <mark>More quotes shrink the interval</mark>, consistent with the conjecture that the Dupire-unique model is recovered in the limit. At 2 months all variants agree to the third decimal; the ambiguity grows with maturity. The LSV model shows similarly visible ranges ([Fig. 5.3](https://arxiv.org/pdf/2007.04154#page=21)). Notably, <mark>even plain re-initialisation of an unconstrained fit moves the exotic price</mark>, so the training algorithm is part of the model.
+
+> **My comment.** This is the factor-selection finding in different clothes: many settings fit the observed prices equally well and disagree on what was not observed. There I put a prior over the competing models and averaged; here they report the extremes. I wonder how much of the width a plain seed sweep, with no constrained search at all, would already recover.
 
 ## 5 Discussion
 

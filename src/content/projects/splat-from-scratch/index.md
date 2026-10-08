@@ -18,17 +18,17 @@ kind: project
 thumb: "/projects/splat-from-scratch/media/orbit_thumb.jpg"
 ---
 
-## Abstract
+## In short
 
-This project rebuilds 3D Gaussian splatting from first principles: an analytic signed-distance scene and a sphere tracer
-produce posed ground-truth images; a scene model of anisotropic 3D Gaussians is projected with the EWA approximation,
-depth-sorted and alpha-composited front to back; autograd supplies the gradients; clone/split/prune densification grows the
-model. Everything is ordinary PyTorch tensor code, about 1,500 lines including tests and experiment scripts. On 100 training views at 160 × 160 px,
-6,000 Gaussians reach 36.93 dB PSNR and 0.993 SSIM on 12 held-out views after 4,000 iterations (113 s on one RTX 3090).
-Anisotropy is worth 4.9 dB at equal count, densification 2.4–4.4 dB over a fixed random initialisation, and a tile-culled
-rasteriser that is provably output-equivalent to the dense one renders 3.0× faster and takes training steps 2.3× faster.
-A five-seed ensemble shows that seed disagreement ranks colour error usefully (Spearman 0.66) but depth error poorly (0.25),
-because depth error is dominated by a bias all seeds share.
+**Where it started.** Gaussian splatting renders a scene as a cloud of semi-transparent ellipsoids by rasterisation. The published systems owe their speed to hand-written CUDA kernels, which also hide the mathematics: the covariance projection, the compositing recursion and their gradients sit inside a custom backward pass. I wanted a version in which every step is a visible tensor expression that can be checked numerically.
+
+**What I learned building it.** To check it exactly I wrote the data source too: an analytic SDF scene and a sphere tracer, so poses, depth and colour are exact. The rest (EWA projection, depth-sorted alpha compositing, clone/split/prune densification) is about 1,500 lines of ordinary PyTorch. An earlier CPU-only draft (96 px, 1,000 Gaussians) was discarded; every number here comes from re-runs on the GPU server.
+
+**What that made me curious about.** How far a kernel-free version can be pushed on a real GPU before the missing kernels hurt, and whether disagreement between models trained with different seeds tells you where a reconstruction is wrong.
+
+**What worked, and what did not.** 6,000 Gaussians reach 36.93 dB PSNR and 0.993 SSIM on 12 held-out views in 113 s on one RTX 3090; anisotropy is worth 4.9 dB at equal count, densification 2.4–4.4 dB. Culling Gaussians into tiles first made rendering faster but training *slower* than dense (66.5 vs 55.1 ms), because the longest tile list held 809 entries while the average tile needed 204; bucketing tiles by list length fixed that, and the tiled rasteriser, output-equal to the dense one, renders 3.0× faster. A floor of about 6 ms per frame remains, the price of no custom kernel. The seed ensemble ranks colour error usefully (Spearman 0.66) but depth error poorly (0.25): depth error is mostly a bias all seeds share, and an ensemble measures variance, not bias.
+
+**Where it leads.** A reconstructed scene used downstream (robot picking, volume estimation, clearance checks) must know where not to trust itself. Next: a median or transmittance-threshold depth to remove the bias, and a chance-constrained toy decision that values calibrated uncertainty in decision cost.
 
 ## 1 Introduction
 

@@ -22,6 +22,8 @@ Ranking & selection and feasibility determination are the part of simulation opt
 
 There are $k$ simulated systems, and each has constraints of the form $p=\Pr(\text{event})\le h$, so every observation is Bernoulli. The constraints are "subjective": the decision maker may try several thresholds $h$ per constraint, all at once or added later. Most valid feasibility procedures assume normal data, so on Bernoulli data they average observations into batch means first. <mark>Batches large enough to look normal waste observations, especially when $p$ is small</mark>, and that is exactly the regime of safety constraints.
 
+> **My comment.** One practical snag for my own use: my battery simulator is deterministic for a given protocol and parameter set, so there is no Bernoulli observation to draw until I decide where the randomness comes from (cell-to-cell parameter spread, ambient noise, or posterior draws of uncertain parameters). That choice would define what "probability of exceeding 60 °C" even means.
+
 ## The idea, as I understand it
 
 - **Compare with a dummy coin.** For each threshold $h$, draw a dummy Bernoulli($h$) variable alongside every real observation and track the running sum of the differences. It is a simple random walk. Declare the system feasible when the walk falls to $-H$, and infeasible when it rises to $+H$.
@@ -48,6 +50,8 @@ How I read it:
 - **The validity result is clean.** The batch-means procedure under-covers when $p$ is small and batches are short; the new procedure meets its target throughout.
 - **The large savings come from the heuristics.** Passes that add thresholds later have no proof, and their savings depend on the order in which thresholds are tried: about 20% in one configuration and none in another. One 100-system example is, in the paper's own words, an extreme case built to favour them.
 - **Common random numbers neither helped nor hurt** in the inventory example.
+
+> **My comment.** Before using this on battery constraints I would add the walk to rs-lab and run the same check I ran for every procedure there, the nominal level verified over thousands of macro-replications, including the small-p settings where batch means fails.
 
 ## Where I am not convinced
 

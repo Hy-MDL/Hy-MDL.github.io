@@ -230,6 +230,8 @@ Main result, out-of-sample relative error in %, mean (std) over five seeds (Tabl
 | WGAN | 21.3 (2.2) | 26.9 (1.7) |
 | **Tail-GAN** | **4.6 (1.6)** | **10.1 (1.1)** |
 
+> **My comment.** TailFlow reports the same kind of comparison on a synthetic market with known truth: 1-day 99% ES error 16.2%, against 28.0% for filtered historical simulation and a 7.6% sampling floor. What that project added is that a good one-horizon number can hide a multi-horizon defect, since its 10-day ES was 13.3–21.5% too low. Tail-GAN scores every strategy only at the end of the 15-minute path, so I would rescore the same strategies at intermediate horizons.
+
 Ablations and variants (Tables 2–6 and 9; synthetic unless noted):
 
 | Experiment | Setting | Result |
@@ -272,6 +274,8 @@ Ablations and variants (Tables 2–6 and 9; synthetic unless noted):
 - The flat ES direction (Section 3.4) and the $\lfloor\alpha n\rfloor$ tail points per batch make levels below 1% doubtful; none is tested.
 - No convergence analysis of the max–min dynamics; learning rates of $10^{-6}$–$10^{-7}$ over up to 20,000 epochs hint at fragile training.
 - Five seeds, and no financial generator other than a vanilla WGAN as competitor — one that also lacks the strategy features.
+
+> **My comment.** This is the argument CASE is built on: one frozen checkpoint, re-conditioned each morning on the last sixty days. On daily data its advantage sat where the observed window was already volatile, which is exactly the regime an unconditional generator trained on one calm month would miss.
 
 ## 7 Extensions
 

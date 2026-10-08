@@ -38,6 +38,8 @@ The last column is the contribution. Every previous row with three ticks bought 
 
 For anyone thinking about applying a flow to data with no natural structure — a panel of factor returns, a set of engineered features — the appeal is direct. A coupling flow forces you to choose a partition; an autoregressive flow forces you to choose an ordering; FFJORD forces you to choose neither. What it asks for instead is an ODE solver, and the bill it sends is in function evaluations rather than in architecture.
 
+> **My comment.** My flow prior for factor selection was a RealNVP-style coupling stack, and at d = 1 coupling layers do not exist, so I had to fall back on element-wise sinh-arcsinh bijections there. A free-form CNF would remove that special case, but the Bayesian machinery needs the prior density itself, and exponentiating an unbiased Hutchinson estimate of a log-density gives a biased density; I wonder how much that would matter for the marginal likelihood.
+
 ## 2 Background
 
 ### 2.1 Continuous normalizing flows
@@ -246,6 +248,8 @@ The replacement bottleneck. Two results:
 - **The $t_0$-to-$t_1$ interval and its interaction with the dynamics is never discussed.** A CNF on a fixed time interval has a velocity scale set by that interval; nothing here explores whether the NFE growth is really a growth in the Lipschitz constant of $f$, which is what the weight-decay fix suggests.
 - **Adjoint gradients are not exact.** The backward solve reconstructs $z(t)$ rather than storing it, so the computed gradient is the exact gradient of a slightly different trajectory. The paper inherits this from Neural ODE and does not discuss the error, nor how tolerance interacts with it.
 - **Nothing about tails or about extrapolation.** As with every flow here, the reported metric is mean log-likelihood on standardised data.
+
+> **My comment.** This is the gap that matters for anything I would use it for. The target of my flow prior is a heavy-tailed scale mixture, and I controlled tail weight explicitly with sinh-arcsinh layers; a Gaussian base pushed through a Lipschitz field on a finite interval should keep roughly Gaussian tails, so I doubt FFJORD alone would get that target right.
 
 ## 7 Extensions
 

@@ -20,7 +20,35 @@ scope: personal
 thumb: "/projects/nune-retina-rl/media/dashboard.jpg"
 ---
 
-A retina examination room runs eight imaging devices and about 160 patients a day, each ordered one to six exams; a nurse at a desk decides which device each waiting patient goes to next. This is my project with Nune Eye Hospital to make that decision by a policy — and, more carefully, to find out *which kind* of policy, evaluated *how*. It started in February 2026 with a simulator built from the hospital's device list, went through three rounds of the simulator being wrong, connected to the hospital's live records in August, and since September has compared its assignment against current operation on real days. The results are real and so are the parts that failed: pure reinforcement learning over the raw action space, reward shaping, and two settings that quietly favoured the simulation.
+## In short
+
+**Where it started.** A retina examination room runs eight imaging devices and about 160 patients a day, and a nurse
+at a desk decides which device each waiting patient goes to next. With Nune Eye Hospital I set out in February 2026 to
+make that decision by a policy, and, more carefully, to find out *which kind* of policy, evaluated *how*. The first
+simulator was built from the hospital's device list.
+
+**What I noticed first.** That simulator described a room that does not exist. It put angiography in about 10 % of
+visits where the room has 0.3 %, and its time in system was 188 minutes against a real 13. Every ranking made on it was
+wrong. Only after sampling the real exam combinations did the exam mix match the room to 0.32 %p. The second lesson came
+from the metric: first wait is fixed the moment a patient's first exam starts, and a rule built on that, with no
+learning, gave 1.75 minutes where four PPO variants landed between 21.6 and 43.5.
+
+**What that made me curious about.** If a rule aligned with the metric exists, can a learned model beat it where the
+rule does not see, at the bottleneck devices and on the busy days? And does a simulator stay right once it meets the
+hospital's live records?
+
+**What worked, and what did not.** Pure RL over the raw (patient × device) action space failed outright, and reward
+shaping (an aging bonus) made the first wait worse. What worked was letting the rule act when the choice is easy and the
+model decide only under contention, imitating a rule, behind a guard. On the fair 72-day replay its gain over FIFO was
+real but small (0.5 minutes of mean wait), and the angiography tail was not solved. The live records then corrected the
+simulator three more times, and when I asked for settings that favoured the simulation, two were found. After those
+fixes the 44-day replay put time in the room at 8.2 minutes against the hospital's 12.2, and on five live business days
+the per-device assignment cut the wait between exams from 2.73 to 1.14 minutes. One failure was ours alone: our poller
+ran with no service window and sent the hospital's database 13,350 `SELECT`s a day, so we cut it and then paused it.
+
+**Where it leads.** A reservation object and interruptible contrast exams in the simulator, modelling absence from the
+floor, and the hospital's decision on dynamic re-assignment once its completion records are clean (see "Where it
+stands").
 
 ![The live pilot, five business days (2026.09.07–11, n = 1,399): per-patient wait between exams under ① current operation, ② assigning the whole exam sequence at check-in, ③ per-device real-time assignment.](./figs/sep_wait_by_mode.png)
 

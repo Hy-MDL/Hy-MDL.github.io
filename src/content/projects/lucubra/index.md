@@ -18,11 +18,23 @@ kind: project
 thumb: "/projects/lucubra/media/home.jpg"
 ---
 
+## In short
+
+**Where it started.** Two manuscripts under review taught me what I wanted and did not have: something that reads a draft the way a hostile referee would, checks the numbers instead of admiring the prose, knows what the target journal's recent papers actually look like, and leaves the decision to me. The agent reviewers that exist are built around arXiv machine-learning papers, and empirical finance has its own failure surface (a factor that "works" at t = 2, a backtest without costs, a signal that uses tomorrow's data). I also wanted to know whether I could build an LLM agent system end to end, not just call a model.
+
+**What I learned building it.** Four days to the first usable version, and the structure was thrown away and rebuilt three times when I could not tell what the product was. What held was the process: each change is a numbered round with a written brief that Claude Code or Codex implements and scripts verify — 57 rounds, 141 Playwright flows and 30 HTTP smoke checks by 2026.10.02.
+
+**What that made me curious about.** Whether I could keep strengthening a program through agents without losing control of it, and whether an agent review could converge instead of drifting from round to round.
+
+**What worked, and what did not.** The review ledger works: later rounds may only close items or add what the revision itself introduced, so the number of open essentials can only fall. I use it on my own drafts every day. But a feature audit on 2026.10.02 marked several landing scenes as only partly built or not built yet, and the committee still gets things wrong: a point raised twice, a baseline axis that should not apply, a persona that reads a finance paper like an ML paper. Each of those becomes the next round's brief.
+
+**Where it leads.** Calibrate the committee against real decisions so that "2 things to change" is a measured prediction rather than a persona's opinion; agent control on a budget; multi-user hosting with local execution kept off; and long-running workflows that reimplement a paper's method on new data end to end.
+
+## The landing page, section by section
+
 Lucubra is the name the platform carries now; its window title reads "Lucubra — research, verified in conversation", and the landing's palette is called lamplight. The public landing page is the outermost layer, the first thing anyone sees before signing in, so this page starts there: one capture per section of the landing page, top to bottom, taken on 2026.10.02 at 1440 × 900.
 
 Two cautions about what the captures show. The landing's scenes run on one illustrative paper (a momentum-crash study with made-up numbers) and the landing says so; none of the numbers in them are results. And the landing is the *specification* of the product as much as a description of it: a feature audit of the app on 2026.10.02 marked several of the scenes as only partly built or not built yet, among them the Reader that links claims to tables with line references, fixes applied in place to the TeX source, and the Codex, Ollama and ORCID connections. Those scenes are being built next; the app screens further down show what runs today.
-
-## The landing page, section by section
 
 ![Hero. "Research beyond the page.": bring a paper, follow the idea, from understanding to implementation to a sharper review. The card on the right is the promise in one example: a table that was read, reimplemented and run on your own data (0.97 reported, 0.95 yours, within tolerance), with what is still open and who in the community holds the missing data. Underneath, the five stages that organise the product: Read, Ideate, Build, Reimplement, Review.](./figs/landing-hero.jpg)
 

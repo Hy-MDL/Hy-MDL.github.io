@@ -112,6 +112,8 @@ $$
 
 The regression target no longer depends on $t$ at all. By McCann's Example 1.7, $\psi_t$ is the optimal-transport displacement map between $\mathcal{N}(0,I)$ and $\mathcal{N}(x_1,\sigma_{\min}^2I)$, so conditional particles move in straight lines at constant speed. The paper also observes that $u_t(x\mid x_1)=g(t)h(x\mid x_1)$ factorises, which is the formal statement of "constant direction in time". They are careful to add that <mark>optimality of each conditional flow does not make the marginal field an optimal transport map</mark>. [Fig. 2 in the paper](https://arxiv.org/pdf/2210.02747#page=6) contrasts the diffusion conditional score, whose shape changes with $t$, against the OT field, whose direction does not; [Fig. 3](https://arxiv.org/pdf/2210.02747#page=6) shows diffusion trajectories overshooting and backtracking while OT ones run straight.
 
+> **My comment.** This connects to the failure I hit in TailFlow: plain ε-prediction blew up near the noise end, because any error is divided by the square root of ᾱ when converted to x̂₀, and I had to rewire the output so the trivial part was not learned. The OT velocity target is bounded at both ends by construction, and I would like to know whether training TailFlow on it would have made that rewiring unnecessary.
+
 ### 3.7 Intuition: two one-dimensional cases
 
 **Why the path reaches the ends.** Let $d=1$ and let the data be a single point $a$. The marginal path equals the conditional path, and with $\sigma_{\min}\to0$ the OT interpolant is $x_t=(1-t)x_0+ta$ with velocity $a-x_0$: a straight line traversed at unit speed that lands exactly on $a$ at $t=1$ and starts exactly at $\mathcal{N}(0,1)$ at $t=0$. Now take the VP path with the paper's schedule, $\beta$ linear from $\beta_{\min}=0.1$ to $\beta_{\max}=20$, so $T(1)=0.1+\tfrac12(19.9)=10.05$ and $\alpha_1=e^{-5.025}\approx0.0066$. At the "noise" end the VP conditional mean is not $0$ but $0.0066\,a$, and its standard deviation is $0.99998$ rather than $1$. That residual is the truncation bias diffusion paths carry and linear paths do not; it is also why the paper samples $t$ in $[0,1-10^{-5}]$ for the diffusion baselines.
@@ -228,6 +230,8 @@ Super-resolution, 64→256 on the ImageNet validation set (Table 2):
 5. *Better generalisation* (abstract). Nothing isolates it; test-set NLL is the closest proxy and is not decomposed. Unsupported as phrased.
 6. *State of the art on unconditional ImageNet-128.* FM-OT reaches NLL 2.90 and FID 20.9 against unconditional GANs whose best entry, PGMGAN, is 21.7 (IC-GAN excluded for self-supervised conditioning). <mark>The comparison set contains no diffusion model at all</mark>, so read it as "competitive with unconditional GANs".
 7. *Conditional generation.* FM-OT beats SR3 on FID and IS and loses on PSNR and SSIM — the expected perceptual-versus-distortion trade-off, which the authors acknowledge by citing SR3's own argument that FID and IS are the better indicators.
+
+> **My comment.** On claim 4: for a risk model I care less about low-NFE FID than about spread. In TailFlow, DDIM with few steps was under-dispersed and biased ES low, and a per-pixel MSE against a 1000-NFE reference, as in Fig. 7, would not show that kind of error.
 
 ## 6 Limitations
 

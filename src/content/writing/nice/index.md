@@ -40,6 +40,8 @@ Two things follow immediately once (1) is tractable, and they are the reason thi
 
 That combination is what makes this line of models interesting to me beyond image generation. If you want to compare two models of the same data — which is what a posterior model probability is — you need $p(x\mid\text{model})$, not a lower bound on it and not a sample from something adversarially trained to look like it. A GAN generator induces a distribution on $\mathbb{R}^D$ that has no density at all with respect to Lebesgue measure when the latent dimension is smaller than $D$, so a "posterior model probability" computed from a GAN prior is not merely hard to compute, it is not well defined. A flow does have a density, everywhere, by construction. NICE is where that construction starts.
 
+> **My comment.** In my model-uncertainty project this stopped being an argument and became a number. Without a density, the GAN route has to estimate each marginal likelihood by sampling the prior, and the effective sample size fell from 20,000 draws to 1.0; even the exactly correct prior, used without its density, landed 37 times further from the exact posterior than an approximate flow prior that had one.
+
 ## 2 Prior work
 
 The paper situates itself against four families, and the comparison is sharper than usual because all four are attacking the same object — $\log p(x)$ — with different compromises.
@@ -122,6 +124,8 @@ h^{(4)}_{I_2}&=h^{(3)}_{I_2}, & h^{(4)}_{I_1}&=h^{(3)}_{I_1}+m^{(4)}(h^{(3)}_{I_
 $$
 
 (The paper writes the arguments of $m^{(2)}$ and $m^{(4)}$ as $x_{I_2}$ and $x_{I_1}$ rather than the current $h$; read in context with the alternating-partition rule, these are the outputs of the preceding layer.)
+
+> **My comment.** The counting argument has an edge case that mattered to me: at $d=1$ there is no partition, so a coupling layer has nothing to condition on. My flow prior needed one model per dimension down to $d=1$, and there the element-wise sinh–arcsinh layers carry the whole transform; for very low-dimensional targets the elementwise part is the model.
 
 ### 3.4 The rescaling layer, and why the model needs one
 

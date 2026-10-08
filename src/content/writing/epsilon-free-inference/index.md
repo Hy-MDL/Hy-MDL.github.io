@@ -151,6 +151,8 @@ $$
 
 The proposal cancels, leaving the exact posterior. The same arithmetic exposes the failure of §3.2. A poorly trained network reporting precision below $1/s_0^2-1/\tau^2$ (below $1/s_0^2$ under the flat prior of §3.2) yields a negative variance. An overfit one reports too much precision, and the corrected posterior is silently overconfident.
 
+> **My comment.** I met the same failure from the other side in the factor-selection project: once the exact posterior was available, the GAN prior's sharper answers turned out to be measured overconfidence. A narrower learned posterior is good news only if something exact says so, and here only the toy and the linear regression can.
+
 Compare ABC on this model with a flat prior. Normalised over $\theta$, the acceptance probability is the density of $x_o+U+\sigma Z$ with $U$ uniform on $[-\epsilon,\epsilon]$. Its variance is therefore $\sigma^2+\epsilon^2/3$, inflated by a user-chosen amount, while acceptance near the mode is about $2\epsilon/(\sqrt{2\pi}\sigma)$ and shrinks roughly like $\epsilon^{D}$ in $D$ data dimensions. <mark>ABC trades bias for simulations along a curve that runs out before the bias reaches zero; the regression approach is not on that curve.</mark>
 
 ### 3.5 Algorithm
@@ -194,6 +196,8 @@ Easy to get wrong when reproducing:
 - **Pilot runs.** Lotka–Volterra statistics are standardised using a 1,000-simulation pilot, and M/G/1 percentiles are whitened using 100K pilot simulations. Whether these count towards the plotted budgets is not stated, and the M/G/1 pilot alone exceeds what MDN with proposal is credited with (about $10^4$ by eye).
 - **Parameter spaces.** Lotka–Volterra is inferred in $\log\theta$ with a uniform prior on $[-5,2]$. M/G/1 puts uniform priors on $\theta_1$ and on $\theta_2-\theta_1$ (both $[0,10]$), and on $\theta_3$ over $[0,1/3]$. The flat-everywhere correction can place mass outside these supports.
 - **Baseline handling.** MCMC-ABC's step size was hand-tuned, and the chain started from a rejection-ABC sample, so it needed no burn-in. SMC-ABC's $\epsilon$ decay was also hand-tuned. ABC samples are refitted before scoring: a Gaussian for regression and Lotka–Volterra, an 8-component EM mixture for M/G/1.
+
+> **My comment.** The 100K-simulation M/G/1 pilot is the detail that bothers me most. If it counts towards the budget, the method's simulation advantage on that problem could disappear, and the paper does not say either way.
 
 ## 5 Experiments
 

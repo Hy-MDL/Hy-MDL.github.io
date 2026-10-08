@@ -18,9 +18,35 @@ kind: project
 thumb: "/projects/eco-route-rl/media/drive_thumb.jpg"
 ---
 
-## Abstract
+## In short
 
-An earlier Green AI project of mine named three Seoul driving routes, simulated two of them for fuel and CO₂ in the commercial microsimulator AIMSUN, and drew its conclusions from **one run per scenario**. This project re-derives that report, rebuilds its comparison on the real road, and then makes the route choice the way simulation methodology prescribes — with a statistical guarantee instead of a fixed budget of runs. §2 transcribes the report's 62 numbers with page references and lists five places where its wording disagrees with its own tables. §3 rebuilds the three corridors it names on an OpenStreetMap network of southern Seoul, converted by `netconvert` into Eclipse SUMO with real lane counts, real junction geometry and 494 signalised intersections, with CO₂ from SUMO's published HBEFA3 model — whose class, chosen from the car's attributes before any comparison, reproduces its rated 143 g/km to 142.8. Over eight common-random-number replications the least-CO₂ route is the 15.5 km direct path, but the two best arms **cannot be separated**: shortest versus fastest is +10.7 ± 35.0 g. §4 builds the machinery that fixes that, on a synthetic 5 km arterial whose truth is computable — fully sequential indifference-zone selection, sequential feasibility determination under a travel-time constraint, and common random numbers — where one run per plan recommends an infeasible plan 23 % of the time while the sequential procedure with CRN is acceptable in 1,000 of 1,000 macro-replications. §5 applies it to the real problem on a bank of 1,600 SUMO runs: the sequential procedure attains **P(correct selection) = 0.956 against a nominal 0.95** with every selection acceptable, for 490 runs against the 40 the fixed budget spent, and at a 20-minute trip budget it answers "no route qualifies" rather than recommending one that breaks it — which the fixed budget does 7.2 % of the time. The tie is then settled at a stated zone: shortest − fastest = **+13.35 g (95 % CI [+7.87, +18.82])**, which is *inside* the δ = 25 g indifference zone declared in advance, so at that zone the two are reported indistinguishable; tightened to δ = 10 g the guarantee applies and the procedure returns the fastest path in 97.7 % of macro-replications for 83 runs. Finally, CRN buys a median 13.7× on the synthetic corridor and only 1.39× here, and §5.5 measures why: holding the shared demand draw fixed removes none of the ego's variance, because a different route makes SUMO consume its random stream in a different order. The geometry and the emission model are real; the demand is not, and every CO₂ figure on the real network is a free-flow figure.
+**Where it started.** In an earlier Green AI project of mine, Green-Navi, we wanted the greenest route rather than the
+shortest or fastest: simulate fuel and CO₂ on candidate Seoul routes in AIMSUN, then learn a routing policy. The one
+report that survives covers only the first stage, and every figure in it comes from **one run per scenario**. A
+microsimulation is a random experiment, and a single draw from one is not a comparison. So I went back to it.
+
+**What I noticed first.** Transcribing its 62 numbers turned up five places where its wording disagrees with its own
+tables, and one of its three routes has no simulation output at all. I rebuilt the corridors on a real
+OpenStreetMap network in SUMO, with HBEFA3 emissions that reproduce the car's rated 143 g/km to 142.8. With eight
+paired replications per route the least-CO₂ route was the direct path, but the two best routes **could not be
+separated**: shortest versus fastest was +10.7 ± 35.0 g.
+
+**What that made me curious about.** Could the route be chosen with a stated guarantee instead of a fixed number of
+runs, with a travel-time limit checked at the same time? And would common random numbers, which pair the routes under
+the same traffic draw, make that cheap?
+
+**What worked, and what did not.** I built the procedures first on a synthetic corridor whose truth is computable. There,
+one run per plan picked the right plan 37 % of the time and an infeasible one 23 % of the time, while the sequential
+procedure with CRN made an acceptable selection in every one of 1,000 macro-replications. On the real network it attained P(correct
+selection) = 0.956 against a nominal 0.95, where eight runs per route reach 0.742, and at a 20-minute budget it answers
+"no route qualifies" instead of recommending one that breaks it. It settled the tie honestly: the gap is +13.35 g,
+inside the δ = 25 g zone declared in advance, so at that zone the two are indistinguishable; at δ = 10 g it returns the
+fastest path in 97.7 % of macro-replications. What disappointed was CRN: 13.7× on the corridor, only 1.39× on the real
+network, because a different route makes SUMO consume its random stream in a different order. And the demand is not
+real: the car averages 47 km/h where the report measured 23.9 km/h, so every CO₂ figure is a free-flow figure.
+
+**Where it leads.** Real or corridor-weighted demand, so the network congests; the selection re-run there; and a
+learning agent only once the network is congested enough to give one something to learn (section 7).
 
 <figure class="vid">
   <video src="/projects/eco-route-rl/media/drive.mp4" autoplay loop muted playsinline preload="metadata" poster="/projects/eco-route-rl/media/drive.jpg"></video>
@@ -45,7 +71,7 @@ An earlier Green AI project of mine named three Seoul driving routes, simulated 
   machine used.</figcaption>
 </figure>
 
-## 1 Introduction
+## 1 Background
 
 Navigation systems minimise time or distance. Fuel and CO₂ depend on both and on how often the car stops, so the greenest route can differ from the shortest. An earlier Green AI project of mine set out to find the greenest one: measure fuel and CO₂ on candidate routes in the commercial microsimulator AIMSUN, then learn a routing policy. One document survives — a 10-page Korean report on the first stage only, whose last page lists shortest-path algorithms and stops.
 
@@ -64,8 +90,6 @@ This project takes that defect seriously, in three moves:
 1. **The report is re-derived** (§2). Its 62 numbers are transcribed with page references and script-checked against the PDF text layer; the totals are recomputed; five places where its wording disagrees with its own tables are listed.
 2. **The comparison is rebuilt on the real road** (§3). The corridors the report names, pulled from OpenStreetMap through the Overpass API and converted by `netconvert` into an Eclipse SUMO network with real lane counts, real junction geometry and 494 signalised intersections, with CO₂ from SUMO's published HBEFA3 model instead of three coefficients fitted to the report itself. This stage replicates — eight paired replications per route — and it is honest about where that gets it: its two best routes **cannot be separated**, at +10.7 ± 35.0 g.
 3. **The route is then chosen with a guarantee instead of a budget** (§5). Not "eight runs each and take the smallest mean", but a fully sequential indifference-zone procedure with a feasibility check on travel time, which decides when to stop and carries a bound on the probability of being wrong. The machinery for that is built and measured first on a synthetic corridor where the truth is known (§4), then applied to the real network.
-
-The last move is the point of the project. The first two make it possible to state what was actually decided, on what road, under what traffic.
 
 ## 2 The archived report, re-derived
 

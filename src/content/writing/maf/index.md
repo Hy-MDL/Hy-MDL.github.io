@@ -30,6 +30,8 @@ And then a list of what those applications are: learning priors from large unlab
 
 That list is why this paper, rather than Glow, is the one I would hand to someone coming from statistics. It is also why MAF sits at the junction of the two topics I have been reading around: it is a flow whose stated purpose is density evaluation, and one of its named uses is building proposals for particle methods, where a good proposal is precisely a tractable density close to an intractable target.
 
+> **My comment.** The first item on that list is what my factor-selection project does: a learned prior plugged into exact Bayesian machinery. I used a RealNVP-style coupling stack there; reading the table in §3.3 afterwards, that project uses both Monte-Carlo routes, one needing prior samples and one needing prior densities, so the one-pass-both-ways row is the one it needs, and I would only switch to MAF if sampling cost stopped mattering.
+
 The tension the paper resolves is that the two tractable-and-flexible families — autoregressive models and normalizing flows — were thought of as alternatives, and they are not. An autoregressive model *is* a flow. Once you see that, "make the autoregressive model more flexible" and "make the flow deeper" become the same operation.
 
 ## 2 Prior work
@@ -84,6 +86,8 @@ $$
 Substituting (4) and (5) into (1) gives the density. Crucially, **(4) is parallel and (3) is sequential**: to compute $u$ from a known $x$ you already have all of $x_{1:i-1}$, so one masked forward pass suffices; to sample you must produce $x_i$ before you can compute $\mu_{i+1}$. This asymmetry is the entire MAF/IAF trade-off.
 
 **The diagnostic.** Because $u=f^{-1}(x)$ is computable, you can transform the training data into its random numbers and *look at them*. If they are not independent standard normals, the model is a bad fit. [Fig. 1b](https://arxiv.org/pdf/1705.07057#page=3) does exactly this for the parabola under the bad order and the scatter is visibly non-Gaussian. This is a free goodness-of-fit check that no GAN and no VAE can offer, and it generalises: any flow lets you inspect its own residual.
+
+> **My comment.** This is a check I would add to my own flow prior: push draws from the exact target through the inverse and test the recovered base draws for normality, in the tails separately, instead of reading only the average log-likelihood.
 
 ### 3.2 Stacking
 

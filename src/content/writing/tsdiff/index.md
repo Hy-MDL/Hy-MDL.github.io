@@ -66,6 +66,8 @@ $$
 
 giving **TSDiff-Q**. Each sample path is guided with a different $\kappa$, evenly spaced over $(0,1)$, so the ensemble spreads across quantiles instead of crowding the mean. The gradient in (2) is obtained by backpropagating through the denoiser.
 
+> **My comment.** Assigning each path its own $\kappa$ means the ensemble's spread is partly manufactured by the guidance rather than by the model. For a VaR read-out that worries me: the 1% quantile of 100 paths guided at evenly spaced $\kappa$ is close to whichever path drew $\kappa\approx0.01$, so the tail depends on the guidance scale $s$ as much as on $p_\theta$.
+
 ```mermaid
 flowchart LR
   A["x_t"] --> B["denoiser: predicted noise"]
@@ -78,6 +80,8 @@ flowchart LR
 ```
 
 The constraint is soft: generated values at observed positions are pulled toward the data, not set equal to it.
+
+> **My comment.** CASE makes the opposite choice: observed days are held at noise level zero and re-clamped at every reverse step, and the conditioning is learned in training. The soft pull is what lets one TSDiff checkpoint take arbitrary masks; what I would want to know is whether it can still carry the volatility state of the last sixty days, since that is where CASE's advantage sat.
 
 ### 3.3 Refinement with the learned density
 

@@ -69,6 +69,8 @@ where $L_{\mathrm{rec}}$ combines a pixel loss with a learned perceptual loss, $
 
 Scale gets explicit treatment. For a KL latent the component-wise variance $\hat\sigma^2$ is estimated from the *first batch* and the encoder output divided by $\hat\sigma$, giving unit standard deviation. Since the forward process adds noise of variance $\sigma_t^2$ to a signal of variance $\mathrm{Var}(z)$, the schedule's effective SNR is $\mathrm{Var}(z)/\sigma_t^2$: <mark>rescaling the latent is not bookkeeping, it silently re-chooses the noise schedule.</mark> VQ latents already have variance near 1 and are left alone.
 
+> **My comment.** CASE handles scale inside the representation instead: each return is split into a slowly moving volatility state and a whitened shape, so the noise schedule always meets a variable of controlled size. The cost moves to the shape, and CASE's generated paths still under-build excess kurtosis, so controlling the scale was not enough on its own.
+
 ### 3.2 Diffusion in the latent
 
 Equation (1) with $x$ replaced by the encoded image:
@@ -236,6 +238,8 @@ Three appendix entries look like printing errors, and a reproduction would inher
 - The latent is a black box here: no analysis of its statistics beyond variance, and no explanation for the VQ-versus-KL result.
 - Throughput comparisons are not always step-matched (on LSUN-Bedrooms, LDM at 200 DDIM steps against ADM at 1000), so part of the speed-up belongs to DDIM, not to the latent.
 - Several appendix entries are internally inconsistent (Churches at 410K/100 steps in Table 18 vs 500K/200 steps in Tables 12 and 1; CelebA-HQ FID 5.11 in Table 1 vs 5.15 in Fig. 28; Bedrooms listed at 60 generator but 55 overall V100-days).
+
+> **My comment.** The recall drop under guidance is the trade I would refuse in scenario generation. A guidance scale that pulls samples towards the condition narrows the scenario set, a narrower set means a lower ES, and I would never tune it for a risk model on a fidelity metric.
 
 ## 7 Extensions
 

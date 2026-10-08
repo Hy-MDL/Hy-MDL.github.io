@@ -61,6 +61,8 @@ $$
 
 The $O(\varepsilon^2)$ terms vanish in the limit, so <mark>(3) is exact, not an approximation — every error in an adjoint gradient is numerical, introduced by the solver, never by the formula.</mark> Starting from $a(t_1)$, which ordinary backprop through the loss head supplies, integrating (3) back to $t_0$ gives $\partial L/\partial z(t_0)$.
 
+> **My comment.** Exact as a formula, but the backwards re-integration of z(t) is where I would expect trouble for dissipative dynamics, such as a volatility state that mean-reverts quickly: a contracting flow run backwards amplifies errors. Before trusting adjoint gradients on anything like that I would compare them with direct backprop over a short horizon.
+
 ### 3.2 One augmented state for the parameters and the times
 
 The parameter gradient comes from the same machinery rather than a separate derivation. Treat $\theta$ and $t$ as extra state variables with trivial dynamics, $d\theta/dt = 0$ and $dt/dt = 1$, and stack them: $z_{\text{aug}} = [z, \theta, t]$. The Jacobian of the augmented dynamics has $\partial f/\partial z$, $\partial f/\partial \theta$, $\partial f/\partial t$ in its first block row and zeros elsewhere, so applying (3) to the augmented system splits into three separate equations. Integrating the $\theta$ component from the terminal condition $a_\theta(t_1) = 0$ gives
@@ -108,6 +110,8 @@ z_{t_0} \sim p(z_{t_0}), \quad z_{t_1},\dots,z_{t_N} = \mathrm{ODESolve}(z_{t_0}
 $$
 
 Training is a VAE: an RNN reads the observations in reverse time order and outputs $q_\phi(z_{t_0} \mid x_{t_1..t_N})$, and Appendix E maximises $\sum_i \log p(x_{t_i}\mid z_{t_i},\theta_x) + \log p(z_{t_0}) - \log q_\phi(z_{t_0}\mid\cdot)$ with $p(z_{t_0}) = \mathcal{N}(0, I)$. Because $f$ is time-invariant, any point on the trajectory determines the whole of it, so extrapolation is just solving further. The computation graph is [Fig. 6 in the paper](https://arxiv.org/pdf/1806.07366#page=6). A Poisson likelihood for the observation times, with intensity $\lambda(z(t))$, can be added; its integral is appended to the ODE state so the trajectory and the likelihood come from one solver call. Latent ODE replaces the RNN encoder here and takes this further.
+
+> **My comment.** In my exchange-queueing work trades that share a millisecond form one batch, and clustering of batch epochs at 10 ms mattered for the SLA. That is the irregular-time structure a latent ODE would have to represent, and a deterministic latent path is close to the opposite of bursty arrivals, so I would want an SDE or a jump term before trying it there.
 
 ### 3.6 Algorithm
 

@@ -36,6 +36,8 @@ $$
 
 where $r^i_{t-252,t}$ is asset $i$'s trailing one-year return, $r^i_{t,t+1}$ its next-day return, $\sigma_{\mathrm{tgt}}$ the annualised volatility target, and $\sigma^i_t$ an ex-ante volatility estimate (an exponentially weighted standard deviation with a 60-day span). The portfolio return is the plain average of Eq. (1) over the $S_t$ assets available at time $t$. The sign term is the "signal" and the ratio $\sigma_{\mathrm{tgt}}/\sigma^i_t$ is the "sizing"; the whole paper is about learning their product in one shot.
 
+> **My comment.** The sign of a trailing 252-day return is a crude phase reading: it says where in its trend cycle the asset is, at one horizon, with no magnitude. FinPhasor reads phase cross-sectionally, relative to the market's cycle, so it is not a drop-in replacement for this time-series signal, and since its signal lives in a coherent large-cap core I doubt it would carry over to 78 futures across asset classes without a lot of work.
+
 Multi-task learning with hard parameter sharing means one trunk network feeds several task-specific heads, and the gradients of all tasks update the trunk.
 
 ## 3 Method
@@ -86,6 +88,8 @@ $$
 $$
 
 where $S_{y,\hat y}$ is the sample covariance and $S_y, S_{\hat y}$ the sample standard deviations. Using correlation means the heads only have to get the ordering and co-movement of volatility right, not its level.
+
+> **My comment.** So the level of volatility, the part a risk statement needs, is never supervised, and the heads cannot be read as forecasts at all. In CASE I read volatility, VaR and ES from the same generated paths so that the level and the tail cannot contradict each other; here only the ordering is learned.
 
 ### 3.4 Total loss
 

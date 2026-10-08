@@ -36,6 +36,8 @@ $$
 and if $c(z,\cdot)$ is Lipschitz uniformly in $z$ (Assumption 1), the objective gap is that times the Lipschitz constant. Every theorem is this lemma plus a standard SAA result.
 - **Leave-one-out residuals.** In-sample residuals are too small when the model over-fits. J-SAA uses jackknife residuals around $\hat f_n(x)$; J+-SAA uses each leave-one-out model's own prediction, as in jackknife+ prediction intervals.
 
+> **My comment.** Writing the heteroscedastic version out, I notice I already run one member of this family: filtered historical simulation is ER-SAA with $\hat f_n\equiv0$ and $\hat Q_n$ an EWMA volatility, rescaling past devolatilised returns to today's level. In TailFlow it was the baseline that kept the 10-day tail almost unbiased (+1.7% / −1.2%) while my generator under-stated it, so the theory here may explain why the plainest residual method is so hard to beat over a horizon.
+
 The guarantees come in three grades. Consistency (Theorem 5) needs Lipschitz cost, a uniform LLN for the full-information SAA, fourth-moment LLNs, and consistent regression at $x$ and in empirical $L^2$ on the training points. The rate is $O_p(n^{-\alpha/2})$, with $\alpha=1$ for OLS or Lasso and $\alpha=O(1)/d_x$ for kNN or forests (appendix Theorem 13). Finite-sample: exponential bounds on the regression error give $P(\mathrm{dist}(\hat z^{ER}_n(x),S^*(x))\ge\eta)\le Q(\eta,x)e^{-\gamma(n,\eta,x)}$ (Theorem 8). For a two-stage LP with sub-Gaussian errors and OLS, Proposition 9 makes it concrete:
 $$
 n\ \ge\ n^*+\frac{O(1)\,\sigma^2 d_y}{\kappa^2}\Big(\log\frac{O(1)}{\delta}+d_x\Big),

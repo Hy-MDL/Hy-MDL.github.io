@@ -134,6 +134,8 @@ Bold marks the largest module share $\varsigma$; by count the largest modules ar
 
 <mark>In the crash year 2015 about 9% of all retained stocks sit in one balanced module, against roughly 0.2% in fragmented 2021.</mark> <mark>Across all twelve years every edge inside every detected LSCBM is positive</mark>, consistent with the dense-regime theorem: validated negative correlations never exceed 0.75% of pairs and average around $-0.15$, far below $\sigma$. <mark>Membership barely persists: the 2024 and 2023 modules share no stock, and likewise 2023/2022 and 2022/2021</mark>, while the dominant sector rotates among coal, machinery, software, brokerages, and steel ([Table 3 and Fig. 8](https://arxiv.org/pdf/2508.04970#page=29)).
 
+> **My comment.** Before reading anything into the zero overlap I would check how much of it is resampling noise. With $T\approx240$ and correlations near $\sigma=0.7$, the standard error of a correlation is about $(1-\rho^2)/\sqrt{T}\approx0.03$, so many pairs sit within a standard error of the cut each year; a bootstrap over days, rerunning MaxBalanceCore each time, would show the overlap rate when nothing has changed.
+
 Sweeping $\sigma$ from 0.4 to 0.9, $\varsigma$ falls monotonically every year, with a sharp drop beyond about 0.75 ([Fig. 9 in the paper](https://arxiv.org/pdf/2508.04970#page=31)).
 
 ## 5 Discussion
@@ -141,6 +143,8 @@ Sweeping $\sigma$ from 0.4 to 0.9, $\varsigma$ falls monotonically every year, w
 **Strengths.** The object is cleanly defined and comes with theorems, rare in empirical stock-network work, and the dense-regime result genuinely explains the all-positive modules. The heuristic is simple and scales to the full A-share universe.
 
 **Weaknesses.** The hedging motivation is never realized: no module contains a negative edge, so the balance condition is inactive and the LSCBM collapses to a large clique in a thresholded positive-correlation graph. $\sigma = 0.7$ does the real work, which narrows the distance to the criticized threshold approach.
+
+> **My comment.** For a single equity market this does not surprise me: strong negative correlation between two stocks is rare once a common factor drives most of the variance. The place I would look for two-camp structure is across asset classes, say equity index futures against long government bond futures in risk-off years, where correlations of $-0.7$ or stronger are at least plausible.
 
 With $T \approx 240$ and $\alpha = 5\%$, my own back-of-envelope inversion of Eq. (1) puts the pass mark near $|C_{ij}| \approx 0.13$, so validation is irrelevant once $\sigma = 0.7$ applies; there is also no multiple-comparison correction, and the t-test assumes i.i.d. Gaussian returns. Raw correlations are dominated by the market factor: <mark>a 99% positive-edge share in 2015 mostly says that a single common factor explained everything that year</mark>, and no factor-residual analysis is offered.
 

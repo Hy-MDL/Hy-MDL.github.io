@@ -32,6 +32,8 @@ There are three answers, and I find it useful to read them as three levels of tr
 
 The theory gives each variant a GP-UCB-type regret bound in which the LLM does not appear. <mark>That is a guarantee that bad advice cannot break convergence, not a guarantee that good advice helps.</mark> I think this is the honest way to state it, and the paper's own framing (LLMs for early exploration, statistical models for exploitation) is consistent with it.
 
+> **My comment.** The guarantee also assumes the referee is right. In my battery simulation the Gaussian-process surrogate's picks were confirmed at 15 and 25 °C and refuted at 45 °C, so a Justify-style test run against that GP would have accepted bad advice exactly where the data were thin; that is the case I would stress-test.
+
 ## What the results show
 
 There is no results table, only curves, so the reading below is mine.

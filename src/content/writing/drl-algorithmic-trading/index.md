@@ -84,6 +84,8 @@ The authors acknowledge that <mark>maximising discounted daily returns is only a
 
 Only one real trajectory exists per stock. New ones are made by keeping the historical prices and changing the agent's actions, which is valid as long as the agent is too small to move the market. Because there are just two actions, a simple exploration trick is available: at every step the opposite action is also executed on a copy of the environment and both transitions are stored in the replay memory.
 
+> **My comment.** Replaying one path under different actions is valid only because the agent is a price-taker, and the moment I ask where richer trajectories could come from I am back at TailFlow's question: a generator used as the input model for a decision, whose errors flow into the choice. I wonder whether a policy trained on generated paths would mostly learn the generator's defects, for example the volatility clustering that CASE's paths still under-build.
+
 ### 3.3 Changes relative to vanilla DQN
 
 The update target is the double-DQN one,
@@ -127,6 +129,8 @@ Sharpe ratios from Table 6 of the paper, where TDQN values are expected performa
 - Benchmarks are all classical. No forecasting-based or other RL baseline is included, by design, so the paper cannot say whether DQN is a good choice among learning methods.
 - The policy is all-or-nothing. With no flat or fractional position the agent cannot express uncertainty through size; the only way to reduce risk is to stop switching.
 - The ablation is missing. Roughly ten modifications to DQN are listed as helpful "experimentally", with no table showing what each contributes. The main text also does not state the discount factor finally used, and its discussion of $\gamma$ points both ways: long-horizon agents should trade less, yet a small $\gamma$ is also said to reduce trading frequency.
+
+> **My comment.** Read as ranking and selection, this is choosing the best of five strategies from two years of daily data, with a 0.035 Sharpe gap. In rs-lab I would state that as a probability of correct selection, and I doubt two years per instrument comes anywhere near the sample a procedure with a 0.95 guarantee would ask for.
 
 **What is not shown.** Per-stock variance across the 50 runs, turnover, and borrowing costs for the short side.
 

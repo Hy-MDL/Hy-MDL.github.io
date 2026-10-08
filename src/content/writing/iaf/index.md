@@ -34,6 +34,8 @@ The constraint is stated just as clearly. To optimise the bound you must, for ev
 
 So the design problem is: a family that is flexible, and for which sampling *and* own-density-evaluation are both one parallel pass. That is a narrower requirement than density estimation needs, and it is why IAF and [MAF](/blog/maf/) are different papers with the same algebra.
 
+> **My comment.** This own-samples-only requirement is the line that mattered in my factor-selection project. The marginal likelihood there is an integral against the prior density, and the well-conditioned importance route needs that density at points the prior did not generate, so an IAF prior would be cheap where I did not need it and D passes per layer where I did.
+
 [Figure 1](https://arxiv.org/pdf/1606.04934#page=1) makes the case in one picture: a VAE fit to four datapoints, with factorised Gaussian posteriors and with IAF posteriors. The Gaussian clusters are axis-aligned blobs that cannot tile the spherical prior; the IAF clusters bend around each other and fill it.
 
 ## 2 Background
@@ -191,6 +193,8 @@ Three readings, of which the paper makes two.
 1. *As the approximate posterior becomes more expressive, generative modelling performance becomes better.* True and monotone across all four IAF rows on both columns.
 2. *An expressive approximate posterior also tightens variational lower bounds as expected, making the gap between variational lower bounds and marginal likelihoods smaller.* The gap goes from $3.00$ nats (diagonal) to $1.70$ nats (depth 8). Stated and correct.
 3. **Most of the VLB improvement is bound-tightening, not a better generative model** — and this the paper leaves for the reader. The VLB improves by $3.28$ nats from diagonal to depth 8; the marginal likelihood improves by $1.98$. So roughly 40% of the headline gain is the bound catching up to a model that was already there. That is not a criticism of the method — tightening the bound *is* what IAF is for, and the remaining 2 nats of genuine model improvement is the payoff of training against a less biased objective — but reading the VLB column alone overstates it by half.
+
+> **My comment.** This split, how much of a gain is the model and how much is the measuring instrument, is the one I now look for first. In the factor-selection project the BO-tuned flow prior mainly lowered the measured model uncertainty without improving the out-of-sample decision, which is a similar warning that a better number can be about the instrument.
 
 The claim of *best published log-likelihood on dynamically binarized MNIST: $-79.10$* stands against this table. On Hugo Larochelle's *statically* binarised MNIST the same model gets $-79.88$, *slightly worse than the best reported result, $-79.2$, using the PixelCNN* — reported rather than omitted.
 

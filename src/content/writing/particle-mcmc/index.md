@@ -124,6 +124,8 @@ $$
 
 The $\psi$ terms cancel. That is (4). Unbiasedness is the *only* property of the estimator used — not consistency, not low variance — which is why the result holds for every $N\ge1$ and why the variance of the estimator affects only mixing, never correctness.
 
+> **My comment.** This is the contrast with what broke the GAN route in my factor-selection project. There the marginal likelihood was also estimated by sampling the prior, an unbiased estimate, but it went straight into posterior model probabilities with no outer chain to absorb its noise, and with an effective sample size near one the ratio carried almost no information. I wonder whether a pseudo-marginal chain over factor subsets would have recovered the right posterior, just slowly.
+
 The paper then notes that PMCMC does more than the generic pseudo-marginal argument: introducing the index $K$ of the selected particle and identifying the extended target $\tilde\pi^N(k,\theta,u)\propto\hat\gamma^N(\theta,u)\psi_\theta(u)W_T^k$ shows *we obtain samples not only from the marginal density $\pi(\theta)$ but also from the joint* — so the paths are valid draws too, not a by-product.
 
 ### 3.5 Algorithm
@@ -193,6 +195,8 @@ with $X_1\sim\mathcal{N}(0,5)$, $V_n\sim\mathcal{N}(0,\sigma_V^2)$, $W_n\sim\mat
 
 A fast-decaying autocorrelation function means the chain is moving quickly *within* where it is. It says nothing about whether it has found the rest of the posterior. The standard sampler passes its own diagnostic and gets the wrong answer; the particle samplers, at matched compute, do not. This is the most valuable empirical fact in the paper and it generalises well beyond state-space models.
 
+> **My comment.** It reminds me of my input-uncertainty result: the constrained selection procedure's guarantee measured 1.000 in its own fitted world and 0.03–0.80 in the true one. A diagnostic computed from inside the thing being checked tends to pass; it takes an outside reference, multiple starts here and the true world there, to make it fail.
+
 The ACF comparison between PG and PMMH at $N\in\{1000,2000,5000\}$ is in [Fig. 5](https://www.stats.ox.ac.uk/~doucet/andrieu_doucet_holenstein_PMCMC.pdf#page=14); autocorrelation falls as $N$ grows for both, as the theory predicts, since larger $N$ means a lower-variance $\hat p_\theta$ and an acceptance ratio closer to the idealised one.
 
 **What is not reported.** The "trapped on most runs" claim has no count attached, no number of replicate chains, and no formal multimodality diagnostic. The comparison is one dataset, one initialisation scheme, one seed budget that is not stated. For a claim this important the evidence is thinner than it could be — though the mechanism is clear enough that I believe it.
@@ -218,6 +222,8 @@ a pair of stochastic integrals against the subordinator.
 The methodological point is made by a choice of marginal. *Many publications have restricted themselves to the case where $\sigma^2(t)$ follows marginally a gamma distribution, in which case the stochastic integrals appearing in* (9) *are finite sums. Even in this case, sophisticated MCMC schemes need to be developed.* The authors quote Gander and Stephens on why that restriction exists: *"the use of the gamma marginal model appears to be motivated by computational tractability, rather than by any theoretical or empirical reasoning"*. They then use a **tempered stable** marginal $\mathcal{TS}(\kappa,\delta,\gamma)$ instead, which includes the inverse Gaussian at $\kappa=\tfrac12$ and for which the integrals are not finite sums.
 
 This is the argument in miniature. The transition can be *simulated* but its density cannot be *evaluated*; MCMC therefore needs either a tractable special case or a prior proposal that ignores the data; PMCMC needs neither, because a particle filter only ever samples the transition. The model class is chosen for statistical reasons and the computation follows, rather than the other way round. That reversal is what the method buys, and it is worth more than any efficiency factor.
+
+> **My comment.** Rough volatility is the class I would most like to try this on, and also where I doubt it is practical. Rough Bergomi is easy to simulate, which is what roughvol-lab does with the hybrid scheme, but it is non-Markovian, so each particle has to carry its whole volatility history and the cost per filter step grows with $T$ unless the kernel is replaced by a Markovian approximation.
 
 ## 6 Limitations
 

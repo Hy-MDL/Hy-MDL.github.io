@@ -90,6 +90,8 @@ Submodularity says $\delta_s(A)\ge\delta_s(B)$ for $A\subseteq B$, where $\delta
 
 *The correctness of this lazy procedure follows directly from submodularity* — and the correctness is exact, not approximate. If after recomputation the top element's true gain still exceeds every other element's *stale* gain, then since each stale gain upper-bounds its true gain, the top element is genuinely the argmax. The algorithm returns exactly what eager greedy returns; only the evaluation count changes.
 
+> **My comment.** This reads to me like a deterministic cousin of the elimination step in the KN procedure I implemented in rs-lab: stop spending evaluations on an alternative once a bound says it cannot win. The difference is that KN's bound is statistical and comes with its own error budget, while here exactness rests on gains being computed exactly. In influence maximisation each gain is a Monte Carlo estimate, so a stale gain is an upper bound only up to noise, and I would want to measure how often noisy lazy greedy returns a different set from eager greedy.
+
 The same idea applies to the bound computation of §3.3. The result is **CELF, Cost-Effective Lazy Forward selection**, and the paper credits a similar algorithm for the unit-cost case to Robertazzi and Schwartz.
 
 ### 3.3 The online bound
@@ -166,6 +168,8 @@ This is the number the paper is remembered for, and it is worth being precise ab
 On the blog data with the PA objective ([Fig. 3a](https://www.cs.cmu.edu/~jure/pubs/detect-kdd07.pdf#page=6)), three curves: the CELF solution, the offline $1-1/e$ bound, and the online bound of Theorem 4. *Notice the discrepancy between the lines is big, which means the bound is very loose* — that is the offline bound. *On the other hand … the gap is much smaller* — the online one. Quantitatively: **after selecting 100 blogs, the solution is at most 13.8% away from optimal.**
 
 Compare: 13.8% against the offline promise of 37% in the unit-cost case, or 69% in the cost-sensitive case. The online bound is roughly three to five times tighter, and it is computed from quantities the algorithm already has. For anyone who actually deploys a greedy selection, this is the more important of the paper's two theoretical contributions.
+
+> **My comment.** I like that the certificate is computed for the instance, but it is a certificate inside the scenario set. My input-uncertainty project is the reason I read it narrowly: there a selection procedure scored 1.000 against its nominal 0.95 in the fitted world and 0.03–0.80 in the true one. I would report the 13.8% as "near-optimal for these cascades" and nothing more.
 
 **Objective comparison** ([Fig. 3b](https://www.cs.cmu.edu/~jure/pubs/detect-kdd07.pdf#page=6)): DL rises fastest, then DT, then PA. The reading is substantive rather than numerical — *one only needs to read a few blogs to detect most of the cascades, or equivalently … most cascades hit one of the big blogs*, whereas PA *increases much slower, which means that one needs many more blogs to know about stories before the rest of population does.* Catching a story and catching it *early* are different problems with different solutions.
 

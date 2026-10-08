@@ -68,6 +68,8 @@ flowchart LR
   MU --> R
 ```
 
+> **My comment.** CASE also splits each return into a slowly moving volatility state and a whitened shape, and its generated paths still under-build volatility clustering. The SVNN's point is that $\sigma_t$ should be a causal function of the path's own past innovations; I would check whether CASE's generated paths carry any of that feedback, since TailFlow's clearly did not (autocorrelation of squared returns 0.013 in generated windows against 0.099 in real ones).
+
 ### 3.3 Why tails need help
 
 Networks here are Lipschitz, so $\|g_\theta(z)\|\le L\|z\|+\|g_\theta(0)\|$. It follows that <mark>if the latent noise has finite $p$-th moment then so does the generator output, and with Gaussian noise the generated returns have finite moments of all orders</mark> — at odds with the empirical view that some moment between the second and fifth diverges. A companion result shows back-propagated gradients are also in $L^p$ under Gaussian noise, which the authors use to argue against simply switching to heavy-tailed noise: it might fix the tails at the cost of unstable optimisation.
@@ -79,6 +81,8 @@ Y=U\exp\!\Big(\frac{\delta}{2}U^{2}\Big)\sigma+\mu,\qquad U=\frac{X-\mu}{\sigma}
 $$
 
 which for $\delta>0$ fattens the tails and is invertible for $\delta\ge0$. The pipeline is: log returns, normalise, apply the *inverse* transform (parameters by maximum likelihood) so the data look nearly Gaussian, normalise again, cut rolling windows. The GAN learns the light-tailed series and <mark>heavy tails are restored afterwards by applying the forward Lambert W map to the samples</mark>.
+
+> **My comment.** TailFlow does the same thing with a different map: EWMA volatility scaling, then a per-asset Student-$t$ Gaussianisation, with the tail put back analytically after sampling. What that project taught me is that a correct one-day marginal tail is not enough: the 10-day ES still came out 13.3% and 21.5% too low at the 95% and 99% levels, because a large early loss never raised later volatility. A marginal transform like Lambert W cannot reach that either.
 
 ### 3.4 Risk-neutral dynamics
 

@@ -107,9 +107,13 @@ with $(\alpha_t,\sigma_t)$ called a scheduler. Three practical consequences foll
 - **Schedulers can be changed after training** via a scale–time transformation driven by the signal-to-noise ratio $\alpha_t/\sigma_t$, and <mark>in exact arithmetic all schedulers give the same endpoint map $\psi_1$</mark> — so scheduler choice is about training conditioning and solver error, not about what is learned.
 - For Gaussian paths the marginal velocity is a gradient field, hence kinetically optimal *for that fixed path*.
 
+> **My comment.** "Numerical choice" undersells it. In TailFlow the ε-parameterisation was exactly where training broke, near the noise end, and the fix was a change of parameterisation, so in a risk model a numerical choice can decide whether the expected shortfall is usable at all.
+
 ### 3.4 Couplings and guidance (§4.9–4.10)
 
 The source need not be independent noise. Paired-data couplings $\pi_{0,1}=\pi_{0|1}(x_0\mid x_1)q(x_1)$ bridge a corrupted and a clean sample; minibatch-OT ("multisample") couplings lower transport cost and straighten trajectories as the batch size $k$ grows. Classifier and classifier-free guidance are obtained through the velocity–score conversion, giving $\tilde u_t(x\mid y)=(1-w)\,u_t(x\mid\varnothing)+w\,u_t(x\mid y)$. The authors state plainly that the distribution CFG actually samples from is not known.
+
+> **My comment.** CASE continues an observed history by holding the observed days at noise level zero and re-clamping them at every reverse step, which is conditioning, not a coupling. I wonder whether putting the recent window on the source side of a bridge would give the same continuation in fewer steps, or whether the source would simply carry the past's volatility level into the future.
 
 ### 3.5 Beyond $\mathbb{R}^d$ (§5–9)
 

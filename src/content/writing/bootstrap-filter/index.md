@@ -93,6 +93,8 @@ The resampling is implemented by inverse-CDF sampling: draw $u_i\sim\mathcal{U}(
 
 **Prediction** is immediate: if $x_{k-1}(i)\sim p(x_{k-1}\mid D_{k-1})$ and $w_{k-1}(i)\sim p(w_{k-1})$ independently, then $f_{k-1}$ of the pair is distributed as $p(x_k\mid D_{k-1})$ by construction of (1) and (2). No approximation is introduced here at all.
 
+> **My comment.** This is the step my TailFlow generator was missing in its one-shot form: it drew the whole ten-day window from the state at the origin, so a large loss on day 2 never raised the volatility of day 3. Re-conditioning each path on its own generated history is, in effect, pushing every sample through its own state update, and it halved the 10-day ES bias. Reading this paper, I wonder whether a proper filtering view of the condition, rather than my ad hoc feedback, would also have stopped the runaway I saw on weakly trained models.
+
 **Update** rests on Smith and Gelfand's *weighted bootstrap*: given samples $\{x^*(i)\}$ from a continuous density $G(x)$ and a known function $L(x)$, a draw from the discrete distribution with mass $L(x^*(i))/\sum_jL(x^*(j))$ on $x^*(i)$ *tends in distribution to* the density proportional to $L(x)G(x)$ as $N\to\infty$. Identify $G$ with the prior and $L$ with the likelihood and the update is justified. Note the two things this buys: the normalising constant in (3) never has to be computed, because it cancels in the weight ratio; and $L$ need only be known up to a constant.
 
 ### 3.3 What is actually required
@@ -128,6 +130,8 @@ $$
 where $E$ is the range (max minus min) of that component before roughening, $d$ is the state dimension, and $K$ is a tuning constant. The scaling is chosen so that $\sigma$ is proportional to the node spacing of an equivalent uniform rectangular grid of $N$ points — with $K=0.2$ in the experiments, *the standard deviation of the Gaussian jitter is 20% of the node spacing*. *Clearly the choice of $K$ is a compromise. Too large a value would blur the distribution but too small a value would produce tight clusters of points around the original samples.*
 
 In modern language this is kernel smoothing of the particle set, and (6) is a Scott-type bandwidth rule. It is also a *bias*: the filter now targets the posterior convolved with a Gaussian. The paper does not say so.
+
+> **My comment.** I have the same kind of constant in my own work. The discount filter in the exchange-queueing reanalysis mixes each block's posterior with a time-of-day prior at a fixed $\delta=0.5$, which keeps the posterior from collapsing onto a stale rate, exactly as roughening keeps the cloud from collapsing. I chose it rather than derived it, and I have not reported a sensitivity sweep over it, which is the same thing I would ask of this paper's $K=0.2$.
 
 **Prior editing.** If you are willing to delay the estimate by one step, boost the number of prior samples near the likelihood by a rejection test:
 

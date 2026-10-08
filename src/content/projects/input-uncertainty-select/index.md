@@ -18,20 +18,38 @@ kind: research
 thumb: "/projects/input-uncertainty-select/media/thumb.jpg"
 ---
 
-## Abstract
+## In short
 
-A ranking-and-selection (R&S) procedure controls *simulation* error: it returns a good system with probability at
-least $1-\alpha$ in the world the simulator describes. When the simulator's input distribution was itself estimated
-from $n$ days of data, that guarantee is conditional on the fitted input model. On a synthetic regime-switching market
-where the true best portfolio and the true feasible set are known by brute force, I run one constrained selection
-problem — highest expected 10-day return among 15 long-only portfolios subject to a 10-day CVaR(95%) cap — and judge
-every decision twice. In the fitted world the procedure meets its nominal 0.95 (P(good
-selection) $=1.000$ for every input model); against the true market it delivers 0.03 to 0.80, and 17%–61% of the
-selections violate the risk cap. The gap is not simulation error — an infinite-budget plug-in oracle scores the same.
-Of three remedies, only a bootstrap feasibility margin helps, and it buys feasibility with return without restoring
-the guarantee.
+**Where it started.** A ranking-and-selection (R&S) procedure, like the ones I built in [rs-lab](/research/rs-lab/),
+promises to return a good system with probability at least $1-\alpha$, but only in the world its simulator describes.
+In finance that simulator's input distribution is itself fitted to $n$ days of data. I wanted to know how much of the
+promise survives that. So I reused the market and decision problem from `tailflow` and the R&S library from `rs-lab`,
+where the true best portfolio and the true feasible set are known by brute force: the highest expected 10-day return
+among 15 long-only portfolios under a 10-day CVaR(95%) cap. Every decision is judged twice, in the fitted world and in
+the true one.
 
-## 1 Introduction
+**What I noticed first.** In the fitted world the procedure did its job perfectly: P(good selection) $=1.000$ for every
+input model. Against the true market it delivered 0.03 to 0.80, and 17%–61% of the selections broke the risk cap.
+More data did not fix it. For historical simulation it got worse, from 0.138 at $n=500$ to 0.046 at $n=8000$: as
+estimation noise shrinks, the procedure grows confident about a world that is systematically wrong.
+
+**What that made me curious about.** Was this just too little simulation? And if the error comes from the input
+model, can resampling the data measure it well enough to correct for it?
+
+**What worked, and what did not.** It was not simulation error. An infinite-budget plug-in oracle scored the same, and
+300× more scenarios moved no fitted model off its plateau. Of three remedies, only a bootstrap feasibility margin
+helped: at $z=3$ it took historical simulation from 0.244 to 0.048 infeasibility for 3.0 bp of regret. It failed for
+Gaussian EWMA (0.460 to 0.340), whose CVaR is biased low, and it never restored the objective half of the guarantee
+(historical simulation stays at 0.06). Bagging and the nested procedure did essentially nothing, at roughly 25× the
+cost of a decision. The reason is that the bootstrap under-states the real error: its one-sided bound covers the true
+CVaR in 35%–92% of decisions instead of 95%, and gets worse as $n$ grows, because every resample is the same model
+class and cannot produce a tail that class cannot represent.
+
+**Where it leads.** The missing uncertainty sits between model classes, not within one. The next step is a margin
+calibrated on the disagreement between input model classes fitted to the same window, and a feasibility test over a
+set of input models (section 5).
+
+## 1 Background
 
 Sequential R&S procedures are among the few simulation-optimization tools with a finite-sample statistical guarantee:
 with probability $1-\alpha$ the returned system satisfies the constraint to a tolerance $\epsilon$ and is within an

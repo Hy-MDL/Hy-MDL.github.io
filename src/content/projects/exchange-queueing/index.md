@@ -20,34 +20,41 @@ scope: personal
 thumb: "/projects/exchange-queueing/media/queue_thumb.jpg"
 ---
 
-## Abstract
+## In short
 
 *Course project submitted with Jaemin Kim and Youngjin Son as co-authors (IIE 6103, Yonsei).
 I carried out the original work — data collection, queueing model, simulation, cost analysis,
 figures and write-up — and the audit and reanalysis below are mine, done in September–October 2026.
 So Part A is a re-examination of my own analysis, not of someone else's.*
 
-The 2025 report **Stochastic Modeling of Cryptocurrency Exchange Traffic** argues that raw
-BTC/USDT arrivals are far too bursty for M/M/c, that an adaptive transaction-time rule
-$K^*(\lambda)\propto\lambda^{-1}$ restores near-Poisson behaviour, that Erlang-C then sizes
-an exchange at one to three nodes under a 100 ms SLA, and that dynamic provisioning avoids
-millions of dollars of slippage for a few dollars a day. **Part A** recomputes fifteen of its
-numbers from the project's own shipped CSVs: eleven reproduce exactly, four do not, and two
-of those — CV 2.72 and variance-to-mean ratio 111 — exist nowhere in the repository except as
-literals in two figure scripts. **Part B** re-runs the statistics on 1.30 GB of the tick
-data. The over-dispersion is not the intraday rate: inside a single minute the 1 s counts are
-still 36.6 times over-dispersed. The binning exponent, fitted within a day rather than across
-seven, is $+0.62$, not $-1$. And on the real arrival stream the SLA the report declares
-comfortably met needs about 48 nodes rather than one.
-**Parts C and D** size capacity under a posterior instead of a point rate. A Cox model
-with a filtered posterior is either over-confident or, with a heavy-tailed burst law, about
-four times too generous. Modelling same-millisecond trades as batches, with a size law that
-adapts block by block and a learned surrogate of the queue simulator, brings capacity close
-to the after-the-fact minimum and makes the decision cheap enough to re-solve every minute.
-It still promises about 97 % and delivers 63–95 %: the batch sizes are not independent in
-time, and the model treats them as if they were.
+**Where it started.** The 2025 report argued that BTC/USDT arrivals are too bursty for M/M/c, that an adaptive rule
+$K^*(\lambda)\propto\lambda^{-1}$ makes them near-Poisson again, and that Erlang-C then sizes an exchange at one to
+three nodes under a 100 ms SLA. Coming back to it, I first asked whether its sentences follow from the files it shipped
+with. Eleven of fifteen numbers reproduce; four do not, and two of them, CV 2.72 and variance-to-mean ratio 111, exist
+only as literals in figure scripts.
 
-## 1 Introduction
+**What I noticed first.** Re-running the statistics on 1.30 GB of tick data, the burstiness is not the intraday rate:
+inside a single minute the 1 s counts are still 36.6 times over-dispersed. The binning exponent, fitted within a day,
+is $+0.62$, not $-1$. And on the real arrival stream the SLA needs about 48 nodes where Erlang-C says one.
+
+**What that made me curious about.** If a point rate is the wrong input, what if the model carries the uncertainty the
+arrivals actually have, and a surrogate re-sizes capacity every minute from it? And which uncertainty is it: the rate,
+the dispersion, or the size of the bursts?
+
+**What worked, and what did not.** A Bayesian Cox model with a filtered posterior on rate and dispersion failed: at 1 s
+bins its 95 % interval covered the real tail on 7 % of blocks, and nesting a second gamma scale only reached 30–53 %.
+A log-normal burst law reached nominal coverage, but at 4.3× the oracle number of servers. Treating same-millisecond
+trades as batches worked better. It moved most of the over-dispersion into the batch sizes (the 1 s dispersion index
+falls from 130 to 38 in sample), and a surrogate re-solves the chance constraint in about 0.02 s, with capacity
+1.00–1.99 times the oracle. What it did not fix is the promise: it says about 97 % and holds the SLA on 63–95 % of
+blocks. Adding 10 ms clustering of the batch epochs (D2) recovers up to 9 points. Permuting the real batch sizes
+lowers the servers needed, which shows the rest: large batches arrive close together in time, and every size law here is
+i.i.d. given the block.
+
+**Where it leads.** A batch-size law that depends on time and on intensity, for example a marked self-exciting process,
+filtered block by block so the controller stays cheap; then a finite-buffer engine with a rejection cost (section 5).
+
+## 1 Background
 
 An exchange is a queue: orders arrive, wait, and are matched. That framing is what lets an
 operator turn a latency target into a server count through Erlang-C, and it depends entirely
@@ -61,13 +68,12 @@ deliberately data-free: it asks only whether the report's sentences follow from 
 shipped with. **Part B** is my own diagnostics, binning re-derivation, sizing and cost
 rebuild on a subset of the tick data, run on the lab server.
 
-**Parts C, D and D2** follow one question. If the model carries the uncertainty the problem
-actually has, can a surrogate then control the decision and adapt it as the day moves? Part
-C puts a posterior on the rate and dispersion of a Cox process. Part D moves the uncertainty
-to where §4.4 and §4.7 found it, the size of the bursts: same-millisecond batches with a
-size posterior that forgets old blocks, and a surrogate that makes the chance-constrained
-choice of $c$ cheap enough to re-solve for every one-minute block. Part D2 adds sub-second
-clustering of the batch epochs and a diagnostic of what is still missing.
+**Parts C, D and D2** size capacity under a posterior instead of a point rate. Part C puts a
+posterior on the rate and dispersion of a Cox process. Part D moves the uncertainty to where
+§4.4 and §4.7 found it, the size of the bursts: same-millisecond batches with a size posterior
+that forgets old blocks, and a surrogate that makes the chance-constrained choice of $c$
+cheap enough to re-solve for every one-minute block. Part D2 adds sub-second clustering of
+the batch epochs and a diagnostic of what is still missing.
 
 ## 2 Method
 

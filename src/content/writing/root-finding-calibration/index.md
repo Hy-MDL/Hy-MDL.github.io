@@ -32,6 +32,8 @@ Squaring this averaged residual gives a lower bound on the original objective.
 - **Bracket the root.** Any two evaluated points with opposite signs define a box that must contain a root. The search keeps shrinking to the smallest such box.
 - **Search with kriging.** A Gaussian-process model of the signed residual is searched with three new root-finding versions of the usual acquisition functions: lower confidence bound, probability of improvement and expected improvement. With noisy simulators, stochastic kriging turns "opposite signs" into a probability.
 
+> **My comment.** My battery GP surrogate failed at exactly such a boundary. At 45 °C it said a charge rate would keep the cell under the 60 °C limit, and the simulator reached 60.7 °C; a probability of being on the wrong side of the constraint, rather than a point prediction, is what that decision needed.
+
 The theory states the price clearly. The root-finding answer is close to the true calibration only up to a bias that cannot be removed, roughly the variance of $S$ and the disagreement between outputs near the root. <mark>The method is fast exactly when the outputs err in the same direction, and can find spurious roots when positive and negative residuals cancel</mark>.
 
 ## What the results show
@@ -39,6 +41,8 @@ The theory states the price clearly. The root-finding answer is close to the tru
 The examples are a 2-D test function, an M/M/1 queue (one unknown rate, 100 sojourn times as outputs) and a stochastic SIR epidemic, with 100 macro-replications and at most 10 sequential evaluations. There are no result tables. Reading the curves, root finding with stochastic kriging and box shrinking reaches a lower post-evaluated calibration error than minimisation for all three acquisitions in all three examples. The sampled points concentrate along the zero contour instead of scattering.
 
 What this supports, in my reading: with very small budgets, in one or two dimensions, on problems with a clean single sign change, the sign is worth a lot. It does not yet say how the method scales.
+
+> **My comment.** The M/M/1 example is the friendliest case possible: one rate, and every sojourn time moves the same way when it changes. The queue in my exchange-queueing reanalysis has bursty batch arrivals that a Poisson model cannot carry, and there I would expect a fitted rate to over-predict short sojourns and under-predict long ones, which is exactly the cancellation across outputs that the bias term warns about.
 
 ## Where I am not convinced
 

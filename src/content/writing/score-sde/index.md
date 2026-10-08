@@ -73,6 +73,8 @@ $$
 
 with $t\sim\mathcal U[0,T]$, $\lambda(t)>0$ a weighting, and $p_{0t}$ the transition kernel. The target is the score of the *kernel*, available in closed form, not of the intractable marginal — the standard denoising-score-matching substitution, exact in expectation. The recommended $\lambda\propto 1/\mathbb E\|\nabla\log p_{0t}\|_2^2$ reproduces both predecessors' weights. When $f$ is affine, $p_{0t}$ is Gaussian in closed form and a training step costs what it costs in the discrete case; when it is not, one can simulate the SDE and swap in sliced score matching (Appendix A), which never needs the kernel score.
 
+> **My comment.** $\lambda(t)$ and the output parameterisation were where TailFlow's training broke. Plain ε-prediction failed near the noise end, where the right answer is essentially $x_\tau$ itself and any error is divided by $\sqrt{\bar\alpha_\tau}$ on the way to $\hat x_0$; rewiring the output so that part is not learned, and dividing the loss by $\bar\alpha_\tau$, fixed it. That is a reweighting plus a reparameterisation, the same design freedom this paper leaves to heuristic.
+
 ### 3.3 VE, VP and sub-VP
 
 Take $N\to\infty$ in each predecessor's chain. SMLD's update $x_i=x_{i-1}+\sqrt{\sigma_i^2-\sigma_{i-1}^2}\,z_{i-1}$ becomes, with $\Delta t=1/N$, an increment of variance $\tfrac{d[\sigma^2]}{dt}\Delta t$; DDPM's $x_i=\sqrt{1-\beta_i}x_{i-1}+\sqrt{\beta_i}z_{i-1}$ becomes $x-\tfrac12\beta\Delta t\,x+\sqrt{\beta\Delta t}\,z$ after a first-order expansion of the square root, with $\beta(t)$ the limit of the rescaled $N\beta_i$. So
@@ -117,6 +119,8 @@ dx=\big\{f(x,t)-g(t)^2\big[\nabla_x\log p_t(x)+\nabla_x\log p_t(y\mid x)\big]\bi
 $$
 
 This is Eq. (2) applied to the conditional density, with $p_t(x\mid y)\propto p_t(x)p(y\mid x)$ splitting the score in two. For class labels the second term is a classifier trained on noised inputs. For inpainting (Appendix I.2) the reverse SDE runs only on the unknown coordinates while the known ones are resampled at each step from their own forward kernel; the approximation is $p_t(z(t)\mid\Omega(x(0))=y)\approx p_t(z(t)\mid\hat\Omega(x(t)))$ — conditioning on a noised observation instead of a clean one. Colourisation is imputation after an orthogonal change of colour basis, orthogonality mattering because it keeps a Wiener process a Wiener process. <mark>The unconditional score network is reused unchanged in all three cases.</mark>
+
+> **My comment.** CASE avoids the replacement approximation by training for it: every day carries its own noise level, observed days are days at noise level zero, and the prefix is re-clamped at every reverse step, so one set of weights both generates and continues a history. I would like to see the sampling-time trick here measured against that on conditional tails, which is direction 2 below.
 
 ### 3.7 Intuition: the case you can solve by hand
 

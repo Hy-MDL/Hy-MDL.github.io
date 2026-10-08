@@ -95,6 +95,8 @@ $$
 
 Only the bias and variance terms respond to training; $\sigma^2$ is a floor set by the label generator. That is the quantitative reason to spend the compute budget on accurate labels rather than on more of them, and also why the reported rough Bergomi errors cannot be read as pure network error.
 
+> **My comment.** I used exactly this subtraction in roughvol-lab. The surrogate's test RMSE was 2.29 bp of volatility, the held-out targets themselves carried 2.15 bp of Monte Carlo noise, and only 0.81 bp was left for the network. Generating the held-out surfaces at ten times the training paths is what made the floor measurable, and I would ask for the same here before reading 4.42% as network error.
+
 ### 3.4 Intuition: the parameters are not identifiable
 
 The most useful limiting case in the paper is not about the network at all. For rough stochastic volatility models a short-time expansion gives
@@ -106,6 +108,8 @@ $$
 for a scaling exponent $\beta$ in the range where the expansion is valid and $C(H)$ a constant depending on $H$. Read the terms: $\sqrt{v_0}$ fixes the level of the smile, the product $\rho\eta$ fixes the slope, and $H$ enters only through $C(H)$ and the rate at which the moneyness window shrinks. <mark>At leading order $\rho$ and $\eta$ appear only as their product, so a decrease in $|\rho|$ offset by an increase in $\eta$ gives the same surface.</mark> Computing a distance between true and calibrated parameter vectors is therefore meaningless, and the authors say so.
 
 The paper's own posteriors confirm it numerically. On synthetic data generated at $\rho = -0.9$, $\eta = 1.9$, the posterior medians are $-0.855$ and $2.041$ — individually 5% and 7% off — yet $\rho\eta = -1.745$ against a true $-1.71$, a 2% gap. The combination the surface pins down is recovered about three times more accurately than either factor.
+
+> **My comment.** My own synthetic-to-synthetic recovery in roughvol-lab did not show a ridge this strong: over 2,000 held-out surfaces the mean absolute errors were 0.0033 for $\eta$ and 0.0013 for $\rho$. My surface runs out to two years, and (6) is a short-maturity statement, so I suspect the longer maturities break the $\rho\eta$ product. I have not tested that, and a point-estimate MAE is not a posterior, so this is a question to check rather than a disagreement.
 
 ### 3.5 Algorithm
 

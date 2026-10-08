@@ -212,6 +212,8 @@ flowchart LR
 6. *The latent space is semantically organised.* Demonstrated by a two-parameter manifold through four validation latents ([Fig. 6](https://arxiv.org/pdf/1605.08803#page=9)) and by a class-conditional CelebA model in Appendix F. Qualitative. The manifold (Eq. 19), $z=\cos\varphi\,\bigl(\cos\varphi'\,z^{(1)}+\sin\varphi'\,z^{(2)}\bigr)+\sin\varphi\,\bigl(\cos\varphi'\,z^{(3)}+\sin\varphi'\,z^{(4)}\bigr)$, is a product of two rotations that passes through all four latents.
 7. *Background/foreground and lighting structure is captured on ImageNet and LSUN.* Eyeballing a figure. Suggestive, not evidence.
 
+> **My comment.** Mass-covering is the property I want when the flow is a prior that has to carry model uncertainty: a mode-seeking fit would put too little mass on loadings it is unsure about and understate the posterior entropy. The flip side here, improbable samples, would show up in a prior as posterior weight on implausible models, and I would look for it against an exact posterior rather than in samples.
+
 **What is missing.** There is no ablation anywhere in the paper. Affine versus additive coupling, checkerboard versus channel masks, multi-scale versus flat, batch norm on versus off, the running-average variant versus standard batch norm, the tanh on $s$ — every one of these is a design decision defended in prose and never isolated in a table. Given that the multi-scale factor-out and the batch-norm log-determinant are the two changes most likely to explain the gap from NICE, their absence from the evidence is the paper's main scientific weakness.
 
 ## 6 Limitations
@@ -227,6 +229,8 @@ flowchart LR
 - **Masks are hand-designed for images.** Checkerboard and channel-wise both assume a spatial grid. For tabular data — a factor panel, say — there is no analogue, and the ordering problem Real NVP claims to escape from autoregressive models comes back in the form of a partition problem. This is precisely what Glow's learned $1\times1$ convolution addresses.
 - **Flip augmentation changes the target density** and is not accounted for in the reported bits/dim discussion.
 - **No compute or wall-clock numbers** anywhere, and no parameter counts, so "larger models are likely to further improve performance" cannot be located on any axis.
+
+> **My comment.** For a density used to compute posterior model probabilities this is disqualifying rather than subtle: the prior must be one fixed function, evaluated identically for every candidate subset. If I put batch norm inside a flow prior I would freeze it to running statistics first and then re-check the posterior against the exact one, because the trained model and the evaluated model are no longer the same object.
 
 ## 7 Extensions
 

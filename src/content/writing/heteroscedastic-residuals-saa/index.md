@@ -22,6 +22,8 @@ This short note is where Kannan, Bayraksan and Luedtke's residual framework meet
 
 The [ER-SAA](/blog/data-driven-saa-covariates/) and ER-DRO frameworks reuse residuals $y^i-\hat f_n(x^i)$ as samples of the noise, which is valid only when the noise is independent of $X$. When demand variability depends on season, or wind variability on location, a residual from a calm covariate is the wrong size for a volatile one. <mark>Reusing raw residuals then puts the same spread on every new covariate</mark>, too narrow in volatile states and too wide in calm ones.
 
+> **My comment.** CASE already does a version of the standardise-then-rescale step inside the generator: each return is split into a slowly moving volatility state and a whitened shape before the diffusion model sees it. So for CASE the open question is less whether to standardise than whether the whitened shape should still depend on the state, which is exactly what the location-scale assumption rules out.
+
 ## The idea, as I understand it
 
 - **Location–scale model.** Assume $Y=f^*(X)+Q^*(X)\varepsilon$, with $Q^*(x)\succ0$ the square root of the conditional error covariance and $\varepsilon$ independent of $X$.

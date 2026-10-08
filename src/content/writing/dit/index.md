@@ -68,6 +68,8 @@ For XL/2 ($N=28$, $d=1152$, $T=256$) this evaluates to 118.4 G against the paper
 
 Patch size is therefore a knob that changes compute without changing model size — total parameters actually decrease slightly, since the patchify and decoder projections shrink. Three values are tested, $p\in\{2,4,8\}$.
 
+> **My comment.** For a return panel the arithmetic looks different. The token count is assets times days, so the $2T^2d$ term cannot be neglected the way it can at 256 tokens. CASE splits attention into an asset pass and a time pass. I chose that so co-movement and path dynamics could be inspected separately, but it also turns one attention over $NL$ tokens into attentions over $N$ and over $L$. I would redo Eq. (5) for that layout before borrowing any of this paper's compute conclusions.
+
 ### 3.2 Conditioning blocks
 
 Four ways of feeding $t$ and $c$ into a block are compared. The cost figures below are mine, derived from the paper's Table 4 for XL/2.
@@ -84,6 +86,8 @@ h \leftarrow h + \alpha(t,c) \odot F\big(\gamma(t,c) \odot \mathrm{LN}(h) + \bet
 $$
 
 so every block starts as the identity map, mirroring the zero-initialised final convolutions in diffusion U-Nets.
+
+> **My comment.** The "computed once per image" saving rests on every token sharing one timestep, and CASE breaks that assumption. Each day carries its own noise level, and observed days sit at level zero, which is what lets one set of weights both generate and continue a history. The modulation then has to vary across tokens. I wonder how much of adaLN-Zero's advantage survives when the gate and shift are per token rather than per sample.
 
 The parameter arithmetic is the part worth pausing on. The adaLN MLP maps $d\to6d$ once per block, costing $6d^2\approx8.0$M parameters per block, or 223M over 28 blocks — almost exactly the 226M gap between adaLN-Zero (675M) and in-context (449M). Those parameters are invisible in the Gflops column because they are applied to a single conditioning vector, not to 256 tokens. <mark>The block comparison is therefore matched on compute but not on parameters: adaLN-Zero carries 50% more weights than in-context conditioning and 12.5% more than plain adaLN</mark>, the latter being exactly the $2d^2$ per block spent on the gates. Since the paper's own headline is that parameters do not determine quality, this is a place where the two arguments pull against each other.
 

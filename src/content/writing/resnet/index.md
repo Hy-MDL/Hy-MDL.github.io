@@ -43,6 +43,8 @@ $$
 
 so the block outputs $\mathcal{F}(\mathbf{x}) + \mathbf{x}$. Both forms can represent the same functions; the hypothesis is only that they are not equally easy to optimize. The identity is unlikely to be literally optimal; the weaker claim is that <mark>the optimal mapping is usually closer to the identity than to zero, so learning a perturbation around identity is a better-conditioned problem</mark>. A later measurement supports it: layer responses in ResNets have smaller standard deviation than in plain nets and shrink as depth increases ([Fig. 7 in the paper](https://arxiv.org/pdf/1512.03385#page=8)).
 
+> **My comment.** I used the same idea one level up in TailFlow. Targets are whitened so that an untrained network already generates a Gaussian copula with $t$ margins and EWMA volatility, and the output is wired so the trivial part of the noise prediction is not learned; the network only learns departures from that reference, and plain ε-prediction without the rewiring failed.
+
 ### 3.2 The building block
 
 A block is defined as
@@ -119,6 +121,8 @@ With Faster R-CNN held fixed, replacing VGG-16 by ResNet-101 raises COCO mAP@[.5
 ## 5 Discussion
 
 **Strengths.** The experimental design is the real argument. Because the shortcut is free, the plain-vs-residual comparison changes one thing only, and the sign flip between 18 and 34 layers is hard to explain any other way. The effect appears on two datasets, transfers to detection, and requires no solver changes.
+
+> **My comment.** This is the experimental design I try to copy: change one thing that costs nothing, so a sign flip has nowhere else to come from. In FinPhasor the comparable move is reading phase and magnitude off the same predicted surface, so when only the phase orders returns, the network, data and protocol are shared and cannot explain the difference.
 
 **Weaknesses.** The paper does not explain *why* deep plain networks degrade. A convergence-rate conjecture is offered and the matter is deferred. The preconditioning story is supported by one indirect statistic (response magnitudes), not by any analysis of the loss surface. The 1202-layer result shows that easy optimization does not guarantee better generalization, and no regularization experiments are run to test the overfitting explanation.
 

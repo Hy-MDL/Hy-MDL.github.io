@@ -83,6 +83,8 @@ $$
 
 For the entropic measure $w$ is unnecessary and one minimises $\mathbb{E}[\exp(-\lambda\, \mathrm{PL}_T)]$ directly. For general convex risk measures the authors use the robust representation $\rho(X) = \max_Q (\mathbb{E}_Q[-X] - \alpha(Q))$, parametrise the log-density of $Q$ with a second network, and obtain a min–max problem whose gradient still decomposes over samples. That part is stated and justified but not tested numerically.
 
+> **My comment.** This min–max shape is also how I would bring model uncertainty in, with the maximum taken over generators rather than over densities $Q$. In TailFlow a robust rule over an ensemble of 11 re-trained models cut the chance of breaking a CVaR limit from 0.405 to 0.155, though it never made the portfolio choice sharper. I would try training the hedge against the worst member of a small generator ensemble and see whether the same trade appears: safer, but not better.
+
 ## 4 Experiments
 
 **Setup.** Horizon of 30 trading days, daily rebalancing. Paths come from a Heston model
@@ -118,6 +120,8 @@ Each strategy wins on the criterion it was trained for. For a tight call spread 
 **Strengths.** The formulation is the contribution. Risk preference, costs, constraints and the instrument set are all inputs, and the same code handles a call under CVaR and a basket under quadratic loss. Indifference pricing, usually a PDE exercise, becomes two training runs. The approximation result is clean, and the experiments are chosen so that a known answer exists to check against.
 
 **Weaknesses.** Everything is simulated, and simulated under a risk-neutral Heston measure; the claim of model independence is structural, not empirical. The quality of a deep hedge on real markets is bounded by the quality of the path generator, which the paper leaves open. The convergence statement concerns capacity only; nothing guarantees SGD finds the minimiser, and no seed variance or confidence intervals are reported. The min–max scheme for general risk measures, fixed costs, market impact and hard constraints are described but not run. The slope of 0.71 is a regression through five points, and the scaling test uses independent assets, the easiest high-dimensional case.
+
+> **My comment.** My input-uncertainty project measured this dependence for a much simpler decision. A CVaR-constrained selection among 15 portfolios met its nominal 0.95 in the fitted world and delivered 0.03–0.80 in the true one, with 17–61% of selections breaking the cap. A deep hedge has far more freedom than a 15-way choice, so I would expect it to exploit generator error at least as hard. The test I would run is to train it on a fitted generator of a synthetic market and score its realised CVaR under the true one.
 
 **Not shown.** Comparison with a cost-aware classical heuristic such as a no-trade band around delta, sensitivity to the number of training paths, and behaviour when the test dynamics differ from the training dynamics.
 

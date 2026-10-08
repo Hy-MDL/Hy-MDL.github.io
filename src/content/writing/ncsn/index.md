@@ -70,6 +70,8 @@ That is suggestive rather than conclusive — an unstable loss curve is consiste
 
 *Mixing.* This is a separate failure and it survives a perfect score. Let $p_{\text{data}}=\pi p_1+(1-\pi)p_2$ with disjoint supports. On $\operatorname{supp}p_1$, $\nabla_x\log p_{\text{data}}(x)=\nabla_x(\log\pi+\log p_1(x))=\nabla_x\log p_1(x)$, and symmetrically on $\operatorname{supp}p_2$: <mark>the score is exactly independent of the mixing weight $\pi$</mark>. A sampler that consumes only the score therefore has no access to $\pi$ at all. With supports that merely nearly separate — the realistic case — the information is present but reachable only by crossing a region of vanishing density, which costs a mixing time that grows exponentially. The toy experiment confirms it with the *ground-truth* score: plain Langevin puts roughly equal mass on the two modes instead of $1{:}4$ ([Fig. 3 in the paper](https://arxiv.org/pdf/1907.05600#page=5)).
 
+> **My comment.** This is the passage that worries me about regime-switching markets. TailFlow's synthetic market has two volatility regimes, and the stressed regime's share is exactly the kind of mode weight a score-based sampler can get wrong with a perfect score; conditioning on the volatility forecast should mostly protect it, but I would check the generated share of stressed paths against the chain's known stationary share before reading any ES.
+
 Keeping these two apart matters. Noise at a given scale helps the first by putting probability mass where there was none; it helps the second only if the scale is comparable to the distance between modes. The second requirement is much more demanding, and it is precisely the one NCSNv2 later turns into a formula.
 
 ### 3.3 The NCSN objective
@@ -165,6 +167,8 @@ INPAINT  (same loop, one extra line)
 ```
 
 The inpainting variant is worth pausing on: nothing is retrained, and the observation is injected *at the current noise level* rather than as clean pixels, so the conditioning stays consistent with the distribution the network was trained on. That is the ancestor of every replacement-based conditional sampler, including the imputation scheme in [CSDI](/blog/csdi/).
+
+> **My comment.** This is close to how CASE continues an observed history: the prefix is re-clamped at every reverse step. The difference is that NCSN re-imposes the observation noised to the current level, while CASE gives every day its own noise level and holds observed days at zero, so the network is trained on that mixed state instead of being asked to tolerate it.
 
 ## 4 Implementation notes
 

@@ -33,6 +33,8 @@ $$
 
 is a deterministic map from (initial draw, Brownian path) to a solution path. So an SDE pushes Wiener measure forward onto path space, exactly as a GAN generator pushes Gaussian noise onto image space. Sampling is easy; a density is not available, since path space has no Lebesgue measure.
 
+> **My comment.** No density means the model can only be checked through samples, and that is where my factor-selection result makes me cautious: there the density-free GAN route gave sharper answers that were measured overconfidence. For path models the analogue is a generator that matches whatever functionals the critic happens to learn and is wrong in the tail, which is where I would score it.
+
 **Wasserstein GAN.** A generator $G_\theta$ is trained so that no scalar critic $F$ can separate $\mathbb{E}_{\text{model}}[F]$ from $\mathbb{E}_{\text{data}}[F]$; the critic must be Lipschitz. Calibration to fixed payoffs is the same game with the critic frozen.
 
 **Neural CDE.** A CDE $dH_t = f(H_t)\,dt + g(H_t)\,dY_t$ evolves a hidden state in response to a driving path $Y$. It is the continuous-time counterpart of an RNN and is a universal approximator for functions of paths.
@@ -91,6 +93,8 @@ The Wasserstein distance has a unique minimiser at the data distribution, a neur
 ## 4 Experiments
 
 **Synthetic check.** A time-dependent Ornstein–Uhlenbeck process, $dz_t = (\mu t - \theta z_t)\,dt + \sigma \circ dW_t$ with $\mu = 0.02$, $\theta = 0.1$, $\sigma = 0.4$, 8192 paths observed at integer times from 0 to 63. Marginals at five times and 50 sample paths match the truth by eye ([Figs. 3 and 4 in the paper](https://arxiv.org/pdf/2102.03657#page=6)); no numeric score is given.
+
+> **My comment.** An OU process with known parameters is the right test, and then it is scored by eye. I would report the error in a few known quantities, the recovered mean-reversion rate or a known quantile of the marginals, the way TailFlow is scored against a synthetic market whose true ES is known.
 
 **Baselines and metrics.** Latent ODE (trained as a VAE) and the latent-variable CTFP (a normalising flow). Three scores: the loss of a neural CDE classifier separating real from fake (higher is better), a train-on-synthetic, test-on-real forecasting loss (lower is better), and an MMD with depth-5 signature features (lower is better). Entries are mean ± standard deviation over three runs.
 

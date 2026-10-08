@@ -20,47 +20,44 @@ scope: personal
 thumb: "/projects/battery-degradation-sim/media/thumb.jpg"
 ---
 
-## Abstract
+## In short
 
-Most battery-life work, including my [companion study](/research/battery-protocol-select/), predicts a number:
-how many cycles until the cell reaches 80 % of its capacity. This page asks the question underneath it. **Take
-the physics of a real cell, charge it again and again under different protocols, and watch: how long does it
-last, and where and why does it collapse?**
+**Where it started.** My [companion study](/research/battery-protocol-select/) predicts a number: how many cycles
+until a cell reaches 80 % of its capacity. As an electrical engineer, though, my first battery question was not
+*how many cycles* but *which of the losses inside the cell wins, and when it starts to run away*. So I took a
+physics model of a real cell, PyBaMM's DFN model with O'Kane et al.'s coupled degradation on the LG M50
+parameter set, and charged it again and again under 16 protocols (0.5–3C × 5–45 °C), to watch where and why it
+collapses.
 
-The model is PyBaMM's Doyle–Fuller–Newman (DFN) model with the coupled degradation mechanisms of O'Kane et al.
-(2022): SEI growth, partially reversible lithium plating, particle cracking with SEI on the cracks,
-stress-driven loss of active material (LAM) and a lumped thermal model. The parameters are the published
-`OKane2022` set for the LG M50 21700 cell (NMC811 / graphite-SiOx, 5 Ah). Sixteen protocols were simulated:
-charge rate 0.5, 1, 2 and 3C × ambient temperature 5, 15, 25 and 45 °C, each for 3,500–5,000 cycles, with a 1C
-discharge every cycle.
+**What I noticed first.** It did not collapse. No run reached 80 % or showed a knee; at cycle 3,500, 86.4–92.8 % of
+the capacity was left and the fade was slowing down. Ambient temperature mattered far more than charge rate, and
+at 5 °C a faster charge even faded slightly less, because self-heating warms the cell and a warmer cell plates
+less. The plating driving force did grow (−71 → −383 mV at 3C / 5 °C), yet only 0.089 Ah of lithium was lost to
+plating for good.
 
-- **The cell as published does not collapse.** No run reaches 80 % or shows a knee. At cycle 3,500, 86.4–92.8 %
-  of the capacity is left, and the fade *slows down* over time (post/pre fade-rate ratio 0.46–0.70). Ambient
-  temperature matters far more than charge rate. With natural-convection cooling, a fast charge heats the cell,
-  and a warmer cell plates less.
-- **The plating driving force grows anyway.** At 3C / 5 °C the lowest anode potential during charge falls from
-  −71 mV vs Li/Li⁺ at cycle 1 to −383 mV at cycle 3,825. Most plated lithium strips back, though: only 0.089 Ah
-  is lost for good.
-- **A what-if cell shows where it breaks.** With one parameter changed, the graphite's stress-driven LAM constant
-  × 30, twelve of the sixteen protocols collapse. End of life comes at 311–333 cycles at 5 °C, 609–649 at
-  15 °C and 1,150–1,226 at 25 °C. At 45 °C it does not come within 2,500 cycles. The knee appears when LAM has
-  shrunk the negative electrode from 5.83 Ah to 4.27–4.38 Ah, against 3.95–4.14 Ah being discharged: the
-  electrode's spare capacity is gone.
-- **A surrogate decision, checked.** Two Gaussian processes over (charge rate, temperature) pick the fastest
-  rate that keeps life ≥ 400 cycles and peak temperature ≤ 60 °C. The simulator confirms the picks at 15 and
-  25 °C (23.5 % and 10.5 % faster than the best grid point). At 45 °C it refutes them: the cell peaks at 60.7 °C.
+**What that made me curious about.** If the published cell never breaks, how far does one mechanism have to be
+pushed before it does, and which other quantity decides the moment? I scaled a single fitted rate, the graphite's
+stress-driven loss of active material: ×3 gave no knee, ×10 collapsed only at 3C / 5 °C, ×30 collapsed twelve of
+the sixteen protocols.
 
-The what-if cell is a parameter change, not a prediction for the LG M50, and it is labelled as such everywhere
-on this page.
+**What worked, and what did not.** In that what-if cell, the knee came exactly when the negative electrode's spare
+capacity was gone: it had shrunk from 5.83 Ah to 4.27–4.38 Ah against 3.95–4.14 Ah being discharged. Temperature
+again decided where (311–333 cycles at 5 °C, 1,150–1,226 at 25 °C). That LAM drives the knee is partly built in by
+my choice, and one run shows a capacity step I have not traced. I then let two Gaussian processes pick the fastest
+safe charge rate and re-ran the picks in the simulator. Simulated life landed inside the predicted interval at all three checked temperatures; at 15 and 25 °C the
+picks were 23.5 % and 10.5 % faster than the best grid rate. At 45 °C the cell peaked at 60.7 °C, over the 60 °C
+limit the temperature GP said would hold: its intervals are too narrow away from the grid points.
+
+**Where it leads.** Every knee here belongs to a what-if cell, with one parameter set and no uncertainty in it.
+Propagating that uncertainty, and a surrogate that can represent the kink in peak temperature, come next
+(section 5).
 
 ## 1 Why simulate, rather than predict
 
 In circuits courses a battery is a voltage source behind a resistor. Inside the can it is a porous sandwich:
 graphite particles on one side, metal-oxide particles on the other, an electrolyte in between. Charging means
 pushing lithium ions out of the oxide and into the graphite. Each cycle, a little of that machinery is lost:
-some lithium gets trapped in side reactions, and some particles crack or lose contact. As an electrical
-engineer, my first battery question was not *how many cycles* but *which of these losses wins, and when it
-starts to run away*.
+some lithium gets trapped in side reactions, and some particles crack or lose contact.
 
 Data-driven models, like the Gaussian process in my companion study, answer the first question well. They learn
 the shape of the fade from cells that have already died, but they cannot say which mechanism shaped it.

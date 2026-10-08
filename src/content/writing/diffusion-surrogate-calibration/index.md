@@ -32,6 +32,8 @@ $$
 $$
 where $h$ is the observed history, $c_1$ the cheap output, $c_2$ the expensive one and $x_t$ the noised state. The second term is evaluated through a user-designed energy $E(c_2,x)$, at the denoised estimate of the state.
 
+> **My comment.** In CASE everything the engine knows enters as trained context, through 37 condition channels, which is why one frozen checkpoint can be re-conditioned each morning. Information that exists only on some decision dates, such as a desk's hand-written stress view, could not enter that way, and this split says it should enter as guidance instead. I would be careful with the weight, though: the high-noise steps that my check below shows are over-weighted are, I suspect, also where a scenario's overall volatility level gets set.
+
 <mark>Cheap simulation as context, expensive simulation as guidance: that division is what lets the expensive runs scale with the number of predictions rather than with the training set.</mark> A Wasserstein bound ties sample quality to the error of the denoiser and of the guidance term.
 
 ## My check: what the guidance shortcuts do

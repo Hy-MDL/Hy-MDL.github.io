@@ -105,6 +105,8 @@ The fusion SVM takes $x = (p_{\text{TA}}, p_{\text{Twitter}})$, a sigmoid of the
 
 In the bear segment (about the last 50 days) buy-and-hold loses 40.5% while the TA SVM and the $\tau = 0.99$ fusion both gain 32.0% on 7 trades. In the bull segment the $\tau = 0.95$ fusion has the best Sortino among the model strategies (5.97) with 8.3% drawdown. The price path and the bear-period trades are shown in [Figs. 10–11 of the paper](https://arxiv.org/pdf/2206.00648#page=24).
 
+> **My comment.** The label and the trade do not match. A day is positive if tomorrow's *high* crosses +5%, but the backtest exits at tomorrow's *close*, so a correct call can still be a flat or losing trade. I would score the classifier on close-to-close moves as well, or give the backtest a take-profit at the threshold, before comparing classification gains with trading gains.
+
 ## 5 Discussion
 
 **Strengths.** The dataset and code are public, which is rare in this literature. The evaluation is more careful than usual: a chronological split, per-class metrics, simulated random baselines with intervals, an honest report of a failed significance test, and separate bull and bear backtests.
@@ -112,6 +114,8 @@ In the bear segment (about the last 50 days) buy-and-hold loses 40.5% while the 
 **Weaknesses.** The headline claim needs qualifying. Text helps the classification metrics on up-moves only, and <mark>in trading the price-only SVM matches or beats every fusion variant over the full year</mark>; the default-threshold fusion earns 1.4%. At $\tau = 0.99$ the fusion model nearly reproduces the TA SVM's trades, which suggests the threshold is mostly filtering out what the Twitter branch added. Cut-offs of 0.95 and 0.99 are examined on the test year itself, not chosen on validation data. As far as Algorithm 3 describes it, the fusion SVM is fitted on probabilities that the base models produce for their own training days; out-of-fold probabilities are not mentioned, so the fusion stage may see over-confident inputs. The model-selection paragraph quotes an F1 of 0.97 for the SVM on Up 5% while the test table gives 0.26; the first number is presumably in-sample, but the text does not say. Finally, 60 positives, 7 bear-market trades and zero transaction costs are thin ground for a profitability claim, as the authors themselves acknowledge.
 
 **Not shown.** A sentiment-score baseline on the same data, which is the comparison the motivation calls for; rolling or multi-period evaluation; results with trading fees.
+
+> **My comment.** My prior on the full-text premise is weak. In FinPhasor a market-wide news stream enters the model through cross-attention and earns no predictive credit in ablation; that is a different target and market, but it is why I would want the missing sentiment-score baseline before believing the embeddings carry anything a score does not.
 
 ## 6 Takeaways
 

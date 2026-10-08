@@ -20,37 +20,37 @@ scope: personal
 thumb: "/projects/battery-protocol-select/media/thumb.jpg"
 ---
 
-## Abstract
+## In short
 
-A new fast-charging protocol is validated by cycling cells until they reach end of life. In the Severson et
-al. (2019) dataset used here, that takes between 148 and 2,237 cycles per cell. Early-life prediction exists to
-shorten this test. I ask a narrower question than how accurate the predictor is: **if the predictor reports its
-own uncertainty, can that uncertainty decide which candidate protocols are still worth testing, and what happens
-when it is wrong?**
+**Where it started.** This is my first study in battery research. I trained as an electrical engineer, and for a
+first study here I did not want to build one more cycle-life predictor; my reading notes already cover several.
+What those papers mostly leave open is what the prediction is for. A new fast-charging protocol is validated by
+cycling cells to end of life, which in the Severson et al. (2019) dataset takes between 148 and 2,237 cycles per
+cell, and early prediction exists to shorten that test. So I asked: if the predictor reports its own uncertainty,
+can that uncertainty decide which candidate protocols are still worth testing, and what happens when it is wrong?
 
-On the 124 LFP/graphite cells, a one-feature linear model on $\log_{10}\operatorname{var}\Delta Q$ reproduces
-the published variance model, with RMSE 138 and 196 cycles on the primary and secondary test sets. A 10-feature
-Gaussian process reaches 118 and 225 cycles, and its 90 % intervals cover 0.88 and 0.85 of the primary and secondary test cells. The GP is then
-cross-fitted, leaving out one group of charging policies at a time, and used as a surrogate in a
-ranking-and-selection experiment with $k$ = 5 or 10 candidate cells and 4,000 draws.
+**What I noticed first.** On the 124 LFP/graphite cells, a 10-feature Gaussian process beat the published one-feature
+baseline on the primary test set (RMSE 118 against 138 cycles) but was worse on the secondary set, batch 3 (225
+against 196). It also overfits, and its intervals were too narrow, most of all early: at 20 cycles they cover only
+0.602.
 
-- **One pick:** when candidates are drawn from all three batches, choosing by the probability of being best
-  is no better than choosing by the point prediction: the largest gap, after 20 cycles with ten candidates, is
-  0.018, and the bootstrap intervals overlap. Inside a single batch it does
-  better at $k$ = 10 (0.612 against 0.568 after 100 cycles).
-- **Adaptive testing:** the probability does help when it decides which tests to stop. After every block of 20
-  cycles, candidates whose probability of being best falls below α are dropped. At α = 0.001 this matches the
-  PCS of testing all five candidates for 100 cycles (0.861 vs 0.861) at 65 % of the cost. With ten candidates
-  it costs 52 % but loses some PCS (0.819 vs 0.830).
-- **Survivors to end of life:** at α = 0.01, running the remaining candidates to end of life gives PCS 0.971
-  ($k$ = 5) and 0.922 ($k$ = 10). That costs 41 % and 31 % of the cheapest rule that is always correct.
-- **Weak spots:** the nominal α is not a guarantee: the best cell is dropped in 0.029 and 0.078 of draws at
-  α = 0.01, about three and eight times α. Inside a single test campaign the problem is harder: PCS 0.899 for
-  five candidates.
-- **Calibration:** shrinking the predictive variance by a factor of 100 cuts PCS from 0.971 to 0.642. The
-  uncertainty is useful only to the extent that it is calibrated.
+**What that made me curious about.** A prediction with an interval is a noisy observation with a known spread, which
+makes protocol testing a ranking-and-selection problem, the same machinery as in [rs-lab](/research/rs-lab/). Does
+the interval change the decision, or only the report?
 
-## 1 Introduction
+**What worked, and what did not.** For a single pick it changed nothing: choosing by the probability of being best was
+no better than the point prediction when candidates come from all three batches (the largest gap is 0.018, with
+overlapping intervals). Where it helped was in deciding what to stop testing. Dropping candidates whose probability
+falls below α = 0.001 matched the PCS of testing all five for 100 cycles (0.861 vs 0.861) at 65 % of the cost, and
+running the survivors to end of life gave PCS 0.971 at 41 % of the cheapest always-correct rule. But α is not a
+guarantee: the best cell is dropped in 0.029 and 0.078 of draws at α = 0.01, about three and eight times α. And when
+I shrank the predictive variance by a factor of 100, PCS fell from 0.971 to 0.642. The uncertainty is useful only
+as far as it is calibrated.
+
+**Where it leads.** Recalibrate before selecting so that α means what it says, use a joint posterior updated as
+cycles arrive, and select protocols rather than single cells (section 5).
+
+## 1 Background
 
 <figure class="gif">
   <img src="/projects/diffusion-bridge/media/bridge.gif" alt="Lithium entering an electrode particle by diffusion, the Brownian walks behind it, and a diffusion model blurring a ring into noise and bringing it back" loading="lazy">
@@ -60,8 +60,7 @@ ranking-and-selection experiment with $k$ = 5 or 10 candidate cells and 4,000 dr
 
 I trained as an electrical engineer before moving to industrial engineering. Batteries are the part of my
 current field where that background helps most directly, because the raw material is current and voltage
-traces from a cycler. For a first study in the area I did not want to build one more cycle-life predictor. My
-reading notes already cover several:
+traces from a cycler. The cycle-life predictors in my reading notes include:
 - Severson-style early prediction with a GP
 - BatteryML
 - BatteryLife
@@ -88,11 +87,6 @@ evaluation as possible. [rs-lab](/research/rs-lab/) builds that machinery with s
 observations. [Input-Uncertainty Select](/research/input-uncertainty-select/) asks how much of its guarantee
 survives an input model that was itself estimated. In this study the noisy observation becomes a prediction
 error.
-
-This is my first study in battery research, and I am ready to learn the field properly: the electrochemistry
-behind the features as much as the data. I am looking forward to carrying the selection and surrogate ideas
-of my earlier projects into a new domain. This study is built on those projects, and I intend to do my best
-with the next steps listed in §5.
 
 Three experiments:
 - **E1** measures how accurate and how well calibrated the early-life predictor is after 20 to 100 cycles.
