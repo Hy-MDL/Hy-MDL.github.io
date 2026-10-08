@@ -16,7 +16,7 @@ code: "projects/battery-r2r-twin"
 order: 3
 kind: research
 scope: personal
-thumb: "/projects/battery-os-efficiency/media/os_battery.jpg"
+thumb: "/projects/battery-os-efficiency/media/board_thumb.jpg"
 ---
 
 ## In short
