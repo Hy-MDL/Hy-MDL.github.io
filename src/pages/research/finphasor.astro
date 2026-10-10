@@ -10,15 +10,15 @@ import Base from '../../layouts/Base.astro';
         <h1>FinPhasor — Phase-Preserving Measurement of Cross-Sectional Timing in Equity Markets</h1>
         <div class="sub">Signal processing says a signal is magnitude <em>and</em> phase. Financial deep learning predicts a scalar return — magnitude with no phase — and so cannot see when a stock reprices relative to the market. FinPhasor models that timing as a stock characteristic, with a complex wavelet representation, an oscillator template and a scale-conditioned Transformer.</div>
         <div class="acts">
-          <span class="status s-plan">Paper · Preparing resubmission</span>
+          <span class="status s-rev">Paper · Submitted to ASOC</span>
           <a class="btn" href="/publications/">Submission history</a><span class="lkoff">manuscript not public · code, checkpoints and preprint on publication</span>
         </div>
         <div class="tags"><span class="tag">continuous wavelet transform</span><span class="tag">phase-preserving prediction</span><span class="tag">damped harmonic oscillator</span><span class="tag">scale-conditioned attention</span><span class="tag">FinBERT</span><span class="tag">S&amp;P 500</span></div>
       </header>
 
       <div class="info"><dl>
-        <dt>Authors</dt><dd><b>Hyeon Min Jeon</b>, Hee Soo Lee*, Kyong Joo Oh*</dd><dt>Venue</dt><dd>Applied Soft Computing (in preparation) · previously Expert Systems with Applications</dd>
-        <dt>Manuscript</dt><dd>ESWA-D-26-35395 (Expert Systems with Applications)</dd><dt>Updated</dt><dd>2026.10.07 — declined after review; preparing the Applied Soft Computing submission</dd>
+        <dt>Authors</dt><dd><b>Hyeon Min Jeon</b>, Hee Soo Lee*, Kyong Joo Oh*</dd><dt>Venue</dt><dd>Applied Soft Computing (submitted 2026.10.10) · previously Expert Systems with Applications</dd>
+        <dt>Manuscript</dt><dd>ESWA-D-26-35395 (Expert Systems with Applications)</dd><dt>Updated</dt><dd>2026.10.10 — submitted to Applied Soft Computing (declined at ESWA after review on 2026.10.07)</dd>
         <dt>Data</dt><dd>S&amp;P 500 constituents, CRSP spliced with adjusted closes; ten market indicators; a market-wide news corpus. Trained to 2020-06, evaluated out of sample through 2025-12</dd>
         <dt>Earlier title</dt><dd>DAMP — Damped Adaptive Market Physics</dd>
       </dl></div>
@@ -28,7 +28,7 @@ import Base from '../../layouts/Base.astro';
           <p>Most AI systems for equity investment are trained on a scalar return, and a scalar erases timing: one disclosure lands on one date for everybody, and different names finish pricing it at very different moments. FinPhasor replaces the target. It predicts each stock's <em>future complex wavelet scalogram</em>, with a damped-oscillator template for delay, overshoot and decay, so every horizon band carries both a magnitude and a phase. Under one protocol, only the phase orders future returns: the coherence-gated medium-horizon lead earns an out-of-sample rank IC of +0.074 on S&amp;P 500 names through 2025. The paper treats this as a validated measurement and stops short of calling it a factor.</p>
           <div class="kw"><b>Keywords</b> decision support · explainable AI · continuous wavelet transform · phase-preserving prediction · cross-sectional return characteristics · market-relative phase timing</div>
         </div>
-        <p>This page summarises a manuscript being prepared for resubmission. The full method, experiments and results are in the paper; code, checkpoints and a preprint follow publication.</p>
+        <p>This page summarises a manuscript under submission at Applied Soft Computing. The full method, experiments and results are in the paper; code, checkpoints and a preprint follow publication.</p>
 
         <h2 id="bW">Where the idea came from</h2>
         <p>This one comes straight out of electrical engineering. In signal processing a signal is never just its amplitude: a filter has a magnitude response and a <i>phase</i> response, a resonant system amplifies some frequencies and delays others, and two signals with identical spectra can be completely different objects if their phases differ. I had spent years with that picture — Fourier and wavelet transforms, damped oscillators, group delay — and when I started reading financial deep learning I noticed that most of the field predicts a scalar: next period's return. A scalar is a magnitude with no phase. It records where a stock ended up and throws away <i>when</i> it got there.</p>
@@ -64,7 +64,7 @@ import Base from '../../layouts/Base.astro';
         </div>
 
         <h2 id="s"><span class="num">4</span>Status</h2>
-        <p>Declined at Expert Systems with Applications on 2026.10.07, after the required reviews were completed on 2026.09.17. The manuscript is now being prepared for submission to Applied Soft Computing. Code, checkpoints and a preprint will be released on publication. Next on this line: broader anomaly spans for the characteristic, and phase-aware scenario generation with <a href="/research/diffusion-scenarios/">CASE</a>.</p>
+        <p>Declined at Expert Systems with Applications on 2026.10.07, after the required reviews were completed on 2026.09.17. It was submitted to Applied Soft Computing on 2026.10.10. Code, checkpoints and a preprint will be released on publication. Next on this line: broader anomaly spans for the characteristic, and phase-aware scenario generation with <a href="/research/diffusion-scenarios/">CASE</a>.</p>
       </div>
     </div>
 
@@ -79,7 +79,7 @@ import Base from '../../layouts/Base.astro';
       </ul>
       <div class="rel"><div class="eyebrow">Related</div>
         <a href="/research/diffusion-scenarios/">CASE — conditional diffusion scenarios<span>paper · under review</span></a>
-        <a href="/publications/">Submission history<span>publications · preparing resubmission</span></a>
+        <a href="/publications/">Submission history<span>publications · submitted to ASOC</span></a>
         <a href="/blog/score-sde/">Score-Based Generative Modeling through SDEs<span>paper review · draft</span></a>
       </div>
     </aside>
