@@ -133,6 +133,12 @@ when only that part's measured behaviour is switched from the Air value to the X
 
 ![Figure 3 — The v7 attribution placed on the parts it belongs to: look at the SoC badge (−2.2 pp, web-use power) against the charge path (−1.2 pp, 80 % vs 100 % hold), the PMICs (−0.5 pp, standby) and the pack (+0.2 pp, temperature); black ticks in the ledger mark the earlier v6 values. Photo: iFixit, CC BY-NC-SA 3.0; badges, boxes and their link to battery ageing are my own analysis, not iFixit's.](./figs/v7_board_flow.jpg)
 
+To try the attribution yourself, the view below puts the same four roles on the photos. Tap a box to see what
+the part does, then set it like the XPS and see where the health dot lands at 2, 3 or 4 years.
+
+<div id="anatomy" class="anatomy"></div>
+<script src="/projects/battery-os-efficiency/anatomy/anatomy.js" defer></script>
+
 The Air has no fan: "Apple nixed the fan in favor of a simple aluminum heat spreader hanging off the left edge of the
 logic board" (iFixit). The pack sits in three sections below the board, and the closest cell edge is roughly 2 cm
 (21.0 mm, scaled from the 30.4 cm case width) from the SoC centre. The label on the pack reads "11.39Vdc 49.9Wh
