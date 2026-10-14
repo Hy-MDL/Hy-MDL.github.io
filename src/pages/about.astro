@@ -15,44 +15,34 @@ const nRes = projects.filter((p) => p.data.kind === 'research').length, nProj = 
         <div class="bio">
           <p class="thesis">I study decision-making under uncertainty when the uncertainty itself must first be learned from data.</p>
           <p class="kw">Generative models as simulation inputs · Ranking &amp; selection · Input uncertainty · Simulation optimisation</p>
-          <p>As a child I loved mathematics, and I assumed its natural home was economics or business, where it is put to work explaining social phenomena. Later I wanted deeper theory, and a training I could carry into many industries and domains, so I chose electrical engineering instead. Then I joined an AI lab as an undergraduate researcher, and found that what I enjoyed most was taking a theory out of one course and applying it somewhere it was not meant for. That became the engine: connect fields, extend them, test the result against something real. AI models — generative models above all — are how I change the axis from which a decision problem is seen; a simulation-based guarantee and a check against the real thing decide whether the new axis was worth it. What I find exciting is fusing theories from different fields to solve a central problem, then carrying the result through experiments into full research; the papers I am writing now are built on exactly that.</p>
+          <p>I studied electrical engineering mainly because it was my major. That changed at GAIL, an AI lab at Chung-Ang University, where I started leading small projects of my own and found that I liked building a model and checking it against what actually happens. In my master's I moved into finance and built generative models for portfolio risk. What stayed with me was taking a method into a domain it was not built for. Now I want to carry that back to engineering systems.</p>
         </div>
       </div>
     </div>
 
-    <div class="hsec"><h2>How I got here</h2>
-      <div class="prose-lite">
-        <p>As an undergraduate researcher at GAIL, Chung-Ang University, I started on AI by connecting it to what I already had — signals and systems, the mathematics of electrical engineering — and I learned by implementing papers rather than reading them. When I moved to finance, the same habit found its material: the mathematics under Black–Scholes and Monte Carlo has counterparts in generative and sequential models, and I liked the research that links the two. That is what carried me into industrial engineering and the Financial Investment AI Lab at Yonsei.</p>
-        <p>My strength is not theory in isolation but connecting mathematical ideas across domains — a model from one, a problem from another, a validation from a third — and pushing them far enough to survive empirical validation, until the result either holds or breaks in a way I can explain.</p>
-        <p>The other habit is turning my own inconveniences into tools and experiments. A 2025 course project on exchange traffic kept bothering me after the course ended — its headline numbers did not come out of its own files — so I re-ran it on the real tick data with what I had since learned in stochastic modelling, and it became the <a href="/projects/exchange-queueing/">queueing study</a> and a working paper. Reviewing my own two manuscripts without a referee to argue with became <a href="/projects/lucubra/">Lucubra</a>, a research-agent platform I now use daily and keep strengthening round by round. A reading list became a <a href="/blog/">blog</a> that checks each paper's numbers; a lost codebase became a rebuild written up as exactly that. When something in my work is awkward, I would rather extend it into a tool I keep using than work around it.</p>
-      </div>
-    </div>
-
-    <div class="hsec"><h2>What I ran into, and what I did about it</h2>
-      <div class="prose-lite">
-        <p><b>A scenario generator that looked right and could not be trusted.</b> Building <a href="/research/diffusion-scenarios/">CASE</a>, a diffusion transformer that generates multi-asset return scenarios, I kept hitting the same wall: the samples looked realistic, and realism told me nothing about whether a reserve set on them would hold. So I stopped judging the generator by its samples and scored it by the decision made on it — nine portfolio books, 139 decision dates, reserve held against shortfall — and then built <a href="/research/tailflow/">TailFlow</a>, a smaller diffusion model on a synthetic market with known VaR and ES, so that the same question had an answer I could check. The habit that came out of it is the one line on top of this page: a learned model of uncertainty is only as good as the decision it feeds.</p>
-        <p><b>Two layers of the same uncertainty.</b> The learned-prior work asked how uncertain the <em>model</em> is — replace the mixture-of-g prior in Bayesian factor selection with a normalizing flow and watch what happens to the posterior over models and its entropy (<a href="/research/model-uncertainty-priors/">learned priors</a>). The input-uncertainty work asked how far that uncertainty <em>propagates</em> — swap the input distribution behind a selection procedure and measure how much of its probability-of-correct-selection guarantee survives (<a href="/research/input-uncertainty-select/">Input-Uncertainty Select</a>, <a href="/research/rs-lab/">rs-lab</a>). I only saw late that they are one question at two layers: quantify the uncertainty a learned distribution carries, then follow it into the guarantee on the decision. That is the research programme I want to spend a doctorate on, in simulation optimisation and ranking &amp; selection.</p>
-        <p><b>A hospital desk that no simulator matched.</b> Nune Eye Hospital asked for a policy that assigns patients to nine imaging devices. The first simulator put policies in the wrong order because its case mix was wrong; the recalibrated one was still beaten by the hospital until three distortions were removed one at a time; and when I asked myself whether any setting favoured the simulation, I found two that did. The <a href="/projects/nune-retina-rl/">scheduler</a> now runs on real days, and what I took from it is a rule for all of my work: keep the real operation as a row in the table, and go looking for the settings that flatter you.</p>
-        <p><b>Reading drafts the way a referee would.</b> Two manuscripts under review taught me what I wanted and did not have: something that checks a draft's numbers instead of admiring its prose, knows what the target journal's recent papers look like, and leaves the decision to me — and I wanted to know whether I could build an LLM agent system end to end. So I built <a href="/projects/lucubra/">Lucubra</a>, a research-agent platform: tool loops, referee personas assembled into venue committees, a review ledger that forbids re-raising closed points, an MCP server, three ways to run a model. Four days, three rebuilt structures, and the standing rule that agents verify and people decide.</p>
-        <p><b>The same method, five domains.</b> Taking a learned model of uncertainty, a decision on simulated outcomes and a check against a known answer into asset returns, a hospital, a city's traffic, a solar farm (<a href="/research/isf2025-solar-forecasting/">ISF 2025</a>, with SAS) and an artist's style (<a href="/projects/artist-style-engine/">TIPS</a>) is what turned breadth into a method. Each move became an experiment, and each experiment something I could write up. I expect the next domains to be new ones, and the method to be the same.</p>
-      </div>
+    <div class="hsec"><h2>What I work on</h2>
+      <ul class="how">
+        <li><b>Generative models behind a decision.</b> <a href="/research/diffusion-scenarios/">CASE</a> generates multi-asset return scenarios and is judged by the risk reserve set on them; <a href="/research/tailflow/">TailFlow</a> asks the same question in a market whose true VaR/ES is known.</li>
+        <li><b>How far learned uncertainty travels.</b> A <a href="/research/model-uncertainty-priors/">learned prior</a> for Bayesian factor selection, and how much of a selection guarantee survives a fitted input model (<a href="/research/input-uncertainty-select/">Input-Uncertainty Select</a>, <a href="/research/rs-lab/">rs-lab</a>).</li>
+        <li><b>The same method in new domains.</b> A <a href="/projects/nune-retina-rl/">hospital exam-room scheduler</a>, <a href="/projects/eco-route-rl/">low-CO₂ routing</a>, and three battery projects ending in <a href="/research/battery-os-efficiency/">Battery and the OS</a>.</li>
+        <li><b>Tools I use myself.</b> <a href="/projects/lucubra/">Lucubra</a>, a research-agent platform that checks a draft's numbers the way a referee would.</li>
+      </ul>
     </div>
 
     <div class="hsec"><h2>How I work</h2>
       <ul class="how">
-        <li><b>Every number has a file.</b> Every experiment on this site is written up like a short paper, and every result figure and metric in it is produced by a script in the repository from a result file. Figures taken from a manuscript or a slide deck say so. If I cannot reproduce it, it is not on the page.</li>
-        <li><b>Negative results stay on the page.</b> When a method does not do what was hoped — a queue model that still under-delivers on the busiest days, a tuned prior that buys little and shrinks the uncertainty measure — the write-up says so, with the numbers, instead of dropping the experiment.</li>
-        <li><b>Truth first, then the real thing.</b> Methods are built and measured where the answer is computable — a synthetic corridor, a market with known tail risk, an exact posterior — before they meet the problem that motivated them.</li>
-        <li><b>Data comes in the front door.</b> Nothing on this site uses data obtained by working around an access control; when a source refused scripted access, the write-up says so and the experiment is synthetic.</li>
-        <li><b>Reading is written down.</b> The <a href="/blog/">blog</a> holds {notes} paper reviews and study notes; each review records the paper's claim, its method and what its own numbers actually show.</li>
+        <li><b>Every number has a file.</b> Each figure and metric on this site comes from a script and a result file in the repository.</li>
+        <li><b>Negative results stay.</b> When a method does not do what was hoped, the write-up says so, with the numbers.</li>
+        <li><b>Truth first, then the real thing.</b> Methods are tested where the answer is known before they meet the real problem.</li>
+        <li><b>Data comes in the front door.</b> No data obtained by working around an access control; {notes} reading notes are on the <a href="/blog/">blog</a>.</li>
       </ul>
     </div>
 
     <div class="hsec"><h2>Now</h2>
       <ul class="how">
-        <li><b>One manuscript under review</b> at Expert Systems with Applications and a second submitted to Applied Soft Computing, two working papers (learned surrogate priors; capacity sizing for an exchange queue), two co-authored lab papers being resubmitted — status kept live on <a href="/publications/">Publications</a>.</li>
-        <li><b>A new domain.</b> Batteries became a run of personal projects, back toward electrical engineering: first <a href="/research/battery-protocol-select/">choosing a fast-charging protocol when the early-life prediction is uncertain</a>, then a <a href="/research/battery-degradation-sim/">physics simulation of where a cell collapses</a>, and most recently a question I had carried since switching to a MacBook: <a href="/research/battery-os-efficiency/">how much does tight SoC–OS–hardware integration actually do for a battery?</a> Measured power and standby drain, a field-calibrated ageing model and an annotated logic board put about four points of battery health in three years between an M1 Air and a comparable Windows ultrabook — most of it from the power the same work costs.</li>
-        <li><b>In the lab.</b> Research assistant in the Financial Investment AI Lab at Yonsei since March 2025, and teaching assistant for the undergraduate Financial Engineering course in spring 2026.</li>
+        <li><b>Papers.</b> One under review at ESWA, one submitted to Applied Soft Computing, two working papers (<a href="/publications/">status</a>).</li>
+        <li><b>Batteries.</b> Personal projects back toward electrical engineering, most recently <a href="/research/battery-os-efficiency/">what the M1's SoC and OS do for battery ageing</a>.</li>
+        <li><b>Lab.</b> Research assistant since March 2025; TA for undergraduate Financial Engineering, spring 2026.</li>
       </ul>
     </div>
 
@@ -67,10 +57,20 @@ const nRes = projects.filter((p) => p.data.kind === 'research').length, nProj = 
     </div>
 
     <div class="hsec"><h2>Looking ahead</h2>
-      <div class="prose-lite">
-        <p>I am ready to learn whatever the next problem asks for: a new body of theory, a new kind of data, a new field's own way of checking its answers. What I look forward to most is carrying this way of working into domains I have not touched yet, and finding out which parts of it survive the move and which have to be rebuilt.</p>
-        <p>Everything on this site is the ground I will build on: the papers under review, the experiments that held up, and the ones that did not. I intend to give the next stage my best.</p>
-      </div>
+      <div class="prose-lite"><p>I want to keep the method and change the domain: learn the theory and data a new field asks for, and find out which parts of this way of working survive the move.</p></div>
+    </div>
+
+    <div class="hsec"><h2>See the work</h2>
+      <ul class="feat feat2">
+        <li><a class="card" href="/research/"><img src="/projects/diffusion-scenarios/media/architecture.png" alt="CASE architecture" loading="lazy"></a>
+          <div class="kick"><span>Research</span><span>{nRes} write-ups</span></div>
+          <a class="t" href="/research/">Research →</a>
+          <p class="k">Papers and research threads: generative scenarios, learned priors, selection with guarantees, batteries.</p></li>
+        <li><a class="card" href="/projects/"><img src="/projects/lucubra/media/home.jpg" alt="Lucubra home screen" loading="lazy"></a>
+          <div class="kick"><span>Projects</span><span>{nProj} projects</span></div>
+          <a class="t" href="/projects/">Projects →</a>
+          <p class="k">Things I built: a research-agent platform, a hospital scheduler, routing in a traffic simulator, the lab's projects.</p></li>
+      </ul>
     </div>
 
     <div class="hsec"><h2>Contact</h2>

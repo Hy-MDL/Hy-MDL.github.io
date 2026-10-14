@@ -67,7 +67,7 @@ export const PUBS: Pub[] = [
     ],
     page: '/research/finphasor/',
     lk: 'manuscript not public',
-    news: 'submitted to Applied Soft Computing after review at Expert Systems with Applications',
+    news: 'submitted to Applied Soft Computing',
   },
   {
     id: 'convfactornet',

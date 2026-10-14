@@ -58,23 +58,23 @@ import Base from '../layouts/Base.astro';
         {PUBS.filter((p) => p.id === 'finphasor').map((p) => (
           <li><span class="d">{month(p.events[p.events.length - 1].date)}</span><span><a href={p.page}>FinPhasor</a> — {p.news ?? `${p.stage.toLowerCase()} at Expert Systems with Applications`}.</span></li>
         ))}
-        <li><span class="d">Oct 2026</span><span>Lab co-authored paper (2nd author) on <a href="/research/#manuscripts">deep convolutional factor prediction with explainable AI</a> submitted to the <i>International Journal of Forecasting</i>.</span></li>
-        <li><span class="d">Oct 2026</span><span>Personal project: <a href="/research/battery-os-efficiency/">does Apple silicon really help the battery?</a> Notebookcheck measurements, an iFixit board annotated by role, and a field-calibrated ageing model: about 86.6 % vs 82.9 % battery health after three years (Monte Carlo 90 %: 1.7–4.8 points), mostly from active power.</span></li>
-        <li><span class="d">Oct 2026</span><span>Working paper on <a href="/projects/exchange-queueing/">sizing an exchange's matching capacity when order arrivals are over-dispersed</a>: a 2025 course study re-run on 1.30 GB of real BTC/USDT tick data, with a Bayesian batch-arrival model as the surrogate behind the server count.</span></li>
-        <li><span class="d">Oct 2026</span><span>Seven reading notes on <a href="/blog/#surrogates-bo">Bayesian optimisation, learned priors and surrogates</a>, the methods behind the current working papers.</span></li>
-        <li><span class="d">Sep 2026 –</span><span>Building <a href="/projects/lucubra/">Lucubra</a>, a research-agent platform where LLM agents verify papers and draft referee reports — the agent orchestration (chain-of-thought review steps, venue committees of referee personas) is the part I am working on now.</span></li>
+        <li><span class="d">Oct 2026</span><span>Lab paper (2nd author) on <a href="/research/#manuscripts">convolutional factor prediction</a> submitted to the <i>International Journal of Forecasting</i>.</span></li>
+        <li><span class="d">Oct 2026</span><span>Personal project: <a href="/research/battery-os-efficiency/">does Apple silicon help the battery?</a> About 86.6 % vs 82.9 % health after three years, mostly from active power.</span></li>
+        <li><span class="d">Oct 2026</span><span>Working paper on <a href="/projects/exchange-queueing/">sizing an exchange's matching capacity</a> from real BTC/USDT tick data.</span></li>
+        <li><span class="d">Oct 2026</span><span>Seven reading notes on <a href="/blog/#surrogates-bo">Bayesian optimisation and learned surrogates</a>.</span></li>
+        <li><span class="d">Sep 2026 –</span><span>Building <a href="/projects/lucubra/">Lucubra</a>, a research-agent platform that checks papers and drafts referee reports.</span></li>
         {PUBS.filter((p) => p.id === 'case').map((p) => (
           <li><span class="d">{month(p.events[p.events.length - 1].date)}</span><span><a href={p.page}>CASE</a> — {p.news ?? `${p.stage.toLowerCase()} at Expert Systems with Applications`}.</span></li>
         ))}
-        <li><span class="d">Feb 2026 –</span><span>Personal project with Nune Eye Hospital: <a href="/projects/nune-retina-rl/">reinforcement learning for dynamic patient assignment</a> in a retina examination room — read-only EMR integration, a recalibrated simulation, and RL against the hospital's own scheduling.</span></li>
+        <li><span class="d">Feb 2026 –</span><span>With Nune Eye Hospital: <a href="/projects/nune-retina-rl/">RL for patient assignment</a> in a retina exam room, tested against the hospital's own scheduling.</span></li>
         <li><span class="d">Jan 2026</span><span>Lab seminar on <a href="/research/model-uncertainty-priors/">learned priors for Bayesian factor selection</a>.</span></li>
-        <li><span class="d">Jul 2025 –</span><span>Built the lab's website <a href="/projects/fai-lab-site/">fai.yonsei.ac.kr</a>; this site followed in 2026.</span></li>
-        <li><span class="d">Jul 2025</span><span>Talk at ISF 2025, Beijing: <a href="/research/isf2025-solar-forecasting/">A Study for Forecasting Solar Energy Power Generation</a>, joint work with SAS Institute and the University of Seoul.</span></li>
-        <li><span class="d">Mar 2025 – Aug 2026</span><span>Lab R&amp;D project with Urban Complex: <a href="/projects/artist-style-engine/">an artist-style generative engine</a> — style captioning, a QLoRA style classifier, SDXL generation routed by style family, and 3D asset output.</span></li>
+        <li><span class="d">Jul 2025 –</span><span>Built the lab's website, <a href="/projects/fai-lab-site/">fai.yonsei.ac.kr</a>.</span></li>
+        <li><span class="d">Jul 2025</span><span>Talk at ISF 2025, Beijing, on <a href="/research/isf2025-solar-forecasting/">solar power forecasting</a>, with SAS Institute.</span></li>
+        <li><span class="d">Mar 2025 – Aug 2026</span><span>Lab R&amp;D project: <a href="/projects/artist-style-engine/">an artist-style generative engine</a> with Urban Complex.</span></li>
         <li><span class="d">Mar 2025</span><span>Joined the Financial Investment AI Lab at Yonsei University as an M.S. student.</span></li>
-        <li><span class="d">2024</span><span>Submitted <a href="/research/#completed">Personalized Sleep Score Prediction Model Using a Lifelog Dataset</a> to the ETRI Human Understanding AI Paper Challenge.</span></li>
-        <li><span class="d">Nov 2023</span><span>Presented <a href="/projects/eco-route-rl/">Green-Navi</a> (RL for fuel-optimal urban routing, team lead) at the Carbon-Neutral ESG research fair, Chung-Ang University.</span></li>
-        <li><span class="d">Nov 2023</span><span>Presented <a href="/research/#completed">Dealing with the Imbalanced-Data Problem with a Diffusion Model</a> at the 2023 KICS fall conference.</span></li>
+        <li><span class="d">2024</span><span><a href="/research/#completed">Sleep-score prediction from lifelog data</a> submitted to the ETRI AI Paper Challenge.</span></li>
+        <li><span class="d">Nov 2023</span><span>Presented <a href="/projects/eco-route-rl/">Green-Navi</a> (RL routing, team lead) at the Chung-Ang ESG research fair.</span></li>
+        <li><span class="d">Nov 2023</span><span>Presented <a href="/research/#completed">diffusion oversampling for imbalanced data</a> at KICS fall 2023.</span></li>
         <li><span class="d">Dec 2022</span><span>Started as an undergraduate researcher at GAIL, Chung-Ang University.</span></li>
       </ul>
     </div>
