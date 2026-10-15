@@ -16,7 +16,7 @@ code: "projects/fomc-live-desk"
 order: 4
 kind: project
 scope: personal
-thumb: "/projects/fomc-live-desk/media/desk.png"
+thumb: "/projects/fomc-live-desk/media/thumb.jpg"
 ---
 
 ## Abstract
