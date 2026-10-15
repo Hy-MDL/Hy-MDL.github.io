@@ -16,6 +16,7 @@ const nRes = projects.filter((p) => p.data.kind === 'research').length, nProj = 
           <p class="thesis">I study decision-making under uncertainty when the uncertainty itself must first be learned from data.</p>
           <p class="kw">Generative models as simulation inputs · Ranking &amp; selection · Input uncertainty · Simulation optimisation</p>
           <p>I studied electrical engineering mainly because it was my major. That changed at GAIL, an AI lab at Chung-Ang University, where I started leading small projects of my own and found that I liked building a model and checking it against what actually happens. In my master's I moved into finance and built generative models for portfolio risk. What stayed with me was taking a method into a domain it was not built for. Now I want to carry that back to engineering systems.</p>
+          <p>In the lab I also work on applied projects: a TIPS-funded engine with an industry partner that describes, classifies and generates an artist's style with Qwen vision-language models and diffusion, and a stock-recommendation system in which I extend the open-source TradingAgents framework from a single recommendation into a simulated market of LLM agents. What I take from both is the same habit: a model is only as useful as the check it survives.</p>
         </div>
       </div>
     </div>
@@ -25,6 +26,7 @@ const nRes = projects.filter((p) => p.data.kind === 'research').length, nProj = 
         <li><b>Generative models behind a decision.</b> <a href="/research/diffusion-scenarios/">CASE</a> generates multi-asset return scenarios and is judged by the risk reserve set on them; <a href="/research/tailflow/">TailFlow</a> asks the same question in a market whose true VaR/ES is known.</li>
         <li><b>How far learned uncertainty travels.</b> A <a href="/research/model-uncertainty-priors/">learned prior</a> for Bayesian factor selection, and how much of a selection guarantee survives a fitted input model (<a href="/research/input-uncertainty-select/">Input-Uncertainty Select</a>, <a href="/research/rs-lab/">rs-lab</a>).</li>
         <li><b>The same method in new domains.</b> A <a href="/projects/nune-retina-rl/">hospital exam-room scheduler</a>, <a href="/projects/eco-route-rl/">low-CO₂ routing</a>, and three battery projects ending in <a href="/research/battery-os-efficiency/">Battery and the OS</a>.</li>
+        <li><b>Agents that read the market live.</b> <a href="/projects/fomc-live-desk/">FOMC Live Desk</a> turns a live broadcast into a transcript, scores each sentence with a fast decision model and lets TradingAgents-based market participants react.</li>
         <li><b>Tools I use myself.</b> <a href="/projects/lucubra/">Lucubra</a>, a research-agent platform that checks a draft's numbers the way a referee would.</li>
       </ul>
     </div>
@@ -42,6 +44,7 @@ const nRes = projects.filter((p) => p.data.kind === 'research').length, nProj = 
       <ul class="how">
         <li><b>Papers.</b> One under review at ESWA, one submitted to Applied Soft Computing, two working papers (<a href="/publications/">status</a>).</li>
         <li><b>Batteries.</b> Personal projects back toward electrical engineering, most recently <a href="/research/battery-os-efficiency/">what the M1's SoC and OS do for battery ageing</a>.</li>
+        <li><b>Lab projects.</b> The <a href="/projects/artist-style-engine/">artist-style engine</a> (TIPS, with Urban Complex) and a TradingAgents-based market simulation for stock recommendation.</li>
         <li><b>Lab.</b> Research assistant since March 2025; TA for undergraduate Financial Engineering, spring 2026.</li>
       </ul>
     </div>
