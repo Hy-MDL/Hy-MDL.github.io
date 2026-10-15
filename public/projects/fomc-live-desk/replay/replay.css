@@ -1,0 +1,101 @@
+/* "Replay the broadcast" widget (fomc-live-desk). Theme tokens come from global.css. */
+.replay{--rp-neg:#B5473F;--rp-neg-soft:#F5E3E1;margin:1.6rem 0;padding:14px;border:1px solid var(--rule);border-radius:10px;background:var(--bg2);font-size:.92rem;line-height:1.5;color:var(--ink)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .replay{--rp-neg:#E08A80;--rp-neg-soft:#3A1F1C}}
+:root[data-theme="dark"] .replay{--rp-neg:#E08A80;--rp-neg-soft:#3A1F1C}
+.replay:focus{outline:none}
+.replay:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.replay button{font:inherit;cursor:pointer;color:inherit}
+.replay .mono,.rp-clock,.rp-k{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+.rp-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.rp-play{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ink);background:var(--ink);color:var(--bg)!important;border-radius:7px;padding:6px 14px 6px 12px;font-weight:500}
+.rp-play:hover{opacity:.88}
+.rp-play svg{width:12px;height:12px;fill:currentColor}
+.rp-clock{font-size:.82rem;color:var(--ink2);font-variant-numeric:tabular-nums;min-width:9.5em}
+.rp-seg{display:inline-flex;border:1px solid var(--rule2);border-radius:7px;overflow:hidden;margin-left:auto}
+.rp-seg button{border:0;background:transparent;color:var(--ink2);padding:4px 10px;font-size:.8rem}
+.rp-seg button+button{border-left:1px solid var(--rule2)}
+.rp-seg button.on{background:var(--ink);color:var(--bg)}
+.rp-scrub{width:100%;margin:10px 0 2px;accent-color:var(--accent)}
+.rp-wave{display:block;width:100%;height:auto;cursor:pointer;touch-action:manipulation}
+.rp-wave .env{fill:var(--rule2)}
+.rp-wave .env.past{fill:var(--ink2);opacity:.55}
+.rp-wave .sp{fill:var(--rule)}
+.rp-wave .sp.spoken{fill:var(--rule2)}
+.rp-wave .sp.done{fill:var(--accent)}
+.rp-wave .ph{stroke:var(--ink);stroke-width:1.5}
+.rp-wave .tg line{stroke:var(--warn);stroke-width:1.5;opacity:.35}
+.rp-wave .tg path{fill:var(--warn);opacity:.35}
+.rp-wave .tg.fired line,.rp-wave .tg.fired path{opacity:1}
+.rp-wave .tg{cursor:pointer}
+.rp-wave .tg:focus{outline:none}
+.rp-wave .tg:focus path{stroke:var(--ink);stroke-width:1.5}
+.rp-wave .ax{fill:var(--mute);font-size:11px;font-family:"IBM Plex Mono",monospace}
+.rp-legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.74rem;color:var(--mute);margin:2px 0 10px}
+.rp-legend i{display:inline-block;width:14px;height:6px;border-radius:3px;margin-right:6px;vertical-align:1px}
+.rp-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:700px){.rp-grid{grid-template-columns:minmax(0,1fr)}}
+.rp-panel{border:1px solid var(--rule);border-radius:8px;padding:10px 12px;background:var(--bg);min-width:0}
+.rp-h{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin:0 0 6px;display:flex;justify-content:space-between;gap:8px}
+.rp-tx{height:13.5em;overflow-y:auto;font-size:.86rem;line-height:1.5;padding-right:4px;scrollbar-width:thin}
+.rp-tx p{margin:0 0 6px;display:grid;grid-template-columns:3.6em minmax(0,1fr);gap:6px}
+.rp-tx p .rp-k{font-size:.72rem;color:var(--mute);padding-top:2px;font-variant-numeric:tabular-nums}
+.rp-tx p.cur span:last-child{color:var(--accent)}
+.rp-tx p.pending{color:var(--mute);opacity:.7}
+.rp-tx .empty{color:var(--mute);font-size:.84rem}
+.rp-dec .rp-meta{font-size:.78rem;color:var(--mute);margin-bottom:6px;font-variant-numeric:tabular-nums}
+.rp-stance{width:100%;height:auto;display:block;margin:2px 0 4px}
+.rp-stance .ln{stroke:var(--rule2);stroke-width:2}
+.rp-stance .tk{stroke:var(--rule2);stroke-width:1.5}
+.rp-stance .lb{fill:var(--mute);font-size:11px;font-family:"IBM Plex Mono",monospace}
+.rp-stance .dot{fill:var(--ink);stroke:var(--bg);stroke-width:2;transition:cx .35s ease}
+.rp-row{display:grid;grid-template-columns:6.4em minmax(0,1fr) 3.4em;gap:8px;align-items:center;margin:5px 0;font-size:.8rem;color:var(--ink2)}
+.rp-row .v{font-family:"IBM Plex Mono",monospace;font-size:.76rem;text-align:right;font-variant-numeric:tabular-nums}
+.rp-track{position:relative;height:8px;border-radius:4px;background:var(--rule)}
+.rp-fill{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--accent);transition:width .3s ease}
+.rp-track .th{position:absolute;left:50%;top:-4px;bottom:-4px;border-left:1.5px dashed var(--mute)}
+.rp-chip{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:.76rem;padding:1px 8px;border-radius:999px;border:1px solid var(--rule2);color:var(--ink2);white-space:nowrap}
+.rp-chip.hike,.rp-chip.neg{border-color:var(--rp-neg);color:var(--rp-neg)}
+.rp-chip.pos{border-color:var(--ok);color:var(--ok)}
+.rp-chip.hold{border-color:var(--rule2)}
+.rp-emu{font-size:.72rem;color:var(--mute);margin-top:8px}
+.rp-ev{margin:12px 0 0;font-size:.8rem;color:var(--ink2);display:flex;flex-direction:column;gap:4px}
+.rp-ev button{display:flex;gap:8px;align-items:baseline;text-align:left;border:0;background:transparent;padding:4px 8px;border-radius:6px;border-left:3px solid var(--warn);width:100%}
+.rp-ev button:hover{background:var(--warn-soft)}
+.rp-ev button.flash{animation:rp-flash 1.2s ease-out}
+@keyframes rp-flash{from{background:var(--warn-soft)}to{background:transparent}}
+@media (prefers-reduced-motion:reduce){.rp-ev button.flash{animation:none}.rp-fill,.rp-stance .dot{transition:none}}
+.rp-ev .rp-k{color:var(--warn);font-size:.74rem;white-space:nowrap}
+.rp-desk{margin-top:12px}
+.rp-desk .note{font-size:.8rem;color:var(--mute);margin:0}
+.rp-tabs{display:flex;gap:6px;margin:4px 0 10px;flex-wrap:wrap}
+.rp-tabs button{border:1px solid var(--rule2);background:transparent;border-radius:7px;padding:3px 12px;font-family:"IBM Plex Mono",monospace;font-size:.8rem;color:var(--ink2)}
+.rp-tabs button[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.rp-tabs .sub{margin-left:auto;font-size:.74rem;color:var(--mute);align-self:center}
+.rp-pipe{display:flex;height:22px;border-radius:5px;overflow:hidden;background:var(--rule)}
+.rp-pipe span{display:block;height:100%;border-right:1.5px solid var(--bg)}
+.rp-pipe-l{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:.72rem;color:var(--mute);margin:5px 0 10px;font-variant-numeric:tabular-nums}
+.rp-pipe-l i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.rp-n-bull{background:var(--ok)}.rp-n-bear{background:var(--rp-neg)}.rp-n-mgr{background:var(--ink2)}
+.rp-n-trader{background:var(--accent)}.rp-n-risk{background:var(--plan);opacity:.7}.rp-n-pm{background:var(--ink)}
+.rp-ratings{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.8rem;color:var(--mute);margin-bottom:8px}
+.rp-ratings span{display:inline-flex;gap:6px;align-items:center}
+.rp-deskgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:700px){.rp-deskgrid{grid-template-columns:minmax(0,1fr)}}
+.rp-ex details{border-top:1px solid var(--rule);padding:5px 0}
+.rp-ex details:last-child{border-bottom:1px solid var(--rule)}
+.rp-ex summary{cursor:pointer;font-size:.82rem;color:var(--ink2)}
+.rp-ex summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.rp-ex details p{margin:5px 0 3px;font-size:.82rem;line-height:1.55;color:var(--ink2)}
+.rp-spark{width:100%;height:auto;display:block}
+.rp-spark .z{stroke:var(--rule2);stroke-width:1}
+.rp-spark .ev{stroke:var(--warn);stroke-width:1.2;stroke-dasharray:3 3}
+.rp-spark .pth{fill:none;stroke:var(--ink);stroke-width:1.6}
+.rp-spark .pre{fill:none;stroke:var(--mute);stroke-width:1.4}
+.rp-spark .pt{fill:var(--ink)}
+.rp-spark .lb{fill:var(--mute);font-size:10.5px;font-family:"IBM Plex Mono",monospace}
+.rp-spark .lb.v{fill:var(--ink2)}
+.rp-moves{display:flex;gap:14px;font-size:.78rem;color:var(--mute);font-variant-numeric:tabular-nums;margin-top:2px}
+.rp-moves b{font-family:"IBM Plex Mono",monospace;font-weight:500;color:var(--ink)}
+.rp-foot{margin:12px 0 0;font-size:.74rem;color:var(--mute)}
+.rp-desk > .rp-h{flex-wrap:wrap}
+.rp-desk > .rp-h span{white-space:nowrap}

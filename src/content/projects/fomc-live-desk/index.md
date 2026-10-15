@@ -44,6 +44,11 @@ on a real stream. (2) Streamed STT with whisper-large-v3. (3) A decision layer i
 returns probabilities over a fixed answer space instead of generated text. (4) A TradingAgents desk in event mode.
 (5) A reaction report checked against realised 5-minute prices.
 
+<figure class="gif">
+  <img src="/projects/fomc-live-desk/media/replay.gif" alt="The statement waveform with a playhead sweeping across it, sentence spans turning teal as the transcriber commits them, a stance dot moving along a dove-to-hawk line, two amber trigger marks, and the desk calls SPY Underweight, TLT Sell, UUP Buy" loading="lazy">
+  <figcaption>The recorded run in ten seconds: sentences turn teal when committed, the dot is the stance score on a dove–hawk line, amber marks are the two desk triggers, and the chips are the portfolio manager's calls.</figcaption>
+</figure>
+
 ## 2 Method
 
 ### 2.1 Streaming transcription
@@ -117,6 +122,12 @@ benchmark. **Metrics.** WER (Levenshtein over words, with basic and Whisper-norm
 single pass over the whole file. For the decision layer, Jev's published 70–500 ms, quoted but not measured.
 
 ## 4 Results
+
+To step through the recorded run yourself, press Play (or Space) below; the replay uses the run's own wall clock, decisions and desk outputs.
+
+<link rel="stylesheet" href="/projects/fomc-live-desk/replay/replay.css">
+<div id="fomc-replay" class="replay"></div>
+<script src="/projects/fomc-live-desk/replay/replay.js" defer></script>
 
 | measurement | value |
 |---|---|
