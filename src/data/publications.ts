@@ -46,6 +46,7 @@ export const PUBS: Pub[] = [
       { date: '2026-09-17', stage: 'Submitted', short: 'ESWA', note: 'Expert Systems with Applications · ESWA-D-26-39029' },
       { date: '2026-09-20', stage: 'With editor', note: 'handling editor assigned · desk &amp; format check' },
       { date: '2026-09-22', stage: 'Under review', note: 'reviewers secured · external peer review started' },
+      { date: '2026-10-31', stage: 'In revision', note: 'first-round reviews received · revision in progress' },
     ],
     page: '/research/diffusion-scenarios/',
     lk: 'manuscript not public',
