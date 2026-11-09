@@ -39,8 +39,9 @@ export const PUBS: Pub[] = [
     title: 'Conditional Diffusion Transformers for Multi-Asset Scenario Generation and Portfolio Risk Measurement',
     authorsHtml: '<b>Hyeon Min Jeon</b>, Hee Soo Lee<sup>*</sup>, Kyong Joo Oh<sup>*</sup>',
     role: '1st author', roleClass: 'first', filterRole: 'first',
-    venueHtml: 'Submitted to <b>Expert Systems with Applications</b> · ESWA-D-26-39029 · earlier title: <i>Diffusion transformers for generative modeling of joint asset return distributions and portfolio risk scenarios</i>',
-    stage: 'Under review', stageClass: 's-rev', filterStage: 'review',
+    venueHtml: 'In revision at <b>Expert Systems with Applications</b> after first-round review · ESWA-D-26-39029 · earlier title: <i>Diffusion transformers for generative modeling of joint asset return distributions and portfolio risk scenarios</i>',
+    stage: 'In revision', stageClass: 's-rev', filterStage: 'review',
+    news: 'in revision at Expert Systems with Applications after first-round review',
     events: [
       { date: '2026-09-17', stage: 'Submitted', short: 'ESWA', note: 'Expert Systems with Applications · ESWA-D-26-39029' },
       { date: '2026-09-20', stage: 'With editor', note: 'handling editor assigned · desk &amp; format check' },

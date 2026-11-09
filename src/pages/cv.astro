@@ -53,7 +53,7 @@ const venue = (p: (typeof PUBS)[number]) => p.venueHtml.replace(/ · earlier tit
     <h2>Publications &amp; Presentations</h2>
     <p class="rcv-sub">Submitted to journals</p>
     <ol class="rcv-list">
-      {first.map((p) => (<li><Fragment set:html={authorsShort(p.authorsHtml)} />. {p.title}. <i><Fragment set:html={venue(p)} /></i>. {p.stageClass === 's-rev' ? `Under review, ${p.year}` : `${p.stage}, ${fmt(last(p).date)}`}.</li>))}
+      {first.map((p) => (<li><Fragment set:html={authorsShort(p.authorsHtml)} />. {p.title}. <i><Fragment set:html={venue(p)} /></i>. {p.stage === 'In revision' ? `In revision after first-round review, ${p.year}` : p.stageClass === 's-rev' ? `Under review, ${p.year}` : `${p.stage}, ${fmt(last(p).date)}`}.</li>))}
       {co.map((p) => (<li><Fragment set:html={authorsShort(p.authorsHtml)} />. {p.title}. <i><Fragment set:html={venue(p)} /></i>. {p.stage}, {fmt(last(p).date)}.</li>))}
     </ol>
     <p class="rcv-sub">Conference presentations and competition submissions</p>

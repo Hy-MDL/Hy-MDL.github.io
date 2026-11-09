@@ -10,7 +10,7 @@ import Base from '../../layouts/Base.astro';
         <h1>CASE — Conditional Diffusion Transformers for Multi-Asset Scenario Generation and Portfolio Risk Measurement</h1>
         <div class="sub">A generative model learns a distribution and a representation; a market scenario depends on too many factors for an unconditional one to be useful. CASE makes the generator a conditional surrogate — a market twin for one decision — and scores it by the capital it tells a desk to hold.</div>
         <div class="acts">
-          <span class="status s-rev">Paper · Under review</span>
+          <span class="status s-rev">Paper · In revision</span>
           <a class="btn" href="/publications/">Submission history</a><span class="lkoff">manuscript not public · code, checkpoints and preprint after the editorial decision</span>
         </div>
         <div class="tags"><span class="tag">conditional diffusion</span><span class="tag">diffusion transformer</span><span class="tag">factorized attention</span><span class="tag">value at risk</span><span class="tag">expected shortfall</span><span class="tag">CRSP</span></div>
@@ -18,7 +18,7 @@ import Base from '../../layouts/Base.astro';
 
       <div class="info"><dl>
         <dt>Authors</dt><dd><b>Hyeon Min Jeon</b>, Hee Soo Lee*, Kyong Joo Oh*</dd><dt>Venue</dt><dd>Expert Systems with Applications</dd>
-        <dt>Manuscript</dt><dd>ESWA-D-26-39029</dd><dt>Updated</dt><dd>2026.09.22 — under review</dd>
+        <dt>Manuscript</dt><dd>ESWA-D-26-39029</dd><dt>Updated</dt><dd>2026.11.09 — in revision after first-round review</dd>
         <dt>Data</dt><dd>CRSP daily panel 1995–2024, extended to 2026-03 for the post-freeze decisions; a five-minute panel; and the published synthetic benchmark of a tail-risk specialist</dd>
         <dt>Earlier title</dt><dd>Diffusion transformers for generative modeling of joint asset return distributions and portfolio risk scenarios</dd>
       </dl></div>
@@ -28,7 +28,7 @@ import Base from '../../layouts/Base.astro';
           <p>Risk desks answer questions that no single volatility number can answer, and they answer them by revaluing positions against <em>joint paths</em>. CASE, the Conditional Asset Scenario Engine, is a conditional diffusion model over multi-asset return panels, built as one reusable path generator rather than a model of one statistic. Asset identity enters through observable characteristics instead of fixed name slots, attention is factorised into an asset pass and a time pass, and continuing an observed history is an ordinary denoising step. One frozen checkpoint is re-conditioned each morning and never refitted, and the paper scores its risk <em>statement</em> against what actually happened, across 139 rolling decisions and nine book compositions.</p>
           <div class="kw"><b>Keywords</b> generative models · conditional diffusion · multi-asset scenario generation · portfolio risk measurement · market risk · transformer</div>
         </div>
-        <p>This page summarises a manuscript under review. The full method, experiments and results are in the paper; code, checkpoints and a preprint follow the editorial decision.</p>
+        <p>This page summarises a manuscript that is in revision after the first round of review. The full method, experiments and results are in the paper; code, checkpoints and a preprint follow the editorial decision.</p>
 
         <h2 id="bW">Where the idea came from</h2>
         <p>Generative models learn a distribution and, underneath it, a representation. That is what made them interesting to me as an undergraduate working on diffusion models for images and for imbalanced data: the sample is the visible part, the representation is what carries over. When I moved to finance the obvious application was market simulation — generate scenarios, revalue a book against them, read off its risk. The obvious application also has an obvious problem. A market scenario is not one object; it is the joint path of many assets, and that path is shaped by a <i>massive</i> number of factors at once — which names are in the book, what regime the market is in, how volatile each name has been, what the cross-section looked like this morning. A generator that tries to learn all of that unconditionally learns an average market, and the average market is the one you never have to make a decision in.</p>
@@ -86,7 +86,7 @@ import Base from '../../layouts/Base.astro';
         </div>
 
         <h2 id="s"><span class="num">4</span>Status</h2>
-        <p>Under review at Expert Systems with Applications since 2026.09.22. Code, checkpoints and a preprint will be released after the editorial decision. Next on this line: the shape defect the paths under-build, and phase-aware scenario generation with <a href="/research/finphasor/">FinPhasor</a>.</p>
+        <p>In revision at Expert Systems with Applications after the first round of review (submitted 2026.09.17, under review from 2026.09.22). Code, checkpoints and a preprint will be released after the editorial decision. Next on this line: the shape defect the paths under-build, and phase-aware scenario generation with <a href="/research/finphasor/">FinPhasor</a>.</p>
       </div>
     </div>
 
@@ -101,7 +101,7 @@ import Base from '../../layouts/Base.astro';
       </ul>
       <div class="rel"><div class="eyebrow">Related</div>
         <a href="/research/finphasor/">FinPhasor — phase-preserving timing<span>paper · submitted to ASOC</span></a>
-        <a href="/publications/">Submission history<span>publications · under review</span></a>
+        <a href="/publications/">Submission history<span>publications · in revision</span></a>
         <a href="/blog/csdi/">CSDI — conditional score-based diffusion<span>paper review</span></a>
       </div>
     </aside>
